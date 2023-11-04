@@ -28,7 +28,7 @@ class Car:
         if hasattr(self, 'vehicle_type'):
             raise ValueError('Vehicle type can not be reset')
         elif vehicle_type not in type(self).VEHICLE_TYPES:
-            raise ValueError(f'Vehicle type must be one of the following: {[print(type) for type in VEHICLE_TYPES]}')
+            raise ValueError(f'Vehicle type must be one of the following: {[type for type in type(self).VEHICLE_TYPES]}')
         else:
             self._vehicle_type = vehicle_type
 
