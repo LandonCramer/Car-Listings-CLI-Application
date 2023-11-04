@@ -1,7 +1,9 @@
 # from classes.Appointment import Appointment
-# from classes.Car import Car
+from classes.Car import Car
 # from classes.Customer import Customer
 # from classes.Employee import Employee
+
+a = Car(123, True, 'Honda', 'Civic', 2012, 133_000, 'GAS', 'Gray', True, 8_500)
 
 # def setup_db():
 #     Doctor.drop_table()
