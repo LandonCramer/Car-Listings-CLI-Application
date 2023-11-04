@@ -1,4 +1,5 @@
 from datetime import datetime
+import random
 from helpers import current_date
 
 class Car:
@@ -6,7 +7,7 @@ class Car:
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
-    def __init__(self, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_ = None, owner_id = None, appt_id = None):
+    def __init__(self, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price=None, id_ = None, owner_id = None, appt_id = None):
         self.vehicle_type = vehicle_type
         self.new = new
         self.make = make
@@ -145,8 +146,23 @@ class Car:
         elif price not in range(1_000_000):
             raise ValueError('Price must be between 0 and 1,000,000.')
         else:
-            #TODO Price and condition properties
-            self._price = price
+            miles_weight = -0.5  # Lower miles means a higher price
+            age_weight = -0.3  # Lower age means a higher price
+            condition_weights = {
+            'New': 0.4,  # Better condition means a higher price
+            'Excellent': 0.3,
+            'Very Good': 0.2,
+            'Good': 0.1,
+            'Fair': 0.0,
+            'Poor': -0.1  # Worse condition means a lower price
+            }
+
+            # Calculate the price based on the factors and weights
+            base_price = random.randint(0, 300_001)
+            price = base_price + (self.miles * miles_weight) + ((current_date.year - self.year) * age_weight) + (condition_weights[self.condition] * base_price)
+
+            # Ensure the price is within the valid range (5000 to 500,000)
+            self._price = max(5000, min(price, 500000))
 
     @property
     def id_(self):
@@ -183,3 +199,24 @@ class Car:
             raise TypeError("Appointment ID must be an integer.")
         else:
             self._appt__id_ = appt_id_
+
+    @property
+    def condition(self):
+        if self.miles == 0:
+            return 'New' 
+    
+        age_weight = current_date.year - self.year / 15
+        mileage_weight = self.miles / 200000
+        
+        condition_score = age_weight + mileage_weight
+
+        if condition_score < 0.4:
+            return 'Excellent'
+        elif condition_score < 0.7:
+            return 'Very Good'
+        elif condition_score < 1:
+            return 'Good'
+        elif condition_score < 1.5:
+            return 'Fair'
+        else:
+            return 'Poor'

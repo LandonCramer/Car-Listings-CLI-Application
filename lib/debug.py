@@ -3,13 +3,17 @@ from classes.Appointment import Appointment
 from classes.Car import Car
 from classes.Customer import Customer
 from classes.Employee import Employee
+from helpers import rand_car
 
 # python lib/debug.py
 
-car = Car('COUPE', True, 'Honda', 'Civic', 2012, 133_000, 'GAS', 'Gray', False, 8_500)
+# car = Car('COUPE', True, 'Honda', 'Civic', 2012, 133_000, 'GAS', 'Gray', False, 8_500)
 cust = Customer('Landon', 9995558765, 1)
 emp = Employee('Matteo', 75_000, datetime.now(), 1)
 appt = Appointment(datetime.now(), 1, 1, 1, 1)
+
+# fleet = [rand_car() for _ in range(51)]
+# car = rand_car()
 
 # def setup_db():
 #     Doctor.drop_table()
