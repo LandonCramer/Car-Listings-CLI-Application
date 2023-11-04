@@ -38,9 +38,11 @@ class Car:
     @new.setter
     def new(self, new):
         if not isinstance(new, bool):
-            raise TypeError("New value must be a boolean.")
+            raise TypeError('New value must be a boolean.')
+        elif new:
+            self._new = 'New'
         else:
-            self._new = new
+            self._new = "Used"
 
     @property 
     def make(self):
@@ -102,4 +104,56 @@ class Car:
         else:
             self._fuel_type = fuel_type
 
-    
+    @property
+    def color(self):
+        return self._color
+    @color.setter
+    def color(self, color):
+        if not isinstance(color, str):
+            raise TypeError('Color must be of type string.')
+        else:
+            self._color = color
+
+    @property
+    def transmission(self):
+        return self._transmission
+    @transmission.setter
+    def transmission(self, transmission):
+        if not isinstance(transmission, bool):
+            raise TypeError('Transmission value must be a boolean.')
+        elif transmission:
+            self._transmission = 'Automatic'
+        else:
+            self._transmission = "Manual"
+
+    @property
+    def price(self):
+        return self._price
+    @price.setter
+    def price(self, price):
+        if not isinstance(price, int):
+            raise TypeError('Price must be of type integer.')
+        elif price not in range(1_000_000):
+            raise ValueError('Price must be between 0 and 1,000,000')
+        else:
+            self._price = price
+
+    @property
+    def owner_id(self):
+        return self._owner_id
+    @owner_id.setter
+    def owner_id(self, owner_id):
+        if not isinstance(owner_id, int):
+            raise TypeError('Owner ID must be an integer.')
+        else:
+            self._owner_id = owner_id
+
+    @property
+    def appt_id(self):
+        return self._appt_id
+    @appt_id.setter
+    def appt_id(self, appt_id):
+        if not isinstance(appt_id, int):
+            raise TypeError('Appointment ID must be an integer.')
+        else:
+            self._appt_id = appt_id
