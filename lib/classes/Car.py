@@ -6,7 +6,7 @@ class Car:
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
-    def __init__(self, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, owner_id = None, appt_id = None):
+    def __init__(self, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_ = None, owner_id = None, appt_id = None):
         self.vehicle_type = vehicle_type
         self.new = new
         self.make = make
@@ -17,6 +17,7 @@ class Car:
         self.color = color
         self.transmission = transmission
         self.price = price
+        self.id_ = id_
         self.owner_id = owner_id
         self.appt_id = appt_id
 
@@ -148,11 +149,21 @@ class Car:
             self._price = price
 
     @property
+    def id_(self):
+        return self._id_ 
+    @id_.setter
+    def id_(self, id_):
+        if not (isinstance(id_, int) and id_ != None) or isinstance(id_, bool):
+            raise TypeError("ID must be an integer.")
+        else:
+            self._id_ = id_
+
+    @property
     def owner_id(self):
         return self._owner_id
     @owner_id.setter
     def owner_id(self, owner_id):
-        if not (isinstance(owner_id, int) and owner_id) != None or isinstance(owner_id, bool):
+        if not (isinstance(owner_id, int) and owner_id != None) or isinstance(owner_id, bool):
             raise TypeError('Owner ID must be an integer or None.')
         else:
             self._owner_id = owner_id
@@ -162,7 +173,7 @@ class Car:
         return self._appt_id
     @appt_id.setter
     def appt_id(self, appt_id):
-        if not (isinstance(appt_id, int) and appt_id) != None or isinstance(appt_id, bool):
+        if not (isinstance(appt_id, int) and appt_id != None) or isinstance(appt_id, bool):
             raise TypeError('Appointment ID must be an integer or None.')
         else:
             self._appt_id = appt_id

@@ -1,12 +1,15 @@
 from datetime import datetime
-# from classes.Appointment import Appointment
+from classes.Appointment import Appointment
 from classes.Car import Car
 from classes.Customer import Customer
 from classes.Employee import Employee
 
-car = Car('COUPE', True, 'Honda', 'Civic', 2012, 133_000, 'GAS', 'Gray', False, 8_500)
-cust = Customer('Landon', 9995558765)
-emp = Employee('Matteo', 75_000, datetime.now())
+# python lib/debug.py
+
+# car = Car('COUPE', True, 'Honda', 'Civic', 2012, 133_000, 'GAS', 'Gray', False, 8_500, 1)
+# cust = Customer('Landon', 9995558765, 1)
+# emp = Employee('Matteo', 75_000, datetime.now(), 1)
+appt = Appointment(datetime.now(), 1, 1, 1, 1)
 
 # def setup_db():
 #     Doctor.drop_table()

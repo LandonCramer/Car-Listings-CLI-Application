@@ -1,9 +1,10 @@
 import re
 
 class Customer:
-    def __init__(self, name, phone):
+    def __init__(self, name, phone, id_ = None):
         self._name = name
         self._phone = phone
+        self.id_ = id_
     
     @property
     def name(self):
@@ -29,3 +30,13 @@ class Customer:
         #TODO if phone found in db raise ValueError
         else:
             self._phone = phone
+    
+    @property
+    def id_(self):
+        return self._id_ 
+    @id_.setter
+    def id_(self, id_):
+        if not (isinstance(id_, int) and id_ != None) or isinstance(id_, bool):
+            raise TypeError("ID must be an integer.")
+        else:
+            self._id_ = id_
