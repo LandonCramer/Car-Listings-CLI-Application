@@ -24,7 +24,7 @@ class Appointment:
         return self._customer_id
     @customer_id.setter
     def customer_id(self, customer_id):
-        if not (isinstance(customer_id, int) and customer_id) != None or isinstance(customer_id, bool):
+        if not (isinstance(customer_id, int) and customer_id != None) or isinstance(customer_id, bool):
             raise TypeError('Customer ID must be an integer or None.')
         else:
             self._customer_id = customer_id
@@ -34,7 +34,7 @@ class Appointment:
         return self._employee_id
     @employee_id.setter
     def employee_id(self, employee_id):
-        if not (isinstance(employee_id, int) and employee_id) != None or isinstance(employee_id, bool):
+        if not (isinstance(employee_id, int) and employee_id != None) or isinstance(employee_id, bool):
             raise TypeError('Employee ID must be an integer or None.')
         else:
             self._employee_id = employee_id
@@ -44,9 +44,18 @@ class Appointment:
         return self._car_id
     @car_id.setter
     def car_id(self, car_id):
-        if not (isinstance(car_id, int) and car_id) != None or isinstance(car_id, bool):
+        if not (isinstance(car_id, int) and car_id != None) or isinstance(car_id, bool):
             raise TypeError('Car ID must be an integer or None.')
         else:
             self._car_id = car_id
 
+    @property
+    def id_(self):
+        return self._id_ 
+    @id_.setter
+    def id_(self, id_):
+        if not (isinstance(id_, int) and id_ != None) or isinstance(id_, bool):
+            raise TypeError("ID must be an integer.")
+        else:
+            self._id_ = id_
     

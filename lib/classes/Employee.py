@@ -44,3 +44,13 @@ class Employee:
             raise TypeError('Hire date must be a valid Date object.')
         else:
             self._hire_date = hire_date
+
+    @property
+    def id_(self):
+        return self._id_ 
+    @id_.setter
+    def id_(self, id_):
+        if not (isinstance(id_, int) and id_ != None) or isinstance(id_, bool):
+            raise TypeError("ID must be an integer.")
+        else:
+            self._id_ = id_
