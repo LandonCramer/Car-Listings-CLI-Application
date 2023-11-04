@@ -6,7 +6,7 @@ class Car:
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
-    def __init__(self, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, owner_id = None, appt_id = None):
+    def __init__(self, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_ = None, owner_id = None, appt_id = None):
         self.vehicle_type = vehicle_type
         self.new = new
         self.make = make
@@ -17,6 +17,7 @@ class Car:
         self.color = color
         self.transmission = transmission
         self.price = price
+        self.id_ = id_
         self.owner_id = owner_id
         self.appt_id = appt_id
 

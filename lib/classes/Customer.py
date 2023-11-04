@@ -1,9 +1,10 @@
 import re
 
 class Customer:
-    def __init__(self, name, phone):
+    def __init__(self, name, phone, id_ = None):
         self._name = name
         self._phone = phone
+        self.id_ = id_
     
     @property
     def name(self):

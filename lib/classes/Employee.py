@@ -2,10 +2,11 @@ from datetime import datetime
 from helpers import parse_date
 
 class Employee:
-    def __init__(self, name, salary, hire_date):
+    def __init__(self, name, salary, hire_date, id_ = None):
         self.name = name
         self.salary = salary
         self.hire_date = hire_date
+        self.id_ = id_
     
     @property
     def name(self):
