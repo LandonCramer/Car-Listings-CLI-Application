@@ -27,7 +27,7 @@ class Car:
     def vehicle_type(self, vehicle_type):
         if hasattr(self, 'vehicle_type'):
             raise ValueError('Vehicle type can not be reset')
-        elif vehicle_type not in VEHICLE_TYPES:
+        elif vehicle_type not in type(self).VEHICLE_TYPES:
             raise ValueError(f'Vehicle type must be one of the following: {[print(type) for type in VEHICLE_TYPES]}')
         else:
             self._vehicle_type = vehicle_type
@@ -55,18 +55,22 @@ class Car:
             raise TypeError("Make must be a string.")
         elif len(make) not in range(1, 21):
             raise ValueError("Make must be a string between 1 and 20 characters.")
+        else:
+            self._make = make
         
     @property 
     def model(self):
         return self._model
     @model.setter
-    def make(self, model):
+    def model(self, model):
         if hasattr(self, 'model'):
             raise ValueError('Model can not be reset')
         elif not isinstance(model, str):
             raise TypeError("Model must be a string.")
         elif len(model) not in range(1, 21):
             raise ValueError("Model must be a string between 1 and 20 characters.")
+        else:
+            self._model = model
         
     @property
     def year(self):
@@ -99,7 +103,7 @@ class Car:
         return self._fuel_type
     @fuel_type.setter
     def fuel_type(self, fuel_type):
-        if fuel_type not in FUEL_TYPES:
+        if fuel_type not in type(self).FUEL_TYPES:
             raise ValueError(f'Type must be one of the following: {[print(type) for type in FUEL_TYPES]}')
         else:
             self._fuel_type = fuel_type
@@ -143,8 +147,8 @@ class Car:
         return self._owner_id
     @owner_id.setter
     def owner_id(self, owner_id):
-        if not isinstance(owner_id, int):
-            raise TypeError('Owner ID must be an integer.')
+        if not isinstance(owner_id, int) and owner_id != None:
+            raise TypeError('Owner ID must be an integer or None.')
         else:
             self._owner_id = owner_id
 
@@ -153,7 +157,7 @@ class Car:
         return self._appt_id
     @appt_id.setter
     def appt_id(self, appt_id):
-        if not isinstance(appt_id, int):
-            raise TypeError('Appointment ID must be an integer.')
+        if not isinstance(appt_id, int) and appt_id != None:
+            raise TypeError('Appointment ID must be an integer or None.')
         else:
             self._appt_id = appt_id
