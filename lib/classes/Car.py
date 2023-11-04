@@ -79,7 +79,7 @@ class Car:
     def year(self, year):
         if hasattr(self, 'year'):
             raise ValueError('Year can not be reset')
-        elif not isinstance(year, int):
+        elif not isinstance(year, int) or isinstance(year, bool):
             raise TypeError('Year must be an int')
         elif year not in range(current_date.year - 100, current_date.year + 1):
             raise ValueError(f'Year must be between {current_date.year - 100} and {current_date.year + 1}.')
@@ -91,7 +91,7 @@ class Car:
         return self._miles
     @miles.setter
     def miles(self, miles):
-        if not isinstance(miles, int):
+        if not isinstance(miles, int) or isinstance(miles, bool):
             raise TypeError('Miles must be an integer.')
         elif miles not in range(0, 300_000):
             raise ValueError('Mileage must be less than 300,000.')
@@ -104,7 +104,7 @@ class Car:
     @fuel_type.setter
     def fuel_type(self, fuel_type):
         if fuel_type not in type(self).FUEL_TYPES:
-            raise ValueError(f'Type must be one of the following: {[print(type) for type in FUEL_TYPES]}')
+            raise ValueError(f'Type must be one of the following: {[type for type in type(self).FUEL_TYPES]}')
         else:
             self._fuel_type = fuel_type
 
@@ -123,7 +123,9 @@ class Car:
         return self._transmission
     @transmission.setter
     def transmission(self, transmission):
-        if not isinstance(transmission, bool):
+        if hasattr(self, 'transmission'):
+            raise ValueError('Transmission cannot be re-assigned.')
+        elif not isinstance(transmission, bool):
             raise TypeError('Transmission value must be a boolean.')
         elif transmission:
             self._transmission = 'Automatic'
@@ -135,10 +137,10 @@ class Car:
         return self._price
     @price.setter
     def price(self, price):
-        if not isinstance(price, int):
+        if not isinstance(price, int) or isinstance(price, bool):
             raise TypeError('Price must be of type integer.')
         elif price not in range(1_000_000):
-            raise ValueError('Price must be between 0 and 1,000,000')
+            raise ValueError('Price must be between 0 and 1,000,000.')
         else:
             self._price = price
 
@@ -147,7 +149,7 @@ class Car:
         return self._owner_id
     @owner_id.setter
     def owner_id(self, owner_id):
-        if not isinstance(owner_id, int) and owner_id != None:
+        if not (isinstance(owner_id, int) and owner_id) != None or isinstance(owner_id, bool):
             raise TypeError('Owner ID must be an integer or None.')
         else:
             self._owner_id = owner_id
@@ -157,7 +159,7 @@ class Car:
         return self._appt_id
     @appt_id.setter
     def appt_id(self, appt_id):
-        if not isinstance(appt_id, int) and appt_id != None:
+        if not (isinstance(appt_id, int) and appt_id) != None or isinstance(appt_id, bool):
             raise TypeError('Appointment ID must be an integer or None.')
         else:
             self._appt_id = appt_id
