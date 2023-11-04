@@ -1,4 +1,5 @@
 from datetime import datetime
+from helpers import current_date
 
 class Car:
     
@@ -58,9 +59,19 @@ class Car:
         elif len(model) not in range(1, 21):
             raise ValueError("Model must be a string between 1 and 20 characters.")
         
-    
-        
-    
+    @property
+    def year(self):
+        return self._year
+    @year.setter
+    def year(self, year):
+        if hasattr(self, 'year'):
+            raise ValueError('Year can not be reset')
+        elif not isinstance(year, int):
+            raise TypeError('Year must be an int')
+        elif year not in range(current_date.year - 100, current_date.year + 1):
+            raise ValueError(f'Year must be between {current_date.year - 100} and {current_date.year + 1}.')
+        else:
+            self._year = year
 
 
 
