@@ -50,7 +50,9 @@ class Employee:
         return self._id_ 
     @id_.setter
     def id_(self, id_):
-        if not (isinstance(id_, int) and id_ != None) or isinstance(id_, bool):
+        if not id_:
+            self._id_ = None
+        elif not isinstance(id_, int) or isinstance(id_, bool):
             raise TypeError("ID must be an integer.")
         else:
             self._id_ = id_
