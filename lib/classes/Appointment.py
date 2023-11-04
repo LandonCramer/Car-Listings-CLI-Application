@@ -1,2 +1,2 @@
 class Appointment:
-    pass
+    pass    

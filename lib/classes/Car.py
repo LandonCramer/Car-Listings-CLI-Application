@@ -115,6 +115,8 @@ class Car:
     def color(self, color):
         if not isinstance(color, str):
             raise TypeError('Color must be of type string.')
+        elif len(color) not in range(1, 21):
+            raise ValueError("Color must be a string between 1 and 20 characters.")
         else:
             self._color = color
 
@@ -142,6 +144,7 @@ class Car:
         elif price not in range(1_000_000):
             raise ValueError('Price must be between 0 and 1,000,000.')
         else:
+            #TODO Price and condition properties
             self._price = price
 
     @property
