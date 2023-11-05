@@ -15,8 +15,8 @@ class Testdrive:
         sql = """
             CREATE TABLE IF NOT EXISTS sales (
             id INTEGER PRIMARY KEY,
-            notes TEXT,
-            FOREIGN KEY (appt_id) REFERENCES appointments.id
+            FOREIGN KEY (appt_id) REFERENCES appointments.id ON DELETE CASCADE,
+            notes TEXT
         """
         CURSOR.execute(sql)
         CONN.commit()

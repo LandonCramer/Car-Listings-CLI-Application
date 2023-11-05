@@ -16,7 +16,7 @@ class Sale:
         sql = """
             CREATE TABLE IF NOT EXISTS sales (
             id INTEGER PRIMARY KEY,
-            FOREIGN KEY (appt_id) REFERENCES appointments.id,
+            FOREIGN KEY (appt_id) REFERENCES appointments.id ON DELETE CASCADE,
             balance INTEGER,
             active: TEXT
             

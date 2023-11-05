@@ -16,7 +16,7 @@ class Service:
         sql = """
             CREATE TABLE IF NOT EXISTS sales (
             id INTEGER PRIMARY KEY,
-            FOREIGN KEY (appt_id) REFERENCES appointments.id
+            FOREIGN KEY (appt_id) REFERENCES appointments.id ON DELETE CASCADE,
             reason_for_visit TEXT,
             active TEXT     
         """
@@ -30,3 +30,31 @@ class Service:
         """
         CURSOR.execute(sql)
         CONN.commit()
+
+    # ***********
+    # PROPERTIES
+    # ***********
+
+    @property
+    def reason_for_visit(self):
+        return self._reason_for_visit
+    @reason_for_visit.setter
+    def reason_for_visit(self, reason):
+        if not isinstance(reason, str):
+            raise TypeError("Reason for visit must be a string.")
+        elif len(reason) > 150:
+            raise ValueError("Reason for visit must be less than 150 characters.")
+        else:
+            self._reason_for_visit = reason
+
+    @property
+    def estimate(self):
+        return self._estimate
+    @estimate.setter
+    def estimate(self, estimate):
+        if not isinstance(estimate, int):
+            raise TypeError("Estimate value must be an integer.")
+        elif estimate <= 0:
+            raise ValueError("Estimate must be greater than 0.")
+        else:
+            self._estimate = estimate
