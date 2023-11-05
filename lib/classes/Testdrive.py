@@ -13,7 +13,7 @@ class Testdrive:
     @classmethod
     def create_table(cls):
         sql = """
-            CREATE TABLE IF NOT EXISTS sales (
+            CREATE TABLE IF NOT EXISTS testdrives (
             id INTEGER PRIMARY KEY,
             FOREIGN KEY (appt_id) REFERENCES appointments.id ON DELETE CASCADE,
             notes TEXT
@@ -24,7 +24,23 @@ class Testdrive:
     @classmethod
     def drop_table(cls):
         sql = """
-            DROP TABLE IF EXISTS appointments;
+            DROP TABLE IF EXISTS testdrives
         """
         CURSOR.execute(sql)
         CONN.commit()    
+
+    # ***********
+    # PROPERTIES
+    # ***********
+
+    @property
+    def notes(self):
+        return self._notes
+    @notes.setter
+    def notes(self, notes):
+        if not isinstance(notes, str):
+            raise TypeError("Notes must be a string.")
+        elif len(notes) > 150:
+            raise ValueError("Notes must be less than 150 characters.")
+        else:
+            self._notes = notes

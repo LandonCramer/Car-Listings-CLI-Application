@@ -27,7 +27,33 @@ class Sale:
     @classmethod
     def drop_table(cls):
         sql = """
-            DROP TABLE IF EXISTS sales;
+            DROP TABLE IF EXISTS sales
         """
         CURSOR.execute(sql)
         CONN.commit()
+
+    # ***********
+    # PROPERTIES
+    # ***********
+
+    @property
+    def balance(self):
+        return self._balance
+    @balance.setter
+    def balance(self, balance):
+        if not isinstance(balance, int):
+            raise TypeError("Balance must be an integer.")
+        elif balance <= 0:
+            raise ValueError("Balance must be greater than 0.")
+        else:
+            self._balance = balance
+
+    @property
+    def active(self):
+        return "Active" if self._active else "Closed"
+    @active.setter
+    def active(self, active):
+        if not isinstance(active, bool):
+            raise TypeError("Active state must be a boolean.")
+        else:
+            self._active = "Active" if active else "Closed"

@@ -14,7 +14,7 @@ class Service:
     @classmethod
     def create_table(cls):
         sql = """
-            CREATE TABLE IF NOT EXISTS sales (
+            CREATE TABLE IF NOT EXISTS services (
             id INTEGER PRIMARY KEY,
             FOREIGN KEY (appt_id) REFERENCES appointments.id ON DELETE CASCADE,
             reason_for_visit TEXT,
@@ -26,7 +26,7 @@ class Service:
     @classmethod
     def drop_table(cls):
         sql = """
-            DROP TABLE IF EXISTS appointments;
+            DROP TABLE IF EXISTS services;
         """
         CURSOR.execute(sql)
         CONN.commit()
