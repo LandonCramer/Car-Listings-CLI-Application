@@ -7,10 +7,23 @@ from helpers import rand_car, generate_fleet
 
 # python lib/debug.py
 
-cust = Customer('Landon', 9995558765, 1)
-emp = Employee('Matteo', 75_000, datetime.now(), 1)
-appt = Appointment(datetime.now(), 1, 1, 1, 1)
-fleet = generate_fleet()
+# cust = Customer('Landon', 9995558765, 1)
+# emp = Employee('Matteo', 75_000, datetime.now(), 1)
+
+Appointment.drop_table()
+Appointment.create_table()
+appt1 = Appointment('SALE', datetime.now(), 1, 1, 1, 1)
+appt2 = Appointment('TESTDRIVE', datetime.now(), 2, 2, 2, 2)
+appt3 = Appointment('SERVICE', datetime.now(), 3, 3, 3, 3)
+appt4 = Appointment('SERVICE', datetime.now(), 4, 4, 4, 4)
+appt5 = Appointment('TESTDRIVE', datetime.now(), 5, 5, 5, 5)
+appt1.save()
+appt2.save()
+appt3.save()
+appt4.save()
+appt5.save()
+
+# fleet = generate_fleet()
 
 # fleet = generate_fleet()
 

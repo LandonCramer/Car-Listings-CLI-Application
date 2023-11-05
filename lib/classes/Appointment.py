@@ -1,14 +1,54 @@
 from datetime import datetime
 from helpers import parse_date
+from classes.__init__ import CURSOR, CONN
 
 class Appointment:
-    def __init__(self, date, customer_id, employee_id, car_id, id_ = None):
-        self._date = date
-        self._customer_id = customer_id
-        self._employee_id = employee_id
-        self._car_id = car_id
+    all = {}
+
+    APPT_TYPES = ['SALE', 'SERVICE', 'TESTDRIVE']
+
+    def __init__(self, type_, date, customer_id, employee_id, car_id, id_ = None):
+        self.type_ = type_
+        self.date = date
+        self.customer_id = customer_id
+        self.employee_id = employee_id
+        self.car_id = car_id
         self.id_ = id_
     
+    # CREATE / DROP TABLES
+    @classmethod
+    def create_table(cls):
+        sql = """
+            CREATE TABLE IF NOT EXISTS appointments (
+            id INTEGER PRIMARY KEY,
+            type TEXT,
+            date TEXT,
+            customer_id INTEGER,
+            employee_id INTEGER,
+            car_id INTEGER)
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+
+    @classmethod
+    def drop_table(cls):
+        sql = """
+            DROP TABLE IF EXISTS appointments;
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+    
+    # PROPERTIES
+    @property
+    def type_(self):
+        return self._type_
+    @type_.setter
+    def type_(self, type_):
+        if type_ not in type(self).APPT_TYPES:
+            raise TypeError('Appointment type must be one of the following: SALE, SERVICE, TESTDRIVE')
+        else:
+            self._type_ = type_
+
     @property
     def date(self):
         return parse_date(self._date)
@@ -67,6 +107,7 @@ class Appointment:
         else:
             self._id_ = id_
     
+    # CLASSMETHODS
     @classmethod
     def get_appts_by_type(cls, subclass):
         pass
@@ -87,20 +128,48 @@ class Appointment:
     def get_appts_by_date(cls, date):
         pass
 
+    # ORM METHODS
     def get_all(cls):
-        pass
-
-    def save(self):
-        pass
-
-    def create(cls, attrs):
-        pass
-
-    def update(self, id, params):
-        pass
-
-    def delete(id):
         pass
 
     def get_by_attr(cls, attr):
         pass
+
+    def save(self):
+        sql = """
+            INSERT INTO appointments (type, date, customer_id, employee_id, car_id)
+            VALUES (?, ?, ?, ?, ?)
+        """
+        CURSOR.execute(sql, (self.type_, self.date, self.customer_id, self.employee_id, self.car_id))
+        CONN.commit()
+
+        type(self).all[self.id_] = self
+
+    @classmethod
+    def create(cls, type, date, customer_id, employee_id, car_id):
+        appointment = cls(type, date, customer_id, employee_id, car_id)
+        appointment.save()
+
+        cls.all[appointment.id_] = appointment
+
+        return appointment
+    
+    def update(self, id):
+        sql = """
+            UPDATE appointments
+            SET date = ?, customer_id = ?, employee_id = ?, car_id = ?
+            WHERE id = ?
+        """
+        CURSOR.execute(sql, (self.date, self.customer_id, self.employee_id, self.car_id, id))
+        CONN.commit()
+
+    def delete(self):
+        sql = """
+            DELETE FROM appointments
+            WHERE id = ?
+        """
+        CURSOR.execute(sql, (self.id_,))
+        CONN.commit()
+
+        del type(self).all[self.id_]
+        self.id_ = None
