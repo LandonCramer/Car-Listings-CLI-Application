@@ -1,5 +1,8 @@
 from datetime import datetime
 from helpers import parse_date
+from Sale import Sale
+from Service import Service
+from Testdrive import Testdrive
 from classes.__init__ import CURSOR, CONN
 
 class Appointment:
@@ -15,7 +18,10 @@ class Appointment:
         self.car_id = car_id
         self.id_ = id_
     
+    # *********************
     # CREATE / DROP TABLES
+    # *********************
+
     @classmethod
     def create_table(cls):
         sql = """
@@ -37,8 +43,11 @@ class Appointment:
         """
         CURSOR.execute(sql)
         CONN.commit()
-    
+
+    # ***********
     # PROPERTIES
+    # ***********
+
     @property
     def type_(self):
         return self._type_
@@ -106,34 +115,38 @@ class Appointment:
             raise TypeError("ID must be an integer.")
         else:
             self._id_ = id_
-    
+
+    # *************
     # CLASSMETHODS
+    # *************
+
     @classmethod
-    def get_appts_by_type(cls, subclass):
+    def get_all(cls):
         pass
 
     @classmethod
-    def get_appts_by_customer_id(cls, customer):
-        pass
-
-    @classmethod
-    def get_appts_by_employee_id(cls, employee):
-        pass
-
-    @classmethod
-    def get_appts_by_car_id(cls, car):
+    def get_appts_by_type(cls, type):
         pass
 
     @classmethod
     def get_appts_by_date(cls, date):
         pass
 
-    # ORM METHODS
-    def get_all(cls):
+    @classmethod
+    def get_appts_by_customer_id(cls, id):
         pass
 
-    def get_by_attr(cls, attr):
+    @classmethod
+    def get_appts_by_employee_id(cls, id):
         pass
+
+    @classmethod
+    def get_appts_by_car_id(cls, id):
+        pass
+
+    # ************
+    # ORM METHODS
+    # ************
 
     def save(self):
         sql = """
@@ -157,10 +170,10 @@ class Appointment:
     def update(self, id):
         sql = """
             UPDATE appointments
-            SET date = ?, customer_id = ?, employee_id = ?, car_id = ?
+            SET type = ?, date = ?, customer_id = ?, employee_id = ?, car_id = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.date, self.customer_id, self.employee_id, self.car_id, id))
+        CURSOR.execute(sql, (self.type_, self.date, self.customer_id, self.employee_id, self.car_id, id))
         CONN.commit()
 
     def delete(self):
