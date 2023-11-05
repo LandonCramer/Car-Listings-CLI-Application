@@ -17,6 +17,7 @@ class Appointment:
         self.employee_id = employee_id
         self.car_id = car_id
         self.id_ = id_
+        # depending on type_, create a row in the respective table
     
     # *********************
     # CREATE / DROP TABLES
