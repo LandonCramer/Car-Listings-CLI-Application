@@ -151,11 +151,11 @@ class Appointment:
 
     def save(self):
         if self.type_ == 'SALE':
-            Sale.create(50_000, True) #currently using default params
+            Sale().save()
         elif self.type_ == 'SERVICE':
-            Service.create('The radio says demonic-sounding things in Latin on every station.', 500, True) #currently using default params
+            Service().save()
         elif self.type_ == 'TESTDRIVE':
-            Testdrive.create("He went through a McDonalds drive-thru and ordered a 50 pc McNuggets.") #currently using default params
+            Testdrive().save()
         else:
             raise ValueError('We do not offer that service.')
         

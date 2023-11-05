@@ -6,7 +6,7 @@ class Service:
     def __init__(self, reason_for_visit='The radio says demonic-sounding things in Latin on every station.', estimate=500, status=True, id=None):
         self.reason_for_visit = reason_for_visit
         estimate = estimate
-        self.status = "Active" if status else "Closed"
+        self.status = status
         self.id = id
     
     # *********************

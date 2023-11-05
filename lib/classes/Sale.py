@@ -3,9 +3,9 @@ from classes.__init__ import CURSOR, CONN
 class Sale:
     all = {}
 
-    def __init__(self, balance=50_000, status=True, id=None):
+    def __init__(self, balance=50_000, status=True, id_=None):
         self.balance = balance
-        self.status = "Active" if status else "Closed"
+        self.status = status
         self.id = id
     
     # *********************
