@@ -3,7 +3,8 @@ from classes.__init__ import CURSOR, CONN
 from helpers import current_date
 
 class Car:
-    
+    all = []
+
     # ! Approved Types
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
@@ -20,13 +21,15 @@ class Car:
         self.transmission = transmission
         self.price = price
         self.id_ = id_
+        # TODO Why do the owner_id and appt_id show up twice on dir()?
         self.owner_id = owner_id
         self.appt_id = appt_id
+        type(self).all.append(self)
 
     # ! Properties
     @property
     def vehicle_type(self):
-        return self._vehicle_type
+        return self._vehicle_type.title()
     @vehicle_type.setter
     def vehicle_type(self, vehicle_type):
         if hasattr(self, 'vehicle_type'):
@@ -34,8 +37,9 @@ class Car:
         elif vehicle_type not in type(self).VEHICLE_TYPES:
             raise ValueError(f'Vehicle type must be one of the following: {[v_type for v_type in self.VEHICLE_TYPES]}')
         else:
-            self._vehicle_type = vehicle_type.title()
+            self._vehicle_type = vehicle_type
 
+    # TODO Should we store the bool or the new/used in the db?
     @property
     def new(self):
         return 'New' if self._new else 'Used'
@@ -103,13 +107,13 @@ class Car:
 
     @property
     def fuel_type(self):
-        return self._fuel_type
+        return self._fuel_type.title()
     @fuel_type.setter
     def fuel_type(self, fuel_type):
         if fuel_type not in type(self).FUEL_TYPES:
             raise ValueError(f'Type must be one of the following: {[f_type for f_type in type(self).FUEL_TYPES]}')
         else:
-            self._fuel_type = fuel_type.title()
+            self._fuel_type = fuel_type
 
     @property
     def color(self):
@@ -123,19 +127,19 @@ class Car:
         else:
             self._color = color
 
+    # TODO Should we store the bool or the auto/manual in the db?
     @property
     def transmission(self):
-        return self._transmission
+        return 'Automatic' if self._transmission else 'Manual'
     @transmission.setter
     def transmission(self, transmission):
         if hasattr(self, 'transmission'):
             raise ValueError('Transmission cannot be re-assigned.')
         elif not isinstance(transmission, bool):
             raise TypeError('Transmission value must be a boolean.')
-        elif transmission:
-            self._transmission = 'Automatic'
         else:
-            self._transmission = "Manual"
+            self._transmission = transmission
+
 
     # TODO Bell curve price weights
     @property

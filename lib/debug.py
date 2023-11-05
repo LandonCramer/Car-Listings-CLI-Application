@@ -10,10 +10,20 @@ def reset_db():
     Car.drop_table()
     Car.create_table()
 
+
 cust = Customer('Landon', 9995558765, 1)
 emp = Employee('Matteo', 75_000, datetime.now(), 1)
 appt = Appointment(datetime.now(), 1, 1, 1, 1)
 fleet = generate_fleet()
+
+def seed_db():
+    reset_db()
+    for car in fleet:
+        car.save()
+    # for car in fleet:
+    #     vals = car.__dict__.values()
+    #     print(*vals)
+    #     Car.new_from_db(*car.__dict__.values())
 
 # def setup_db():
 #     Doctor.drop_table()
