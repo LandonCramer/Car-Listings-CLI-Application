@@ -67,3 +67,40 @@ class Appointment:
         else:
             self._id_ = id_
     
+    @classmethod
+    def get_appts_by_type(cls, subclass):
+        pass
+
+    @classmethod
+    def get_appts_by_customer_id(cls, customer):
+        pass
+
+    @classmethod
+    def get_appts_by_employee_id(cls, employee):
+        pass
+
+    @classmethod
+    def get_appts_by_car_id(cls, car):
+        pass
+
+    @classmethod
+    def get_appts_by_date(cls, date):
+        pass
+
+    def get_all(cls):
+        pass
+
+    def save(self):
+        pass
+
+    def create(cls, attrs):
+        pass
+
+    def update(self, id, params):
+        pass
+
+    def delete(id):
+        pass
+
+    def get_by_attr(cls, attr):
+        pass
