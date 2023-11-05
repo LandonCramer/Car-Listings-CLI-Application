@@ -3,7 +3,7 @@ from classes.__init__ import CURSOR, CONN
 class Sale:
     all = {}
 
-    def __init__(self, balance=50_000, status=True, id_=None):
+    def __init__(self, balance=50_000, status=True, id=None):
         self.balance = balance
         self.status = status
         self.id = id
@@ -17,10 +17,10 @@ class Sale:
         sql = """
             CREATE TABLE IF NOT EXISTS sales (
             id INTEGER PRIMARY KEY,
-            FOREIGN KEY (appt_id) REFERENCES appointments.id ON DELETE CASCADE,
+            appt_id INTEGER,
+            FOREIGN KEY (appt_id) REFERENCES appointments(id) ON DELETE CASCADE,
             balance INTEGER,
-            active: TEXT
-            
+            status: TEXT)
         """
         CURSOR.execute(sql)
         CONN.commit()

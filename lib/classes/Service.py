@@ -18,9 +18,10 @@ class Service:
         sql = """
             CREATE TABLE IF NOT EXISTS services (
             id INTEGER PRIMARY KEY,
-            FOREIGN KEY (appt_id) REFERENCES appointments.id ON DELETE CASCADE,
+            appt_id INTEGER,
+            FOREIGN KEY (appt_id) REFERENCES appointments(id) ON DELETE CASCADE,
             reason_for_visit TEXT,
-            active TEXT     
+            status TEXT)     
         """
         CURSOR.execute(sql)
         CONN.commit()

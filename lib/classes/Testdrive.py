@@ -16,8 +16,9 @@ class Testdrive:
         sql = """
             CREATE TABLE IF NOT EXISTS testdrives (
             id INTEGER PRIMARY KEY,
-            FOREIGN KEY (appt_id) REFERENCES appointments.id ON DELETE CASCADE,
-            notes TEXT
+            appt_id INTEGER,
+            FOREIGN KEY (appt_id) REFERENCES appointments(id) ON DELETE CASCADE,
+            notes TEXT)
         """
         CURSOR.execute(sql)
         CONN.commit()
