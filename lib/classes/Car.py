@@ -1,4 +1,3 @@
-from datetime import datetime
 import random
 from helpers import current_date
 
@@ -34,7 +33,7 @@ class Car:
         elif vehicle_type not in type(self).VEHICLE_TYPES:
             raise ValueError(f'Vehicle type must be one of the following: {[v_type for v_type in self.VEHICLE_TYPES]}')
         else:
-            self._vehicle_type = vehicle_type
+            self._vehicle_type = vehicle_type.title()
 
     @property
     def new(self):
@@ -76,19 +75,19 @@ class Car:
         else:
             self._model = model
         
-    # @property
-    # def year(self):
-    #     return self._year
-    # @year.setter
-    # def year(self, year):
-    #     if hasattr(self, 'year'):
-    #         raise ValueError('Year can not be reset')
-    #     elif not isinstance(year, int) or isinstance(year, bool):
-    #         raise TypeError('Year must be an int')
-    #     elif year not in range(current_date.year - 100, current_date.year + 1):
-    #         raise ValueError(f'Year must be between {current_date.year - 100} and {current_date.year + 1}.')
-    #     else:
-    #         self._year = year
+    @property
+    def year(self):
+        return self._year
+    @year.setter
+    def year(self, year):
+        if hasattr(self, 'year'):
+            raise ValueError('Year can not be reset')
+        elif not isinstance(year, int) or isinstance(year, bool):
+            raise TypeError('Year must be an int')
+        elif year not in range(current_date.year - 100, current_date.year + 1):
+            raise ValueError(f'Year must be between {current_date.year - 100} and {current_date.year + 1}.')
+        else:
+            self._year = year
 
     @property
     def miles(self):
@@ -110,7 +109,7 @@ class Car:
         if fuel_type not in type(self).FUEL_TYPES:
             raise ValueError(f'Type must be one of the following: {[f_type for f_type in type(self).FUEL_TYPES]}')
         else:
-            self._fuel_type = fuel_type
+            self._fuel_type = fuel_type.title()
 
     @property
     def color(self):
@@ -230,5 +229,5 @@ class Car:
     def list_details(self):
         print(f'--- {self.year} {self.make.upper()} {self.model.upper()} ---\nColor: {self.color}\nFuel Type: {self._fuel_type}\nMiles: {self.miles}\nCondition: {self.condition}\nPrice: {self.price}')
     
-    def list_details(self):
-        print(f'')
+    def full_details(self):
+        print(f'Vehicle Type: {self.vehicle_type}\nNew or Used: {self.new}\nMake: {self.make}\nModel: {self.model}\nYear: {self.year}\nMiles: {self.miles}\nFuel Type: {self.fuel_type}\nColor: {self.color}\nTransmission: {self.transmission}\nPrice: {self.price}')

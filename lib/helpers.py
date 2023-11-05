@@ -93,7 +93,9 @@ def rand_make_and_model():
     return (make, selected_model)
 
 def rand_year():
-    return random.randint(1900, (current_date.year + 1))
+    year = random.randint(1900, (current_date.year + 1))
+    print(year)
+    return year
 
 def rand_miles():
     return random.randint(0, 300_001)
