@@ -84,7 +84,6 @@ random_car_stuff = {
 }
 
 def rand_v_type():
-    print()
     return random.choice(['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV'])
 
 def rand_make_and_model():
@@ -93,8 +92,7 @@ def rand_make_and_model():
     return (make, selected_model)
 
 def rand_year():
-    year = random.randint(1900, (current_date.year + 1))
-    print(year)
+    year = random.randint(current_date.year - 100, current_date.year)
     return year
 
 def rand_miles():
@@ -116,19 +114,18 @@ def rand_car():
         random.choice([True, False]),
         make_and_model[0], 
         make_and_model[1],
-        rand_year(),
         rand_miles(),
         rand_fuel_type(),
         rand_color(),
         random.choice([True, False]),
+        rand_year()
         )
 
 def generate_fleet():
     fleet = []
 
     for _ in range(50):
-        fleet.append(rand_car())
+        car = rand_car()
+        fleet.append(car)
     
     return fleet
-
-fleet = generate_fleet()

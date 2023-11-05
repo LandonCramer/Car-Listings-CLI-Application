@@ -7,7 +7,7 @@ class Car:
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
-    def __init__(self, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price=None, id_ = None, owner_id = None, appt_id = None):
+    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_ = None, owner_id = None, appt_id = None):
         self.vehicle_type = vehicle_type
         self.new = new
         self.make = make
@@ -74,7 +74,8 @@ class Car:
             raise ValueError("Model must be a string between 1 and 20 characters.")
         else:
             self._model = model
-        
+    
+    # TODO The further you are away from current_date.year, the smaller your weight is for random.choice
     @property
     def year(self):
         return self._year
@@ -137,6 +138,7 @@ class Car:
         else:
             self._transmission = "Manual"
 
+    # TODO Bell curve price weights
     @property
     def price(self):
         return self._price
@@ -159,7 +161,7 @@ class Car:
             price = base_price + (self.miles * miles_weight) + ((current_date.year - self.year) * age_weight) + (condition_weights[self.condition] * base_price)
 
             # Ensure the price is within the valid range (5000 to 500,000)
-            self._price = int(max(5_000, min(price, 1_000_000)))
+            self._price = int(max(8_000, min(price, 1_000_000)))
         elif not isinstance(price, int) or isinstance(price, bool):
             raise TypeError('Price must be of type integer.')
         elif price not in range(1_000_000):
@@ -204,6 +206,7 @@ class Car:
         else:
             self._appt__id_ = appt_id_
 
+    # TODO Bell curve weights. Right now all cars seems to be poor for some reason.
     @property
     def condition(self):
         if self.miles == 0:
