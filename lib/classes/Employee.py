@@ -1,5 +1,6 @@
 from datetime import datetime
 from helpers import parse_date
+from __init__ import CURSOR, CONN
 
 class Employee:
     def __init__(self, name, salary, hire_date, id_ = None):
@@ -56,3 +57,62 @@ class Employee:
             raise TypeError("ID must be an integer.")
         else:
             self._id_ = id_
+
+    @classmethod
+    def create_table(cls):
+        """ Create a new table to persist the attributes of Employee instances"""
+        sql = """
+            CREATE TABLE IF NOT EXISTS employees (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                salary INTEGER,
+                hire_date TEXT
+            )
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+
+    @classmethod
+    def get_all(cls):
+        """ Return a list containing Employee objects per row in the table """
+        sql = """
+            SELECT *
+            FROM employees
+        """
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.new_from_db(row) for row in rows]
+
+    def save(self):
+        """ Insert a new row with the name, salary, and hire date (hire date converted to a string, Format YYYY-MM-DD) """
+        sql = """
+            INSERT INTO employees (name, salary, hire_date)
+            VALUES (?, ?, ?)
+        """
+        CURSOR.execute(sql, (self.name, self.salary, self.hire_date.strftime('%Y-%m-%d')))
+        CONN.commit()
+
+    @classmethod
+    def create(cls, name, salary, hire_date):
+        """ Initialize a new Employee instance and save the object to the database """
+        employee = Employee(name, salary, hire_date)
+        employee.save()
+        return employee
+
+    def update(self):
+        """ Update the table row corresponding to the current Employee instance """
+        sql = """
+            UPDATE employees
+            SET name = ?, salary = ?, hire_date = ?
+            WHERE id = ?
+        """
+        CURSOR.execute(sql, (self.name, self.salary, self.hire_date.strftime('%Y-%m-%d'), self.id))
+        CONN.commit()
+
+    def delete(self):
+        """ Delete the table row corresponding to the current Employee instance """
+        sql = """
+            DELETE FROM employees
+            WHERE id = ?
+        """
+        CURSOR.execute(sql, (self.id))
+        CONN.commit()
