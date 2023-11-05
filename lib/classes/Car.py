@@ -4,6 +4,7 @@ from helpers import current_date
 
 class Car:
     
+    # ! Approved Types
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
@@ -22,6 +23,7 @@ class Car:
         self.owner_id = owner_id
         self.appt_id = appt_id
 
+    # ! Properties
     @property
     def vehicle_type(self):
         return self._vehicle_type
@@ -30,7 +32,7 @@ class Car:
         if hasattr(self, 'vehicle_type'):
             raise ValueError('Vehicle type can not be reset')
         elif vehicle_type not in type(self).VEHICLE_TYPES:
-            raise ValueError(f'Vehicle type must be one of the following: {[type for type in type(self).VEHICLE_TYPES]}')
+            raise ValueError(f'Vehicle type must be one of the following: {[v_type for v_type in self.VEHICLE_TYPES]}')
         else:
             self._vehicle_type = vehicle_type
 
@@ -74,19 +76,19 @@ class Car:
         else:
             self._model = model
         
-    @property
-    def year(self):
-        return self._year
-    @year.setter
-    def year(self, year):
-        if hasattr(self, 'year'):
-            raise ValueError('Year can not be reset')
-        elif not isinstance(year, int) or isinstance(year, bool):
-            raise TypeError('Year must be an int')
-        elif year not in range(current_date.year - 100, current_date.year + 1):
-            raise ValueError(f'Year must be between {current_date.year - 100} and {current_date.year + 1}.')
-        else:
-            self._year = year
+    # @property
+    # def year(self):
+    #     return self._year
+    # @year.setter
+    # def year(self, year):
+    #     if hasattr(self, 'year'):
+    #         raise ValueError('Year can not be reset')
+    #     elif not isinstance(year, int) or isinstance(year, bool):
+    #         raise TypeError('Year must be an int')
+    #     elif year not in range(current_date.year - 100, current_date.year + 1):
+    #         raise ValueError(f'Year must be between {current_date.year - 100} and {current_date.year + 1}.')
+    #     else:
+    #         self._year = year
 
     @property
     def miles(self):
@@ -106,7 +108,7 @@ class Car:
     @fuel_type.setter
     def fuel_type(self, fuel_type):
         if fuel_type not in type(self).FUEL_TYPES:
-            raise ValueError(f'Type must be one of the following: {[type for type in type(self).FUEL_TYPES]}')
+            raise ValueError(f'Type must be one of the following: {[f_type for f_type in type(self).FUEL_TYPES]}')
         else:
             self._fuel_type = fuel_type
 
@@ -141,11 +143,7 @@ class Car:
         return self._price
     @price.setter
     def price(self, price):
-        if not isinstance(price, int) or isinstance(price, bool):
-            raise TypeError('Price must be of type integer.')
-        elif price not in range(1_000_000):
-            raise ValueError('Price must be between 0 and 1,000,000.')
-        else:
+        if not price:
             miles_weight = -0.5  # Lower miles means a higher price
             age_weight = -0.3  # Lower age means a higher price
             condition_weights = {
@@ -162,7 +160,14 @@ class Car:
             price = base_price + (self.miles * miles_weight) + ((current_date.year - self.year) * age_weight) + (condition_weights[self.condition] * base_price)
 
             # Ensure the price is within the valid range (5000 to 500,000)
-            self._price = max(5000, min(price, 500000))
+            self._price = int(max(5_000, min(price, 1_000_000)))
+        elif not isinstance(price, int) or isinstance(price, bool):
+            raise TypeError('Price must be of type integer.')
+        elif price not in range(1_000_000):
+            raise ValueError('Price must be between 0 and 1,000,000.')
+        else:
+            self._price = price
+
 
     @property
     def id_(self):
@@ -220,3 +225,10 @@ class Car:
             return 'Fair'
         else:
             return 'Poor'
+    
+    # ! Instance Methods
+    def list_details(self):
+        print(f'--- {self.year} {self.make.upper()} {self.model.upper()} ---\nColor: {self.color}\nFuel Type: {self._fuel_type}\nMiles: {self.miles}\nCondition: {self.condition}\nPrice: {self.price}')
+    
+    def list_details(self):
+        print(f'')

@@ -1,3 +1,5 @@
+# python helpers.py
+
 from datetime import datetime
 import random
 
@@ -98,9 +100,8 @@ def rand_miles():
 
 def rand_fuel_type():
     options = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
-    weights = [0.65, 0.2, 0.15, 0.2] 
-
-    return random.choices(options)
+    weights = [0.65, 0.2, 0.15, 0.2]
+    return random.choices(options, weights=weights , k=1)[0]
 
 def rand_color():
     return random.choice(['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'brown', 'black', 'white', 'cyan', 'magenta']).title()
@@ -119,3 +120,13 @@ def rand_car():
         rand_color(),
         random.choice([True, False]),
         )
+
+def generate_fleet():
+    fleet = []
+
+    for _ in range(50):
+        fleet.append(rand_car())
+    
+    return fleet
+
+fleet = generate_fleet()
