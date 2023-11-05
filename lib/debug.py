@@ -10,8 +10,7 @@ from helpers import rand_car, generate_fleet
 cust = Customer('Landon', 9995558765, 1)
 emp = Employee('Matteo', 75_000, datetime.now(), 1)
 appt = Appointment(datetime.now(), 1, 1, 1, 1)
-car_1 = rand_car()
-car_2 = rand_car()
+fleet = generate_fleet()
 
 # fleet = generate_fleet()
 

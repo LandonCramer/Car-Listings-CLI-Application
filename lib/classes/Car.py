@@ -1,4 +1,3 @@
-from datetime import datetime
 import random
 from helpers import current_date
 
@@ -8,7 +7,7 @@ class Car:
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
-    def __init__(self, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price=None, id_ = None, owner_id = None, appt_id = None):
+    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_ = None, owner_id = None, appt_id = None):
         self.vehicle_type = vehicle_type
         self.new = new
         self.make = make
@@ -34,7 +33,7 @@ class Car:
         elif vehicle_type not in type(self).VEHICLE_TYPES:
             raise ValueError(f'Vehicle type must be one of the following: {[v_type for v_type in self.VEHICLE_TYPES]}')
         else:
-            self._vehicle_type = vehicle_type
+            self._vehicle_type = vehicle_type.title()
 
     @property
     def new(self):
@@ -75,20 +74,21 @@ class Car:
             raise ValueError("Model must be a string between 1 and 20 characters.")
         else:
             self._model = model
-        
-    # @property
-    # def year(self):
-    #     return self._year
-    # @year.setter
-    # def year(self, year):
-    #     if hasattr(self, 'year'):
-    #         raise ValueError('Year can not be reset')
-    #     elif not isinstance(year, int) or isinstance(year, bool):
-    #         raise TypeError('Year must be an int')
-    #     elif year not in range(current_date.year - 100, current_date.year + 1):
-    #         raise ValueError(f'Year must be between {current_date.year - 100} and {current_date.year + 1}.')
-    #     else:
-    #         self._year = year
+    
+    # TODO The further you are away from current_date.year, the smaller your weight is for random.choice
+    @property
+    def year(self):
+        return self._year
+    @year.setter
+    def year(self, year):
+        if hasattr(self, 'year'):
+            raise ValueError('Year can not be reset')
+        elif not isinstance(year, int) or isinstance(year, bool):
+            raise TypeError('Year must be an int')
+        elif year not in range(current_date.year - 100, current_date.year + 1):
+            raise ValueError(f'Year must be between {current_date.year - 100} and {current_date.year + 1}.')
+        else:
+            self._year = year
 
     @property
     def miles(self):
@@ -110,7 +110,7 @@ class Car:
         if fuel_type not in type(self).FUEL_TYPES:
             raise ValueError(f'Type must be one of the following: {[f_type for f_type in type(self).FUEL_TYPES]}')
         else:
-            self._fuel_type = fuel_type
+            self._fuel_type = fuel_type.title()
 
     @property
     def color(self):
@@ -138,6 +138,7 @@ class Car:
         else:
             self._transmission = "Manual"
 
+    # TODO Bell curve price weights
     @property
     def price(self):
         return self._price
@@ -160,7 +161,7 @@ class Car:
             price = base_price + (self.miles * miles_weight) + ((current_date.year - self.year) * age_weight) + (condition_weights[self.condition] * base_price)
 
             # Ensure the price is within the valid range (5000 to 500,000)
-            self._price = int(max(5_000, min(price, 1_000_000)))
+            self._price = int(max(8_000, min(price, 1_000_000)))
         elif not isinstance(price, int) or isinstance(price, bool):
             raise TypeError('Price must be of type integer.')
         elif price not in range(1_000_000):
@@ -205,6 +206,7 @@ class Car:
         else:
             self._appt__id_ = appt_id_
 
+    # TODO Bell curve weights. Right now all cars seems to be poor for some reason.
     @property
     def condition(self):
         if self.miles == 0:
@@ -230,5 +232,5 @@ class Car:
     def list_details(self):
         print(f'--- {self.year} {self.make.upper()} {self.model.upper()} ---\nColor: {self.color}\nFuel Type: {self._fuel_type}\nMiles: {self.miles}\nCondition: {self.condition}\nPrice: {self.price}')
     
-    def list_details(self):
-        print(f'')
+    def full_details(self):
+        print(f'Vehicle Type: {self.vehicle_type}\nNew or Used: {self.new}\nMake: {self.make}\nModel: {self.model}\nYear: {self.year}\nMiles: {self.miles}\nFuel Type: {self.fuel_type}\nColor: {self.color}\nTransmission: {self.transmission}\nPrice: {self.price}')
