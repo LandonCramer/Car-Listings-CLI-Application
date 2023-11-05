@@ -78,7 +78,6 @@ class Car:
         else:
             self._model = model
     
-    # TODO The further you are away from current_date.year, the smaller your weight is for random.choice
     @property
     def year(self):
         return self._year
@@ -284,7 +283,7 @@ class Car:
         )
         row = CURSOR.fetchone()
         return cls(
-                row[1].upper(), 
+                row[1], 
                 row[2], 
                 row[3], 
                 row[4], 
@@ -315,7 +314,7 @@ class Car:
         CURSOR.execute(
             '''
             SELECT * FROM cars
-            WHERE id = ?
+            WHERE id_ = ?
             ''',
             (id_,)
         )
