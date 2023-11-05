@@ -1,4 +1,5 @@
 import random
+from classes.__init__ import CURSOR, CONN
 from helpers import current_date
 
 class Car:
@@ -37,15 +38,13 @@ class Car:
 
     @property
     def new(self):
-        return self._new
+        return 'New' if self._new else 'Used'
     @new.setter
     def new(self, new):
         if not isinstance(new, bool):
             raise TypeError('New value must be a boolean.')
-        elif new:
-            self._new = 'New'
         else:
-            self._new = "Used"
+            self._new = new
 
     @property 
     def make(self):
@@ -228,6 +227,152 @@ class Car:
         else:
             return 'Poor'
     
+    # ! ORM Class Methods
+    @classmethod
+    def create_table(cls):
+        CURSOR.execute(
+            '''
+            CREATE TABLE IF NOT EXISTS cars (
+                id_ INTEGER PRIMARY KEY,
+                vehicle_type TEXT,
+                new INTEGER,
+                make TEXT,
+                model TEXT,
+                year INTEGER,
+                miles INTEGER,
+                fuel_type TEXT,
+                color TEXT,
+                transmission INTEGER,
+                price INTEGER,
+                owner_id INTEGER,
+                appt_id INTEGER
+            );
+            '''
+        )
+        CONN.commit()
+
+    # FOREIGN KEY owner_id INTEGER references customers(id)
+    # FOREIGN KEY appt_id INTEGER references appointments(id)
+
+    @classmethod
+    def drop_table(cls):
+        CURSOR.execute(
+            '''
+            DROP TABLE IF EXISTS cars;
+            '''
+        )
+        CONN.commit()
+    
+    @classmethod
+    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, appt_id):
+        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, appt_id)
+        new_car.save()
+        return new_car
+    
+    @classmethod
+    def new_from_db(cls, row):
+        CURSOR.execute(
+            '''
+            SELECT * FROM CARS
+            ORDER BY id_ DESC
+            LIMIT 1;
+            '''
+        )
+        row = CURSOR.fetchone()
+        return cls(
+                row[1].upper(), 
+                row[2], 
+                row[3], 
+                row[4], 
+                row[5], 
+                row[6], 
+                row[7], 
+                row[8], 
+                row[9], 
+                row[10], 
+                row[0], 
+                row[11], 
+                row[12]
+                )
+
+    @classmethod
+    def get_all(cls):
+
+        CURSOR.execute(
+            '''
+            SELECT * FROM cars;
+            '''
+        )
+        rows = CURSOR.fetchall()
+        return [cls.new_from_db(row) for row in rows]
+
+    @classmethod
+    def find_by_id(cls, id_):
+        CURSOR.execute(
+            '''
+            SELECT * FROM cars
+            WHERE id = ?
+            ''',
+            (id_,)
+        )
+        row = CURSOR.fetchone()
+        return cls.new_from_db(row) if row else None
+    
+    # TODO find_by_name seems inappropriate for Car because there is nothing stopping identical cars from existing.
+    # TODO What other unique property besides name can we query cars by?
+    # @classmethod
+    # def find_by_name(cls, name):
+    #     CURSOR.execute(
+    #         '''
+    #         SELECT * FROM cars
+    #         WHERE id = ?
+    #         ''',
+    #         (name,)
+    #     )
+    #     row = CURSOR.fetchone()
+    #     return cls.new_from_db(row) if row else None
+    
+    # def find_or_create_by(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, appt_id):
+    #     return cls.find_by_name()
+
+    # ! ORM Instance Methods
+
+    def save(self):
+        CURSOR.execute(
+            '''
+            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, appt_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''',
+            (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_, self.owner_id, self.appt_id)
+        )
+        CONN.commit()
+        self.id = CURSOR.lastrowid
+        return self
+    
+    def update(self):
+        CURSOR.execute(
+            '''
+            UPDATE cars
+            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?, owner_id = ?, appt_id = ?
+            WHERE id_ = ?
+            ''',
+            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owner_id, self.appt_id)
+        )
+        CONN.commit()
+        return self
+    
+    def delete(self):
+        CURSOR.execute(
+            '''
+            DELETE FROM cars
+            WHERE id_ = ?
+            ''',
+            (self.id_)
+        )
+        CONN.commit()
+        self.id = None
+        return self
+
     # ! Instance Methods
     def list_details(self):
         print(f'--- {self.year} {self.make.upper()} {self.model.upper()} ---\nColor: {self.color}\nFuel Type: {self._fuel_type}\nMiles: {self.miles}\nCondition: {self.condition}\nPrice: {self.price}')
