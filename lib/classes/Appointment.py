@@ -1,8 +1,8 @@
 from datetime import datetime
 from helpers import parse_date
-from Sale import Sale
-from Service import Service
-from Testdrive import Testdrive
+from classes.Sale import Sale
+from classes.Service import Service
+from classes.Testdrive import Testdrive
 from classes.__init__ import CURSOR, CONN
 
 class Appointment:
@@ -10,13 +10,13 @@ class Appointment:
 
     APPT_TYPES = ['SALE', 'SERVICE', 'TESTDRIVE']
 
-    def __init__(self, type_, date, customer_id, employee_id, car_id, id_ = None):
+    def __init__(self, type_, date, customer_id, employee_id, car_id, id=None):
         self.type_ = type_
         self.date = date
         self.customer_id = customer_id
         self.employee_id = employee_id
         self.car_id = car_id
-        self.id_ = id_
+        self.id = id
         # depending on type_, create a row in the respective table
     
     # *********************
@@ -70,52 +70,52 @@ class Appointment:
             self._date = date
 
     @property
-    def customer_id_(self):
-        return self._customer_id_ 
-    @customer_id_.setter
-    def customer_id_(self, customer_id_):
-        if not customer_id_:
-            self._customer_id_ = None
-        elif not isinstance(customer_id_, int) or isinstance(customer_id_, bool):
+    def customer_id(self):
+        return self._customer_id
+    @customer_id.setter
+    def customer_id(self, customer_id):
+        if not customer_id:
+            self._customer_id = None
+        elif not isinstance(customer_id, int) or isinstance(customer_id, bool):
             raise TypeError("Customer ID must be an integer.")
         else:
-            self._customer_id_ = customer_id_
+            self._customer_id = customer_id
 
     @property
-    def employee_id_(self):
-        return self._employee_id_ 
-    @employee_id_.setter
-    def employee_id_(self, employee_id_):
-        if not employee_id_:
-            self._employee_id_ = None
-        elif not isinstance(employee_id_, int) or isinstance(employee_id_, bool):
+    def employee_id(self):
+        return self._employee_id
+    @employee_id.setter
+    def employee_id(self, employee_id):
+        if not employee_id:
+            self._employee_id = None
+        elif not isinstance(employee_id, int) or isinstance(employee_id, bool):
             raise TypeError("Employee ID must be an integer.")
         else:
-            self._employee_id_ = employee_id_
+            self._employee_id = employee_id
 
     @property
-    def car_id_(self):
-        return self._car_id_ 
-    @car_id_.setter
-    def car_id_(self, car_id_):
-        if not car_id_:
-            self._car_id_ = None
-        elif not isinstance(car_id_, int) or isinstance(car_id_, bool):
+    def car_id(self):
+        return self._car_id
+    @car_id.setter
+    def car_id(self, car_id):
+        if not car_id:
+            self._car_id = None
+        elif not isinstance(car_id, int) or isinstance(car_id, bool):
             raise TypeError("Car ID must be an integer.")
         else:
-            self._car_id_ = car_id_
+            self._car_id = car_id
 
     @property
-    def id_(self):
-        return self._id_ 
-    @id_.setter
-    def id_(self, id_):
-        if not id_:
-            self._id_ = None
-        elif not isinstance(id_, int) or isinstance(id_, bool):
+    def id(self):
+        return self._id
+    @id.setter
+    def id(self, id):
+        if not id:
+            self._id = None
+        elif not isinstance(id, int) or isinstance(id, bool):
             raise TypeError("ID must be an integer.")
         else:
-            self._id_ = id_
+            self._id = id
 
     # *************
     # CLASSMETHODS
@@ -126,7 +126,7 @@ class Appointment:
         pass
 
     @classmethod
-    def get_appts_by_type(cls, type):
+    def get_appts_by_type(cls, type_):
         pass
 
     @classmethod
@@ -150,6 +150,15 @@ class Appointment:
     # ************
 
     def save(self):
+        if self.type_ == 'SALE':
+            Sale.create(50_000, True) #currently using default params
+        elif self.type_ == 'SERVICE':
+            Service.create('The radio says demonic-sounding things in Latin on every station.', 500, True) #currently using default params
+        elif self.type_ == 'TESTDRIVE':
+            Testdrive.create("He went through a McDonalds drive-thru and ordered a 50 pc McNuggets.") #currently using default params
+        else:
+            raise ValueError('We do not offer that service.')
+        
         sql = """
             INSERT INTO appointments (type, date, customer_id, employee_id, car_id)
             VALUES (?, ?, ?, ?, ?)
@@ -157,14 +166,15 @@ class Appointment:
         CURSOR.execute(sql, (self.type_, self.date, self.customer_id, self.employee_id, self.car_id))
         CONN.commit()
 
-        type(self).all[self.id_] = self
+        self.id = CURSOR.lastrowid
+        type(self).all[self.id] = self
 
     @classmethod
-    def create(cls, type, date, customer_id, employee_id, car_id):
-        appointment = cls(type, date, customer_id, employee_id, car_id)
+    def create(cls, type_, date, customer_id, employee_id, car_id):
+        appointment = cls(type_, date, customer_id, employee_id, car_id)
         appointment.save()
 
-        cls.all[appointment.id_] = appointment
+        cls.all[appointment.id] = appointment
 
         return appointment
     
@@ -182,8 +192,8 @@ class Appointment:
             DELETE FROM appointments
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.id_,))
+        CURSOR.execute(sql, (self.id,))
         CONN.commit()
 
-        del type(self).all[self.id_]
-        self.id_ = None
+        del type(self).all[self.id]
+        self.id = None

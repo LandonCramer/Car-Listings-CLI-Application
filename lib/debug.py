@@ -1,6 +1,9 @@
 from datetime import datetime
 from classes.Appointment import Appointment
 from classes.Car import Car
+from classes.Sale import Sale
+from classes.Service import Service
+from classes.Testdrive import Testdrive
 from classes.Customer import Customer
 from classes.Employee import Employee
 from helpers import rand_car, generate_fleet
@@ -12,6 +15,12 @@ from helpers import rand_car, generate_fleet
 
 Appointment.drop_table()
 Appointment.create_table()
+# Sale.drop_table()
+# Sale.create_table()
+# Service.drop_table()
+# Service.create_table()
+# Testdrive.drop_table()
+# Testdrive.create_table()
 appt1 = Appointment('SALE', datetime.now(), 1, 1, 1, 1)
 appt2 = Appointment('TESTDRIVE', datetime.now(), 2, 2, 2, 2)
 appt3 = Appointment('SERVICE', datetime.now(), 3, 3, 3, 3)
