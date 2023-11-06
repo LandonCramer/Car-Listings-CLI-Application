@@ -131,7 +131,7 @@ class Appointment:
         row = list(row)
         row.pop(0)
 
-        relevant_values = [item for item in row if item != 'N/A']
+        relevant_values = [item for item in row if item != '*']
 
         if row[0] == 'SALE':
             a, b, c, d, e, f, g = relevant_values
@@ -245,7 +245,7 @@ class Appointment:
             if key in attr_dict.keys():
                 all_values.append(attr_dict[key])
             else:
-                all_values.append('N/A')
+                all_values.append('*')
 
         if self.type_ == 'SALE' or self.type_ == 'SERVICE' or self.type_ == 'TESTDRIVE':
             sql = """
