@@ -97,7 +97,6 @@ class Appointment:
         return self._id_
     @id_.setter
     def id_(self, id_):
-        print("PENIS", id_)
         if not id_:
             self._id_ = None
         elif not isinstance(id_, int) or isinstance(id_, bool):

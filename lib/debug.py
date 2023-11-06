@@ -47,6 +47,7 @@ serv3 = Service('SERVICE', datetime.now(), 3, 3, 3, 'The car smells like feet.',
 td1 = Testdrive('TESTDRIVE', datetime.now(), 1, 1, 1, "The guy drove through a McDonalds and bought a 50 pc chicken nugget.")
 td2 = Testdrive('TESTDRIVE', datetime.now(), 3, 3, 3, "Dude crashed into a Burger King.")
 td3 = Testdrive('TESTDRIVE', datetime.now(), 3, 3, 3, "Testdrive actually went well.")
+
 sale1.save()
 sale2.save()
 sale3.save()
@@ -56,9 +57,18 @@ serv3.save()
 td1.save()
 td2.save()
 td3.save()
-sale1.delete()
-serv1.delete()
-td1.delete()
+
+# sale1.delete()
+# serv1.delete()
+# td1.delete()
+
+# sale3.balance = 9999
+# serv3.reason_for_visit = "My feet smell like tortilla chips."
+# td3.notes = "My colon itches."
+
+# sale3.update()
+# serv3.update()
+# td3.update()
 
 
 if __name__ == '__main__':
