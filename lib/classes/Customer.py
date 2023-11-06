@@ -68,6 +68,14 @@ class Customer:
         CURSOR.execute(sql)
         CONN.commit()
 
+    def drop_table(cls):
+        sql = """
+            DROP TABLE IF EXISTS customers
+        """
+        
+        CURSOR.execute(sql)
+        CONN.commit()   
+
     @classmethod
     def get_all(cls):
         """ Return a list containing Customer objects per row in the table """
