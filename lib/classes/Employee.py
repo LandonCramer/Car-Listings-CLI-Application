@@ -1,5 +1,5 @@
 from datetime import datetime
-from helpers import parse_date
+import helpers
 from classes.__init__ import CURSOR, CONN
 
 
@@ -12,7 +12,7 @@ class Employee:
         
         self.hire_date = hire_date
         self.id_ = id_
-        self.job_title = type(self).__name__
+        self.job_title = helpers.pascal_to_words(type(self).__name__)
     
     @property
     def name(self):
@@ -57,7 +57,7 @@ class Employee:
     
     @property
     def hire_date(self):
-        return parse_date(self._hire_date)
+        return helpers.parse_date(self._hire_date)
     
     @hire_date.setter
     def hire_date(self, hire_date):

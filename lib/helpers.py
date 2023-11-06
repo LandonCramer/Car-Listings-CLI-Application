@@ -1,5 +1,5 @@
 # python helpers.py
-
+import re
 from datetime import datetime
 import random
 
@@ -7,6 +7,11 @@ current_date = datetime.now()
 
 def parse_date(datetime_obj):
     return f'{datetime_obj.month}/{datetime_obj.day}/{datetime_obj.year}'
+
+def pascal_to_words(string):
+    return ' '.join(re.findall(r'[A-Z][a-z0-9]*', string))
+
+# ! Random Fleet Generation Functions
 
 random_car_stuff = {
     'Ford': [
