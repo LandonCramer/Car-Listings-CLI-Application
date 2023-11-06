@@ -115,28 +115,29 @@ def rand_fuel_type():
     return random.choices(options, weights=weights , k=1)[0]
 
 def rand_color():
-    colors = [
-        'Black',
-        'Grey',
-        'White',
-        'Blue',
-        'Red',
-        'Gold',
-        'Green',
-        'Pink',
-        'Purple'
-    ]
-    weight = [
-        0.19,
-        0.29,
-        0.26,
-        0.23,
-        0.0125,
-        0.0125,
-        0.0005,
-        0.0005
-    ]
-    print(sum(weight))
+    return random.choice(['grey', 'black', 'white'])
+    # colors = [
+    #     'Black',
+    #     'Grey',
+    #     'White',
+    #     'Blue',
+    #     'Red',
+    #     'Gold',
+    #     'Green',
+    #     'Pink',
+    #     'Purple'
+    # ]
+    # weight = [
+    #     0.19,
+    #     0.29,
+    #     0.26,
+    #     0.23,
+    #     0.0125,
+    #     0.0125,
+    #     0.0005,
+    #     0.0005
+    # ]
+    # print(sum(weight))
 
 def rand_car():
     from classes.Car import Car

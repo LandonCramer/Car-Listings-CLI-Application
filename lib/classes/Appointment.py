@@ -33,7 +33,10 @@ class Appointment:
             reason_for_visit TEXT,
             estimate INTEGER,
             notes TEXT,
-            status INTEGER)
+            status INTEGER,
+            FOREIGN KEY (customer_id) references customers(id),
+            FOREIGN KEY (employee_id) references employees(id),
+            FOREIGN KEY (car_id) references cars(id))
         """
         CURSOR.execute(sql)
         CONN.commit()

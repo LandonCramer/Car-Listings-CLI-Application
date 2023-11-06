@@ -1,6 +1,7 @@
 import re
 from classes.__init__ import CURSOR, CONN
-from helpers import parse_date
+import helpers
+from datetime import datetime
 
 class Customer:
     def __init__(self, name, phone, join_date, id_ = None):
@@ -34,13 +35,17 @@ class Customer:
         else:
             self._phone = phone
 
-    @property   
+    @property
     def join_date(self):
-        return self._join_date
+        return helpers.parse_date(self._join_date)
     @join_date.setter
     def join_date(self, join_date):
-        # Add checks???????????????????
-        self._join_date = join_date
+        if isinstance(join_date, datetime):
+            self._join_date = helpers.parse_date(join_date)
+        elif isinstance(join_date, str):
+            self._join_date = join_date
+        else:
+            raise TypeError('Date must be a valid Date object or string.')
     
     @property
     def id_(self):
@@ -68,6 +73,7 @@ class Customer:
         CURSOR.execute(sql)
         CONN.commit()
 
+    @classmethod
     def drop_table(cls):
         sql = """
             DROP TABLE IF EXISTS customers
@@ -92,7 +98,7 @@ class Customer:
             INSERT INTO customers (name, phone, join_date)
             VALUES (?, ?, ?)
         """
-        CURSOR.execute(sql, (self.name, self.phone, self.join_date.strftime('%Y-%m-%d')))
+        CURSOR.execute(sql, (self.name, self.phone, self.join_date))
         CONN.commit()
 
     @classmethod
@@ -121,9 +127,6 @@ class Customer:
         CURSOR.execute(sql, (self.id))
         CONN.commit()
 
-
-
-
 #New for Monday
 
     @classmethod
@@ -131,7 +134,7 @@ class Customer:
         return cls(
             row[1], #name
             row[2], #phone
-            parse_date(row[3]), #joindate
+            row[3], #joindate
             row[0] #id_
         )
     

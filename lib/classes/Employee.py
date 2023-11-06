@@ -186,16 +186,21 @@ class Employee:
     def employee_of_the_month(cls):
         pass
 
-
+    # def cars(self):
+    #     sql = """
+    #         SELECT cars.*
+    #         FROM cars
+    #         INNER JOIN employees_cars ON cars.id = employees_cars.car_id
+    #         WHERE employees_cars.employee_id = ?
+    #     """
+    #     rows = CURSOR.execute(sql, (self.id_,)).fetchall()
+    #     return [Car.new_from_db(row) for row in rows]
+    
     def cars(self):
-        sql = """
-            SELECT cars.*
-            FROM cars
-            INNER JOIN employees_cars ON cars.id = employees_cars.car_id
-            WHERE employees_cars.employee_id = ?
-        """
-        rows = CURSOR.execute(sql, (self.id_,)).fetchall()
-        return [Car.new_from_db(row) for row in rows]
+        return [car for car in Car.get_cars_by_employee_id(self.id)]
+        sql = '''
+
+        '''
 
 
     def customers(self):

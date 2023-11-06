@@ -235,7 +235,7 @@ class Car:
         CURSOR.execute(
             '''
             CREATE TABLE IF NOT EXISTS cars (
-                id_ INTEGER PRIMARY KEY,
+                id INTEGER PRIMARY KEY,
                 vehicle_type TEXT,
                 new INTEGER,
                 make TEXT,
@@ -305,7 +305,7 @@ class Car:
         CURSOR.execute(
             '''
             SELECT * FROM cars
-            WHERE id_ = ?
+            WHERE id = ?
             ''',
             (id_,)
         )
@@ -326,7 +326,7 @@ class Car:
     #     row = CURSOR.fetchone()
     #     return cls.new_from_db(row) if row else None
     
-    # def find_or_create_by(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id):
+    # def find_or_create_by(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id, owner_id, sale_id):
     #     return cls.find_by_name()
 
     # ! ORM Instance Methods
@@ -334,7 +334,7 @@ class Car:
     def save(self):
         CURSOR.execute(
             '''
-            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id)
+            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id, owner_id, sale_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''',
             (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_, self.owner_id, self.sale_id)
@@ -348,7 +348,7 @@ class Car:
             '''
             UPDATE cars
             SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?, owner_id = ?, sale_id = ?
-            WHERE id_ = ?
+            WHERE id = ?
             ''',
             (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owner_id, self.sale_id)
         )
@@ -359,7 +359,7 @@ class Car:
         CURSOR.execute(
             '''
             DELETE FROM cars
-            WHERE id_ = ?
+            WHERE id = ?
             ''',
             (self.id_,)
         )
