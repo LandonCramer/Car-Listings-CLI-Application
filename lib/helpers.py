@@ -1,120 +1,148 @@
 # python helpers.py
-
+import re
 from datetime import datetime
 import random
 
 current_date = datetime.now()
+year_range = range(current_date.year - 100, current_date.year + 1)
+miles_range = range(300_001)
 
 def parse_date(datetime_obj):
     return f'{datetime_obj.month}/{datetime_obj.day}/{datetime_obj.year}'
 
+def pascal_to_words(string):
+    return ' '.join(re.findall(r'[A-Z][a-z0-9]*', string))
+
+# ! Random Fleet Generation Functions
+
 random_car_stuff = {
     'Ford': [
-    "F-150",
-    "Escape",
-    "Explorer",
-    "Edge",
-    "Mustang",
-    "Ranger",
-    "Expedition",
-    "Fusion",
-    "Focus",
-    "Bronco"
-],
+        ("F-150", 'TRUCK'),
+        ("Escape", 'SUV'),
+        ("Explorer", 'SUV'),
+        ("Edge", 'SUV'),
+        ("Mustang", 'COUPE'),
+        ("Ranger", 'TRUCK'),
+        ("Expedition", 'SUV'),
+        ("Fusion", 'SEDAN'),
+        ("Focus", 'SEDAN'),
+        ("Bronco", 'SUV')
+    ],
     'Chevrolet': [
-    "Malibu",
-    "Camaro",
-    "Silverado",
-    "Equinox",
-    "Traverse",
-    "Tahoe",
-    "Suburban",
-    "Impala",
-    "Blazer",
-    "Corvette"
-],
+        ("Malibu", 'SEDAN'),
+        ("Camaro", 'COUPE'),
+        ("Silverado", 'TRUCK'),
+        ("Equinox", 'SUV'),
+        ("Traverse", 'SUV'),
+        ("Tahoe", 'SUV'),
+        ("Suburban", 'VAN'),
+        ("Impala", 'SEDAN'),
+        ("Blazer", 'SUV'),
+        ("Corvette", 'COUPE')
+    ],
     'Audi': [
-    "A3",
-    "A4",
-    "A5",
-    "A6",
-    "A7",
-    "A8",
-    "Q3",
-    "Q5",
-    "Q7",
-    "Q8"
-],
+        ("A3", 'SEDAN'),
+        ("A4", 'SEDAN'),
+        ("A5", 'COUPE'),
+        ("A6", 'SEDAN'),
+        ("A7", 'SEDAN'),
+        ("A8", 'SEDAN'),
+        ("Q3", 'SUV'),
+        ("Q5", 'SUV'),
+        ("Q7", 'SUV'),
+        ("Q8", 'SUV')
+    ],
     'Jeep': [
-    "Wrangler",
-    "Cherokee",
-    "Grand Cherokee",
-    "Gladiator",
-    "Compass",
-    "Renegade",
-    "Wagoneer",
-    "Grand Wagoneer",
-    "Commander",
-    "Patriot"
-],
+        ("Wrangler", 'SUV'),
+        ("Cherokee", 'SUV'),
+        ("Grand Cherokee", 'SUV'),
+        ("Gladiator", 'TRUCK'),
+        ("Compass", 'SUV'),
+        ("Renegade", 'SUV'),
+        ("Wagoneer", 'VAN'),
+        ("Grand Wagoneer", 'VAN'),
+        ("Commander", 'SUV'),
+        ("Patriot", 'SUV')
+    ],
     'Kia': [
-    "Seltos",
-    "Sportage",
-    "Forte",
-    "Sorento",
-    "Soul",
-    "Optima",
-    "Telluride",
-    "Stinger",
-    "Rio",
-    "Cadenza"
-],
-    'Toyota': [    
-        "Corolla",
-        "Camry",
-        "Rav4",
-        "Prius",
-        "Highlander",
-        "Tacoma",
-        "Sienna",
-        "Yaris",
-        "Tundra",
-        "Supra"
-        ]
+        ("Seltos", 'SUV'),
+        ("Sportage", 'SUV'),
+        ("Forte", 'SEDAN'),
+        ("Sorento", 'SUV'),
+        ("Soul", 'SUV'),
+        ("Optima", 'SEDAN'),
+        ("Telluride", 'SUV'),
+        ("Stinger", 'COUPE'),
+        ("Rio", 'SEDAN'),
+        ("Cadenza", 'SEDAN')
+    ],
+    'Toyota': [
+        ("Corolla", 'SEDAN'),
+        ("Camry", 'SEDAN'),
+        ("Rav4", 'SUV'),
+        ("Prius", 'SEDAN'),
+        ("Highlander", 'SUV'),
+        ("Tacoma", 'TRUCK'),
+        ("Sienna", 'VAN'),
+        ("Yaris", 'SEDAN'),
+        ("Tundra", 'TRUCK'),
+        ("Supra", 'COUPE')
+    ]
 }
 
-# TODO We will eventually have to bind this to the model of the car somehow.
-def rand_v_type():
-    return random.choice(['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV'])
+def rand_vehicle():
+    rand_make, available_models = random.choice(list(random_car_stuff.items()))
+    rand_model = random.choice(available_models)
+    return (rand_make, rand_model[0], rand_model[1])
 
-# TODO ^ Maybe match a v_type value to each model in random cars, and assign v_type based on that value after make and model.
-def rand_make_and_model():
-    make, models = random.choice(list(random_car_stuff.items()))
-    selected_model = random.choice(models)
-    return (make, selected_model)
-
-# TODO The further you are away from current_date.year, the smaller your weight is for random.choice
 def rand_year():
-    year = random.randint(current_date.year - 100, current_date.year)
-    return year
+    years = list(year_range)
+    weights = [i - current_date.year + 75 for i in years]  # Weights favoring recent years
+    return random.choices(years, weights=weights)[0]
 
-# TODO Weight miles to favor average miles and not extreme values.
 def rand_miles():
-    return random.randint(0, 300_001)
+    miles = list(miles_range)
+    weights = [
+        10 if i < 100000 else
+        3 if i < 200_000 else
+        1 for i in miles
+    ]  
+    return random.choices(miles, weights=weights)[0]
 
 def rand_fuel_type():
     options = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
-    weights = [0.65, 0.2, 0.15, 0.2]
+    weights = [0.65, 0.1, 0.15, 0.2]
     return random.choices(options, weights=weights , k=1)[0]
 
 def rand_color():
-    return random.choice(['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'brown', 'black', 'white', 'cyan', 'magenta']).title()
+    colors = [
+        'Black',
+        'Grey',
+        'White',
+        'Blue',
+        'Red',
+        'Gold',
+        'Green',
+        'Pink',
+        'Purple'
+    ]
+    weight = [
+        0.19,
+        0.29,
+        0.26,
+        0.23,
+        0.0125,
+        0.0125,
+        0.0005,
+        0.0005
+    ]
+    print(sum(weight))
 
 def rand_car():
     from classes.Car import Car
-    make_and_model = rand_make_and_model()
+    make_and_model = rand_vehicle()
     return Car(
-        rand_v_type(),
+        make_and_model[2],
         # TODO Should we weight new so only a certain percentage of cars are used?
         random.choice([True, False]),
         make_and_model[0], 
@@ -130,9 +158,7 @@ def rand_car():
 def generate_fleet():
     fleet = []
 
-
     for _ in range(50):
-        car = rand_car()
-        fleet.append(car)
+        fleet.append(rand_car())
     
     return fleet

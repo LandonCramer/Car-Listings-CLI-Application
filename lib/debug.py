@@ -31,12 +31,8 @@ from classes.ServiceTech import ServiceTech
 # salesman = Salesman('Landon', 80000, datetime.now(), 1)
 # st = ServiceTech('Landon', 80000, datetime.now(), 1)
 
-Sale.drop_table()
-Sale.create_table()
-Service.drop_table()
-Service.create_table()
-Testdrive.drop_table()
-Testdrive.create_table()
+Appointment.drop_table()
+Appointment.create_table()
 
 sale1 = Sale('SALE', datetime.now(), 1, 1, 1, 69_000, 'Active')
 sale2 = Sale('SALE', datetime.now(), 2, 2, 2, 9_000, 'Closed')
