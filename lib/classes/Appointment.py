@@ -155,79 +155,125 @@ class Appointment:
 
     @classmethod
     def get_all(cls):
-        sql = """
-            SELECT * FROM appointments
-        """
+        appt_type = cls.__name__.upper()
+
+        if appt_type == 'APPOINTMENT':
+            sql = """
+                SELECT * FROM appointments
+            """
+        else:
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE type = '{appt_type}'
+            """     
         
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
 
     @classmethod
-    def get_appts_by_type(cls, type):
-        sql = f"""
-            SELECT * FROM appointments
-            WHERE type = '{type}'
-        """
+    def get_by_date(cls, date):
+        appt_type = cls.__name__.upper()
+
+        if appt_type == 'APPOINTMENT':
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE date = '{date}'
+            """
+        else:
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE date = '{date}' AND type = '{appt_type}'
+            """
+
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+
+    @classmethod
+    def get_by_customer_id(cls, id):
+        appt_type = cls.__name__.upper()
+
+        if appt_type == 'APPOINTMENT':
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE date = '{id}'
+            """
+        else:
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE date = '{id}' AND type = '{appt_type}'
+            """
+
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+
+    @classmethod
+    def get_by_employee_id(cls, id):
+        appt_type = cls.__name__.upper()
+
+        if appt_type == 'APPOINTMENT':
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE date = '{id}'
+            """
+        else:
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE date = '{id}' AND type = '{appt_type}'
+            """
+
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+
+    @classmethod
+    def get_by_car_id(cls, id):
+        appt_type = cls.__name__.upper()
+
+        if appt_type == 'APPOINTMENT':
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE date = '{id}'
+            """
+        else:
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE date = '{id}' AND type = '{appt_type}'
+            """
+
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+    
+    @classmethod
+    def get_active(cls):
+        appt_type = cls.__name__.upper()
+
+        if appt_type == 'APPOINTMENT':
+            sql = """
+                SELECT * FROM appointments
+                WHERE status = "Active"
+            """
+        else:
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE status = "Active" AND type = '{appt_type}'
+            """
         
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_appts_by_date(cls, date):
-        sql = f"""
-            SELECT * FROM appointments
-            WHERE date = '{date}'
-        """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_appts_by_customer_id(cls, id):
-        sql = f"""
-            SELECT * FROM appointments
-            WHERE customer_id = {id}
-        """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_appts_by_employee_id(cls, id):
-        sql = f"""
-            SELECT * FROM appointments
-            WHERE employee_id = {id}
-        """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_appts_by_car_id(cls, id):
-        sql = f"""
-            SELECT * FROM appointments
-            WHERE car_id = {id}
-        """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
     
     @classmethod
-    def get_active_appts(cls):
-        sql = """
-            SELECT * FROM appointments
-            WHERE status = "Active"
-        """
+    def get_closed(cls):
+        appt_type = cls.__name__.upper()
 
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-    
-    @classmethod
-    def get_closed_appts(cls):
-        sql = """
-            SELECT * FROM appointments
-            WHERE status = "Closed"
-        """
+        if appt_type == 'APPOINTMENT':
+            sql = """
+                SELECT * FROM appointments
+                WHERE status = "Closed"
+            """
+        else:
+            sql = f"""
+                SELECT * FROM appointments
+                WHERE status = "Closed" AND type = '{appt_type}'
+            """
 
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
