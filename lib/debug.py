@@ -5,8 +5,10 @@ from classes.Sale import Sale
 from classes.Service import Service
 from classes.Testdrive import Testdrive
 from classes.Customer import Customer
-from classes.Employee import Employee
+
 from helpers import rand_car, generate_fleet
+from classes.Salesman import Salesman
+from classes.ServiceTech import ServiceTech
 
 # python lib/debug.py
 
@@ -23,8 +25,11 @@ def seed_db():
     for car in fleet:
         car.save()
 
-
-
+td = Testdrive('TESTDRIVE', datetime.now(), 2, 2, 2, 2, 'teststring')
+sale = Sale('SALE', datetime.now(), 1, 1, 1, 1)
+service = Service('SERVICE', datetime.now(), 3, 3, 3, 3)
+salesman = Salesman('Landon', 80000, datetime.now(), 1)
+st = ServiceTech('Landon', 80000, datetime.now(), 1)
 # Appointment.drop_table()
 # Appointment.create_table()
 # Sale.drop_table()

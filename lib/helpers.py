@@ -130,6 +130,7 @@ def rand_car():
 def generate_fleet():
     fleet = []
 
+
     for _ in range(50):
         car = rand_car()
         fleet.append(car)
