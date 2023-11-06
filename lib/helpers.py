@@ -4,6 +4,8 @@ from datetime import datetime
 import random
 
 current_date = datetime.now()
+year_range = range(current_date.year - 100, current_date.year + 1)
+miles_range = range(300_001)
 
 def parse_date(datetime_obj):
     return f'{datetime_obj.month}/{datetime_obj.day}/{datetime_obj.year}'
@@ -93,14 +95,19 @@ def rand_vehicle():
     rand_model = random.choice(available_models)
     return (rand_make, rand_model[0], rand_model[1])
 
-# TODO The further you are away from current_date.year, the smaller your weight is for random.choice
 def rand_year():
-    year = random.randint(current_date.year - 100, current_date.year)
-    return year
+    years = list(year_range)
+    weights = [i - current_date.year + 75 for i in years]  # Weights favoring recent years
+    return random.choices(years, weights=weights)[0]
 
-# TODO Weight miles to favor average miles and not extreme values.
 def rand_miles():
-    return random.randint(0, 300_001)
+    miles = list(miles_range)
+    weights = [
+        10 if i < 100000 else
+        3 if i < 200_000 else
+        1 for i in miles
+    ]  
+    return random.choices(miles, weights=weights)[0]
 
 def rand_fuel_type():
     options = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
