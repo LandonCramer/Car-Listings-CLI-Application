@@ -14,11 +14,11 @@ class Car:
         self.new = new
         self.make = make
         self.model = model
-        self.year = year
         self.miles = miles
         self.fuel_type = fuel_type
         self.color = color
         self.transmission = transmission
+        self.year = year
         self.price = price
         self.id_ = id_
         # TODO Why do the owner_id and appt_id show up twice on dir()?
@@ -139,7 +139,6 @@ class Car:
         else:
             self._transmission = transmission
 
-
     # TODO Bell curve price weights
     @property
     def price(self):
@@ -185,28 +184,28 @@ class Car:
             self._id_ = id_
 
     @property
-    def owner_id_(self):
-        return self._owner_id_ 
-    @owner_id_.setter
-    def owner_id_(self, owner_id_):
-        if not owner_id_:
-            self._owner_id_ = None
-        elif not isinstance(owner_id_, int) or isinstance(owner_id_, bool):
+    def owner_id(self):
+        return self._owner_id
+    @owner_id.setter
+    def owner_id(self, owner_id):
+        if not owner_id:
+            self._owner_id = None
+        elif not isinstance(owner_id, int) or isinstance(owner_id, bool):
             raise TypeError("Owner ID must be an integer.")
         else:
-            self._owner__id_ = owner_id_
+            self._owner__id = owner_id
 
     @property
-    def appt_id_(self):
-        return self._appt_id_ 
-    @appt_id_.setter
-    def appt_id_(self, appt_id_):
-        if not appt_id_:
-            self._appt_id_ = None
-        elif not isinstance(appt_id_, int) or isinstance(appt_id_, bool):
+    def appt_id(self):
+        return self._appt_id 
+    @appt_id.setter
+    def appt_id(self, appt_id):
+        if not appt_id:
+            self._appt_id = None
+        elif not isinstance(appt_id, int) or isinstance(appt_id, bool):
             raise TypeError("Appointment ID must be an integer.")
         else:
-            self._appt__id_ = appt_id_
+            self._appt_id = appt_id
 
     # TODO Bell curve weights. Right now all cars seems to be poor for some reason.
     @property
@@ -274,28 +273,38 @@ class Car:
     
     @classmethod
     def new_from_db(cls, row):
-        CURSOR.execute(
-            '''
-            SELECT * FROM CARS
-            ORDER BY id_ DESC
-            LIMIT 1;
-            '''
-        )
-        row = CURSOR.fetchone()
+        pass
+        # print((row[5]), row[5] in range(current_date.year - 100, current_date.year + 1))
+
+        # print(
+        #         row[1], 
+        #         row[2],
+        #         row[3], 
+        #         row[4], 
+        #         row[5], 
+        #         row[6], 
+        #         row[7], 
+        #         row[8], 
+        #         row[9], 
+        #         row[10], 
+        #         row[0], 
+        #         row[11], 
+        #         row[12]
+        # )
         return cls(
-                row[1], 
-                row[2], 
-                row[3], 
-                row[4], 
-                row[5], 
-                row[6], 
-                row[7], 
-                row[8], 
-                row[9], 
-                row[10], 
-                row[0], 
-                row[11], 
-                row[12]
+                row[1], # vehicle_type
+                bool(row[2]), # new
+                row[3], # make
+                row[4], # model
+                row[6], # miles
+                row[7], # fuel_type
+                row[8], # color
+                bool(row[9]), # transmission
+                row[5], # year
+                row[10], # price
+                row[0], # id_
+                row[11], # owner_id
+                row[12] # appt_id
                 )
 
     @classmethod
@@ -307,8 +316,9 @@ class Car:
             '''
         )
         rows = CURSOR.fetchall()
+        # print([(row[5], type(row[5]), row[5] in range(current_date.year - 100, current_date.year + 1)) for row in rows])
         return [cls.new_from_db(row) for row in rows]
-
+    
     @classmethod
     def find_by_id(cls, id_):
         CURSOR.execute(
@@ -370,7 +380,7 @@ class Car:
             DELETE FROM cars
             WHERE id_ = ?
             ''',
-            (self.id_)
+            (self.id_,)
         )
         CONN.commit()
         self.id = None
