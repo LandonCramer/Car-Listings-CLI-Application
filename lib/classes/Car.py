@@ -371,7 +371,23 @@ class Car:
     def cars_in_shop(cls):
         pass
 
-    
+    def test_driven_cars(cls):
+        pass
+
+    def owned_cars(cls):
+        pass
+
+    def top_cars(cls):
+        pass
+
+    def search_cars(cls):
+        pass
+
+    def filter_cars(cls):
+        pass
+
+    def get_cars_by_person(cls):
+        pass
 
     # ! Instance Methods
     def appts(self):
@@ -381,6 +397,15 @@ class Car:
         pass
 
     def test_drives(self):
+        pass
+
+    def assoc_people(self):
+        pass
+
+    def employees(self):
+        pass
+
+    def customers(self): 
         pass
 
     def list_details(self):
