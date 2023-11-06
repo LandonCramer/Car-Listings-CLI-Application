@@ -8,9 +8,9 @@ class Testdrive(Appointment):
         super().__init__(type_, date, customer_id, employee_id, car_id, id_)
         self.notes = notes
 
-    # *********************
+    # *************
     # CREATE TABLE
-    # *********************
+    # *************
 
     @classmethod
     def create_table(cls):

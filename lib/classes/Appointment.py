@@ -34,7 +34,7 @@ class Appointment:
         
         CURSOR.execute(sql)
         CONN.commit()
-        
+
     # ***********
     # PROPERTIES
     # ***********
@@ -107,36 +107,57 @@ class Appointment:
         else:
             self._id_ = id_
 
-    # # *************
-    # # CLASSMETHODS
-    # # *************
+    # *************
+    # CLASSMETHODS
+    # *************
 
-    # @classmethod
-    # def get_all(cls):
-    #     pass
+    @classmethod
+    def instance_from_db(cls, row):
+        instance_id = row[0]
+        row.pop(0)
 
-    # @classmethod
-    # def get_appts_by_type(cls, type_):
-    #     pass
+        if cls.__name__ == 'Sale':
+            a, b, c, d, e, f, g = row
+            updated = cls(a, b, c, d, e, f, g)
+        elif cls.__name__ == 'Service':
+            a, b, c, d, e, f, g, h = row
+            updated = cls(a, b, c, d, e, f, g, h)
+        elif cls.__name__ == 'Testdrive':
+            a, b, c, d, e, f = row
+            updated = cls(a, b, c, d, e, f)
+        else:
+            raise ValueError("Invalid class name.")
+        
+        cls.all[instance_id] = updated
+        return updated
 
-    # @classmethod
-    # def get_appts_by_date(cls, date):
-    #     pass
+    @classmethod
+    def get_all(cls):
+        table_name = cls.__name__.lower() + 's'
+        pass
 
-    # @classmethod
-    # def get_appts_by_customer_id(cls, id):
-    #     pass
+    @classmethod
+    def get_appts_by_date(cls, date):
+        table_name = cls.__name__.lower() + 's'
+        pass
 
-    # @classmethod
-    # def get_appts_by_employee_id(cls, id):
-    #     pass
+    @classmethod
+    def get_appts_by_customer_id(cls, id):
+        table_name = cls.__name__.lower() + 's'
+        pass
 
-    # @classmethod
-    # def get_appts_by_car_id(cls, id):
-    #     pass
+    @classmethod
+    def get_appts_by_employee_id(cls, id):
+        table_name = cls.__name__.lower() + 's'
+        pass
+
+    @classmethod
+    def get_appts_by_car_id(cls, id):
+        table_name = cls.__name__.lower() + 's'
+        pass
 
     # ************
-    # ORM METHODS
+    # CRUD METHODS
     # ************
 
     def save(self):

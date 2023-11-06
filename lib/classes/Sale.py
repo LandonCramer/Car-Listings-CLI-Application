@@ -9,9 +9,9 @@ class Sale(Appointment):
         self.balance = balance
         self.status = status
 
-    # *********************
+    # *************
     # CREATE TABLE
-    # *********************
+    # *************
 
     @classmethod
     def create_table(cls):

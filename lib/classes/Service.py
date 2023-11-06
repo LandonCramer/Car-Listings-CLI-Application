@@ -10,9 +10,9 @@ class Service(Appointment):
         self.estimate = estimate
         self.status = status
 
-    # *********************
+    # *************
     # CREATE TABLE
-    # *********************
+    # *************
 
     @classmethod
     def create_table(cls):
