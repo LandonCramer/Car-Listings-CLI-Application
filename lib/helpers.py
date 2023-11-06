@@ -124,7 +124,7 @@ def rand_car():
 def generate_fleet():
     fleet = []
 
-    for _ in range(50):
+    for _ in range():
         fleet.append(rand_car())
     
     return fleet

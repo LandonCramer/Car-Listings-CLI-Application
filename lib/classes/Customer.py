@@ -2,10 +2,11 @@ import re
 from __init__ import CURSOR, CONN
 
 class Customer:
-    def __init__(self, name, phone, id_ = None):
+    def __init__(self, name, phone, join_date, id_ = None):
         self._name = name
         self._phone = phone
-        self.id_ = id_
+        self._join_date = join_date
+        self._id = id_
     
     @property
     def name(self):
@@ -38,7 +39,7 @@ class Customer:
     @join_date.setter
     def join_date(self, join_date):
         # Add checks???????????????????
-        self._foin_date = join_date
+        self._join_date = join_date
     
     @property
     def id_(self):
