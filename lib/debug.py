@@ -6,15 +6,15 @@ from classes.Service import Service
 from classes.Testdrive import Testdrive
 from classes.Customer import Customer
 
-from helpers import rand_car, generate_fleet
+import helpers
 from classes.Salesman import Salesman
 from classes.ServiceTech import ServiceTech
+from classes.Manager import Manager
 
 # python lib/debug.py
 
 # cust = Customer('Landon', 9995558765, 1)
-# emp = Employee('Matteo', 75_000, datetime.now(), 1)
-fleet = generate_fleet()
+fleet = helpers.generate_fleet()
 
 def reset_db():
     Car.drop_table()
@@ -30,6 +30,8 @@ sale = Sale('SALE', datetime.now(), 1, 1, 1, 1)
 service = Service('SERVICE', datetime.now(), 3, 3, 3, 3)
 salesman = Salesman('Landon', 80000, datetime.now(), 1)
 st = ServiceTech('Landon', 80000, datetime.now(), 1)
+mgr = Manager('Landon', 80000, datetime.now(), 1)
+
 # Appointment.drop_table()
 # Appointment.create_table()
 # Sale.drop_table()

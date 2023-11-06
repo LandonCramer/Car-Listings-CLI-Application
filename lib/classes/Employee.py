@@ -9,7 +9,6 @@ class Employee:
     def __init__(self, name, salary, hire_date, id_ = None, job_title = None):
         self.name = name
         self.salary = salary
-        
         self.hire_date = hire_date
         self.id_ = id_
         self.job_title = helpers.pascal_to_words(type(self).__name__)
