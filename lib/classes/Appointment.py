@@ -51,13 +51,15 @@ class Appointment:
 
     @property
     def date(self):
-        return parse_date(self._date)
+        return self._date
     @date.setter
     def date(self, date):
-        if not isinstance(date, datetime):
-            raise TypeError('Appointment date must be a valid Date object.')
-        else:
+        if isinstance(date, datetime):
+            self._date = parse_date(date)
+        elif isinstance(date, str):
             self._date = date
+        else:
+            raise TypeError('Date must be a valid Date object or string.')
 
     @property
     def customer_id(self):
@@ -107,14 +109,16 @@ class Appointment:
         else:
             self._id_ = id_
 
-    # *************
-    # CLASSMETHODS
-    # *************
+    # **************
+    # CLASS METHODS
+    # **************
 
     @classmethod
     def instance_from_db(cls, row):
         instance_id = row[0]
+        row = list(row)
         row.pop(0)
+        row = tuple(row)
 
         if cls.__name__ == 'Sale':
             a, b, c, d, e, f, g = row
@@ -134,31 +138,65 @@ class Appointment:
     @classmethod
     def get_all(cls):
         table_name = cls.__name__.lower() + 's'
-        pass
+
+        sql = f"""
+            SELECT * FROM {table_name}
+        """
+        
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
 
     @classmethod
     def get_appts_by_date(cls, date):
         table_name = cls.__name__.lower() + 's'
-        pass
+
+        sql = f"""
+            SELECT * FROM {table_name}
+            WHERE date = {date}
+        """
+
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
 
     @classmethod
     def get_appts_by_customer_id(cls, id):
         table_name = cls.__name__.lower() + 's'
-        pass
+        
+        sql = f"""
+            SELECT * FROM {table_name}
+            WHERE customer_id = {id}
+        """
+
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
 
     @classmethod
     def get_appts_by_employee_id(cls, id):
         table_name = cls.__name__.lower() + 's'
-        pass
+        
+        sql = f"""
+            SELECT * FROM {table_name}
+            WHERE employee_id = {id}
+        """
+
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
 
     @classmethod
     def get_appts_by_car_id(cls, id):
         table_name = cls.__name__.lower() + 's'
-        pass
+        
+        sql = f"""
+            SELECT * FROM {table_name}
+            WHERE car_id = {id}
+        """
 
-    # ************
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+
+    # *************
     # CRUD METHODS
-    # ************
+    # *************
 
     def save(self):
 
@@ -190,8 +228,7 @@ class Appointment:
 
         else:
             raise ValueError('We do not offer that service.')
-        
-        
+          
         CURSOR.execute(sql, tuple(attrs))
         CONN.commit()
 
