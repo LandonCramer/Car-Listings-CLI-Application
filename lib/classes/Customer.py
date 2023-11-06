@@ -1,5 +1,6 @@
 import re
 from classes.__init__ import CURSOR, CONN
+from helpers import parse_date
 
 class Customer:
     def __init__(self, name, phone, join_date, id_ = None):
@@ -111,3 +112,19 @@ class Customer:
         """
         CURSOR.execute(sql, (self.id))
         CONN.commit()
+
+
+
+
+#New for Monday
+
+    @classmethod
+    def new_from_db(cls, row):
+        return cls(
+            row[1], #name
+            row[2], #phone
+            parse_date(row[3]), #joindate
+            row[0] #id_
+        )
+    
+  

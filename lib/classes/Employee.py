@@ -1,6 +1,9 @@
 from datetime import datetime
 from helpers import parse_date
 from classes.__init__ import CURSOR, CONN
+from classes.Customer import Customer
+from classes.Car import Car
+from classes.Appointment import Appointment
 
 
 # I added Job_title and hire_date not sure if you want it but just in case...
@@ -137,3 +140,64 @@ class Employee:
         """
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
+
+
+
+
+#Monday new code
+    @classmethod
+    def new_from_db(cls, row):
+        return cls(
+            row[1], #name
+            row[2], #salary
+            parse_date(row[4]), #hire_date
+            row[0], #id_
+            row[3] #job_title
+        )
+    
+
+    @classmethod
+    def get_employees_by_role(cls, role):
+        sql = """
+            SELECT *
+            FROM employees
+            WHERE job_title = ?
+        """
+        rows = CURSOR.execute(sql, (role,)).fetchall()
+        return [cls.new_from_db(row) for row in rows]
+    
+    @classmethod
+    def employee_of_the_month(cls):
+        pass
+
+
+    def cars(self):
+        sql = """
+            SELECT cars.*
+            FROM cars
+            INNER JOIN employees_cars ON cars.id = employees_cars.car_id
+            WHERE employees_cars.employee_id = ?
+        """
+        rows = CURSOR.execute(sql, (self.id_,)).fetchall()
+        return [Car.new_from_db(row) for row in rows]
+
+
+    def customers(self):
+        sql = """
+            SELECT customers.* 
+            FROM customers 
+            INNER JOIN employees_customers ON customers.id = employees_customers.customer_id
+            WHERE employees_customers.employee_id = ?
+        """
+        rows = CURSOR.execute(sql, (self.id_,)).fetchall()
+        return [Customer.new_from_db(row) for row in rows]
+    
+    def appointments(self):
+        sql = """
+            SELECT appointments.*
+            FROM appointments
+            INNER JOIN employees_appointments ON appointments.id = employees_appointments.appointment_id
+            WHERE employees_appointments.employee_id = ?
+        """
+        rows = CURSOR.execute(sql, (self.id_,)).fetchall()
+        return [Appointment.new_from_db(row) for row in rows]
