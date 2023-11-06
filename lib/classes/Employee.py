@@ -1,6 +1,6 @@
 from datetime import datetime
 from helpers import parse_date
-from __init__ import CURSOR, CONN
+from classes.__init__ import CURSOR, CONN
 
 
 # I added Job_title and hire_date not sure if you want it but just in case...

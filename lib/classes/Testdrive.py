@@ -4,8 +4,8 @@ from classes.Appointment import Appointment
 class Testdrive(Appointment):
     all = {}
 
-    def __init__(self, type_, date, customer_id, employee_id, car_id, id=None, notes="He went through a McDonalds drive-thru and ordered a 50 pc McNuggets."):
-           
+    def __init__(self, type_, date, customer_id, employee_id, car_id, id=None, notes="He went through a McDonalds drive-thru and ordered a 50 pc McNuggets." ):
+        super().__init__(type_, date, customer_id, employee_id, car_id, id)
         self.notes = notes
     
     # *********************

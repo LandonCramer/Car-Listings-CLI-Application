@@ -4,9 +4,11 @@ from classes.Appointment import Appointment
 class Sale(Appointment):
     all = {}
 
-    def __init__(self, type_, date, customer_id, employee_id, car_id, id=None, balance=50_000, status=True):
+    def __init__(self, type_, date, customer_id, employee_id, car_id, id=None, balance=50000, status=True):
+        super().__init__(type_, date, customer_id, employee_id, car_id, id)
         self.balance = balance
         self.status = status
+
     
 #     # *********************
 #     # CREATE / DROP TABLES

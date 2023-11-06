@@ -1,5 +1,5 @@
 import re
-from __init__ import CURSOR, CONN
+from classes.__init__ import CURSOR, CONN
 
 class Customer:
     def __init__(self, name, phone, join_date, id_ = None):

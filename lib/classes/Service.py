@@ -5,10 +5,10 @@ class Service(Appointment):
     all = {}
 
     def __init__(self, type_, date, customer_id, employee_id, car_id, id=None, reason_for_visit='The radio says demonic-sounding things in Latin on every station.', estimate=500, status=True):
+        super().__init__(type_, date, customer_id, employee_id, car_id, id)
         self.reason_for_visit = reason_for_visit
-        estimate = estimate
+        self.estimate = estimate
         self.status = status
-    
 #     # *********************
 #     # CREATE / DROP TABLES
 #     # *********************
