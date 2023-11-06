@@ -7,6 +7,7 @@ from classes.Testdrive import Testdrive
 from classes.Customer import Customer
 
 import helpers
+from classes.Employee import Employee
 from classes.Salesman import Salesman
 from classes.ServiceTech import ServiceTech
 from classes.Manager import Manager

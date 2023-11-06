@@ -9,7 +9,7 @@ class Car:
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
-    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_ = None, owner_id = None, appt_id = None):
+    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_ = None, owner_id = None, sale_id = None):
         self.vehicle_type = vehicle_type
         self.new = new
         self.make = make
@@ -21,9 +21,8 @@ class Car:
         self.year = year
         self.price = price
         self.id_ = id_
-        # TODO Why do the owner_id and appt_id show up twice on dir()?
         self.owner_id = owner_id
-        self.appt_id = appt_id
+        self.sale_id = sale_id
         type(self).all.append(self)
 
     # ! Properties
@@ -196,16 +195,16 @@ class Car:
             self._owner__id = owner_id
 
     @property
-    def appt_id(self):
-        return self._appt_id 
-    @appt_id.setter
-    def appt_id(self, appt_id):
-        if not appt_id:
-            self._appt_id = None
-        elif not isinstance(appt_id, int) or isinstance(appt_id, bool):
+    def sale_id(self):
+        return self._sale_id 
+    @sale_id.setter
+    def sale_id(self, sale_id):
+        if not sale_id:
+            self._sale_id = None
+        elif not isinstance(sale_id, int) or isinstance(sale_id, bool):
             raise TypeError("Appointment ID must be an integer.")
         else:
-            self._appt_id = appt_id
+            self._sale_id = sale_id
 
     # TODO Bell curve weights. Right now all cars seems to be poor for some reason.
     @property
@@ -247,14 +246,14 @@ class Car:
                 transmission INTEGER,
                 price INTEGER,
                 owner_id INTEGER,
-                appt_id INTEGER
+                sale_id INTEGER
             );
             '''
         )
         CONN.commit()
 
     # FOREIGN KEY owner_id INTEGER references customers(id)
-    # FOREIGN KEY appt_id INTEGER references appointments(id)
+    # FOREIGN KEY sale_id INTEGER references appointments(id)
 
     @classmethod
     def drop_table(cls):
@@ -266,8 +265,8 @@ class Car:
         CONN.commit()
     
     @classmethod
-    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, appt_id):
-        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, appt_id)
+    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id):
+        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id)
         new_car.save()
         return new_car
     
@@ -286,7 +285,7 @@ class Car:
                 row[10], # price
                 row[0], # id_
                 row[11], # owner_id
-                row[12] # appt_id
+                row[12] # sale_id
                 )
 
     @classmethod
@@ -326,7 +325,7 @@ class Car:
     #     row = CURSOR.fetchone()
     #     return cls.new_from_db(row) if row else None
     
-    # def find_or_create_by(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, appt_id):
+    # def find_or_create_by(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id):
     #     return cls.find_by_name()
 
     # ! ORM Instance Methods
@@ -334,10 +333,10 @@ class Car:
     def save(self):
         CURSOR.execute(
             '''
-            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, appt_id)
+            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''',
-            (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_, self.owner_id, self.appt_id)
+            (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_, self.owner_id, self.sale_id)
         )
         CONN.commit()
         self.id = CURSOR.lastrowid
@@ -347,10 +346,10 @@ class Car:
         CURSOR.execute(
             '''
             UPDATE cars
-            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?, owner_id = ?, appt_id = ?
+            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?, owner_id = ?, sale_id = ?
             WHERE id_ = ?
             ''',
-            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owner_id, self.appt_id)
+            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owner_id, self.sale_id)
         )
         CONN.commit()
         return self
@@ -367,7 +366,23 @@ class Car:
         self.id = None
         return self
 
+    # ! Class Methods
+    @classmethod
+    def cars_in_shop(cls):
+        pass
+
+    
+
     # ! Instance Methods
+    def appts(self):
+        pass
+
+    def services(self):
+        pass
+
+    def test_drives(self):
+        pass
+
     def list_details(self):
         print(f'--- {self.year} {self.make.upper()} {self.model.upper()} ---\nColor: {self.color}\nFuel Type: {self._fuel_type}\nMiles: {self.miles}\nCondition: {self.condition}\nPrice: {self.price}')
     
