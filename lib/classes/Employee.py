@@ -6,12 +6,13 @@ from classes.__init__ import CURSOR, CONN
 # I added Job_title and hire_date not sure if you want it but just in case...
 
 class Employee:
-    def __init__(self, name, salary, job_title, hire_date, id_ = None):
+    def __init__(self, name, salary, hire_date, id_ = None, job_title = None):
         self.name = name
         self.salary = salary
-        self.job_title = job_title
+        
         self.hire_date = hire_date
         self.id_ = id_
+        self.job_title = type(self).__name__
     
     @property
     def name(self):
@@ -39,18 +40,20 @@ class Employee:
         else:
             self._salary = salary
 
-    @property
-    def job_title(self):
-        return self._job_title
+    # @property
+    # def job_title(self):
+    #     return self._job_title
 
-    @job_title.setter
-    def job_title(self, job_title):
-        if isinstance(job_title, str) and len(job_title) > 0:
-            self._job_title = job_title
-        else:
-            raise ValueError(
-                "job_title must be a non-empty string"
-            )
+    # @job_title.setter
+    # def job_title(self):
+    #     self._job_title = str(type(self))
+    # def job_title(self, job_title):
+    #     if isinstance(job_title, str) and len(job_title) > 0:
+    #         self._job_title = job_title
+    #     else:
+    #         raise ValueError(
+    #             "job_title must be a non-empty string"
+    #         )
     
     @property
     def hire_date(self):
