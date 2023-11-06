@@ -40,8 +40,6 @@ class Appointment:
 
     @classmethod
     def drop_table(cls):
-        table_name = cls.__name__.lower() + 's'
-
         sql = f"""
             DROP TABLE IF EXISTS appointments
         """
@@ -132,29 +130,43 @@ class Appointment:
         instance_id = row[0]
         row = list(row)
         row.pop(0)
-        row = tuple(row)
 
-        if cls.__name__ == 'Sale':
-            a, b, c, d, e, f, g = row
-            updated = cls(a, b, c, d, e, f, g)
-        elif cls.__name__ == 'Service':
-            a, b, c, d, e, f, g, h = row
-            updated = cls(a, b, c, d, e, f, g, h)
-        elif cls.__name__ == 'Testdrive':
-            a, b, c, d, e, f = row
-            updated = cls(a, b, c, d, e, f)
+        relevant_values = [item for item in row if item != 'N/A']
+
+        if row[0] == 'SALE':
+            a, b, c, d, e, f, g = relevant_values
+            from classes.Sale import Sale
+            updated = Sale(a, b, c, d, e, f, g)
+        elif row[0] == 'SERVICE':
+            a, b, c, d, e, f, g, h = relevant_values
+            from classes.Service import Service
+            updated = Service(a, b, c, d, e, f, g, h)
+        elif row[0] == 'TESTDRIVE':
+            a, b, c, d, e, f = relevant_values
+            from classes.Testdrive import Testdrive
+            updated = Testdrive(a, b, c, d, e, f)
         else:
             raise ValueError("Invalid class name.")
         
+        updated.id_ = instance_id
         cls.all[instance_id] = updated
+
         return updated
 
     @classmethod
     def get_all(cls):
-        table_name = cls.__name__.lower() + 's'
+        sql = """
+            SELECT * FROM appointments
+        """
+        
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
 
+    @classmethod
+    def get_appts_by_type(cls, type):
         sql = f"""
-            SELECT * FROM {table_name}
+            SELECT * FROM appointments
+            WHERE type = '{type}'
         """
         
         rows = CURSOR.execute(sql).fetchall()
@@ -162,11 +174,9 @@ class Appointment:
 
     @classmethod
     def get_appts_by_date(cls, date):
-        table_name = cls.__name__.lower() + 's'
-
         sql = f"""
-            SELECT * FROM {table_name}
-            WHERE date = {date}
+            SELECT * FROM appointments
+            WHERE date = '{date}'
         """
 
         rows = CURSOR.execute(sql).fetchall()
@@ -174,10 +184,8 @@ class Appointment:
 
     @classmethod
     def get_appts_by_customer_id(cls, id):
-        table_name = cls.__name__.lower() + 's'
-        
         sql = f"""
-            SELECT * FROM {table_name}
+            SELECT * FROM appointments
             WHERE customer_id = {id}
         """
 
@@ -186,10 +194,8 @@ class Appointment:
 
     @classmethod
     def get_appts_by_employee_id(cls, id):
-        table_name = cls.__name__.lower() + 's'
-        
         sql = f"""
-            SELECT * FROM {table_name}
+            SELECT * FROM appointments
             WHERE employee_id = {id}
         """
 
@@ -198,11 +204,29 @@ class Appointment:
 
     @classmethod
     def get_appts_by_car_id(cls, id):
-        table_name = cls.__name__.lower() + 's'
-        
         sql = f"""
-            SELECT * FROM {table_name}
+            SELECT * FROM appointments
             WHERE car_id = {id}
+        """
+
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+    
+    @classmethod
+    def get_active_appts(cls):
+        sql = """
+            SELECT * FROM appointments
+            WHERE status = "Active"
+        """
+
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+    
+    @classmethod
+    def get_closed_appts(cls):
+        sql = """
+            SELECT * FROM appointments
+            WHERE status = "Closed"
         """
 
         rows = CURSOR.execute(sql).fetchall()

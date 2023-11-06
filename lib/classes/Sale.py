@@ -34,31 +34,3 @@ class Sale(Appointment):
             raise TypeError("Status must be a string.")
         else:
             self._status = status
-
-    # **************
-    # CLASS METHODS
-    # **************
-
-    @classmethod
-    def get_active_appts(cls):
-        table_name = cls.__name__.lower() + 's'
-        
-        sql = f"""
-            SELECT * FROM {table_name}
-            WHERE status = "Active"
-        """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-    
-    @classmethod
-    def get_closed_appts(cls):
-        table_name = cls.__name__.lower() + 's'
-        
-        sql = f"""
-            SELECT * FROM {table_name}
-            WHERE status = "Closed"
-        """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
