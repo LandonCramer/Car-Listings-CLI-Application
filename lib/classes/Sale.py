@@ -8,25 +8,6 @@ class Sale(Appointment):
         super().__init__(type_, date, customer_id, employee_id, car_id, id_)
         self.balance = balance
         self.status = status
-
-    # *************
-    # CREATE TABLE
-    # *************
-
-    @classmethod
-    def create_table(cls):
-        sql = """
-            CREATE TABLE IF NOT EXISTS sales (
-            id INTEGER PRIMARY KEY,
-            type TEXT,
-            date TEXT,
-            customer_id INTEGER,
-            employee_id INTEGER,
-            car_id INTEGER,
-            balance INTEGER,
-            status INTEGER)
-        """
-        super().create_table(sql)
  
     # ***********
     # PROPERTIES

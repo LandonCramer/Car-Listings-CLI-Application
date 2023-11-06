@@ -8,24 +8,6 @@ class Testdrive(Appointment):
         super().__init__(type_, date, customer_id, employee_id, car_id, id_)
         self.notes = notes
 
-    # *************
-    # CREATE TABLE
-    # *************
-
-    @classmethod
-    def create_table(cls):
-        sql = """
-            CREATE TABLE IF NOT EXISTS testdrives (
-            id INTEGER PRIMARY KEY,
-            type TEXT,
-            date TEXT,
-            customer_id INTEGER,
-            employee_id INTEGER,
-            car_id INTEGER,
-            notes TEXT)
-        """
-        super().create_table(sql)
-
     # ***********
     # PROPERTIES
     # ***********

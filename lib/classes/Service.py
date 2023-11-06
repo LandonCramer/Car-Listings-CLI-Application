@@ -10,26 +10,6 @@ class Service(Appointment):
         self.estimate = estimate
         self.status = status
 
-    # *************
-    # CREATE TABLE
-    # *************
-
-    @classmethod
-    def create_table(cls):
-        sql = """
-            CREATE TABLE IF NOT EXISTS services (
-            id INTEGER PRIMARY KEY,
-            type TEXT,
-            date TEXT,
-            customer_id INTEGER,
-            employee_id INTEGER,
-            car_id INTEGER,
-            reason_for_visit TEXT,
-            estimate INTEGER,
-            status INTEGER)
-        """
-        super().create_table(sql)
-
     # ***********
     # PROPERTIES
     # ***********

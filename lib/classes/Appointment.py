@@ -20,7 +20,21 @@ class Appointment:
     # *********************
 
     @classmethod
-    def create_table(cls, sql):
+    def create_table(cls):
+        sql = """
+            CREATE TABLE IF NOT EXISTS appointments (
+            id INTEGER PRIMARY KEY,
+            type TEXT,
+            date TEXT,
+            customer_id INTEGER,
+            employee_id INTEGER,
+            car_id INTEGER,
+            balance INTEGER,
+            reason_for_visit TEXT,
+            estimate INTEGER,
+            notes TEXT,
+            status INTEGER)
+        """
         CURSOR.execute(sql)
         CONN.commit()
 
@@ -29,7 +43,7 @@ class Appointment:
         table_name = cls.__name__.lower() + 's'
 
         sql = f"""
-            DROP TABLE IF EXISTS {table_name}
+            DROP TABLE IF EXISTS appointments
         """
         
         CURSOR.execute(sql)
@@ -138,7 +152,7 @@ class Appointment:
     @classmethod
     def get_all(cls):
         table_name = cls.__name__.lower() + 's'
-        
+
         sql = f"""
             SELECT * FROM {table_name}
         """
@@ -199,37 +213,25 @@ class Appointment:
     # *************
 
     def save(self):
+        attr_dict = self.__dict__
+        all_keys = ['_type_', '_date', '_customer_id', '_employee_id', '_car_id', '_balance', '_reason_for_visit', '_estimate', '_notes', '_status']
+        all_values = []
 
-        attrs = [self.type_, self.date, self.customer_id, self.employee_id, self.car_id]
+        for key in all_keys:
+            if key in attr_dict.keys():
+                all_values.append(attr_dict[key])
+            else:
+                all_values.append('N/A')
 
-        if self.type_ == 'SALE':
+        if self.type_ == 'SALE' or self.type_ == 'SERVICE' or self.type_ == 'TESTDRIVE':
             sql = """
-                INSERT INTO sales (type, date, customer_id, employee_id, car_id, balance, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO appointments (type, date, customer_id, employee_id, car_id, balance, reason_for_visit, estimate, notes, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
-            attrs.append(self.balance)
-            attrs.append(self.status)
-
-        elif self.type_ == 'SERVICE':
-            sql = """
-                INSERT INTO services (type, date, customer_id, employee_id, car_id, reason_for_visit, estimate, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """
-            attrs.append(self.reason_for_visit)
-            attrs.append(self.estimate)
-            attrs.append(self.status)
-
-        elif self.type_ == 'TESTDRIVE':
-            sql = """
-                INSERT INTO testdrives (type, date, customer_id, employee_id, car_id, notes)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """
-            attrs.append(self.notes)
-
         else:
             raise ValueError('We do not offer that service.')
           
-        CURSOR.execute(sql, tuple(attrs))
+        CURSOR.execute(sql, tuple(all_values))
         CONN.commit()
 
         self.id_ = CURSOR.lastrowid
@@ -251,9 +253,7 @@ class Appointment:
             raise ValueError("Invalid class name.")
   
         appointment.save()
-
         cls.all[appointment.id_] = appointment
-
         return appointment
     
     def update(self):
@@ -285,13 +285,11 @@ class Appointment:
         CONN.commit()
 
     def delete(self):
-        table_name = type(self).__name__.lower() + 's'
-
-        sql = f"""
-            DELETE FROM {table_name}
-            WHERE id = ?
+        sql = """
+            DELETE FROM appointments
+            WHERE type_ = ? AND id = ?
         """
-        CURSOR.execute(sql, (self.id_,))
+        CURSOR.execute(sql, (self.type_, self.id_,))
         CONN.commit()
 
         del type(self).all[self.id_]
