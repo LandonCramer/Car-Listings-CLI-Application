@@ -1,8 +1,8 @@
 from datetime import datetime
 from helpers import parse_date
-from classes.Sale import Sale
-from classes.Service import Service
-from classes.Testdrive import Testdrive
+# from classes.Sale import Sale
+# from classes.Service import Service
+# from classes.Testdrive import Testdrive
 from classes.__init__ import CURSOR, CONN
 
 class Appointment:

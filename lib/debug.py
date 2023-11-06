@@ -23,7 +23,9 @@ def seed_db():
     for car in fleet:
         car.save()
 
-
+td = Testdrive('TESTDRIVE', datetime.now(), 2, 2, 2, 2, 'teststring')
+sale = Sale('SALE', datetime.now(), 1, 1, 1, 1)
+service = Service('SERVICE', datetime.now(), 3, 3, 3, 3)
 
 # Appointment.drop_table()
 # Appointment.create_table()
