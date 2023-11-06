@@ -1,5 +1,5 @@
 from datetime import datetime
-from helpers import parse_date
+import helpers
 from classes.__init__ import CURSOR, CONN
 from classes.Customer import Customer
 from classes.Car import Car
@@ -15,7 +15,7 @@ class Employee:
         
         self.hire_date = hire_date
         self.id_ = id_
-        self.job_title = type(self).__name__
+        self.job_title = helpers.pascal_to_words(type(self).__name__)
     
     @property
     def name(self):
@@ -60,14 +60,15 @@ class Employee:
     
     @property
     def hire_date(self):
-        return parse_date(self._hire_date)
-    
+        return self._hire_date
     @hire_date.setter
     def hire_date(self, hire_date):
-        if not isinstance(hire_date, datetime):
-            raise TypeError('Hire date must be a valid Date object.')
-        else:
+        if isinstance(hire_date, datetime):
+            self._hire_date = helpers.parse_date(hire_date)
+        elif isinstance(hire_date, str):
             self._hire_date = hire_date
+        else:
+            raise TypeError('Date must be a valid Date object or string.')
 
     @property
     def id_(self):
@@ -95,14 +96,29 @@ class Employee:
         """
         CURSOR.execute(sql)
         CONN.commit()
+    
+    @classmethod
+    def drop_table(cls):
+        sql = """
+            DROP TABLE IF EXISTS employees
+        """
+        
+        CURSOR.execute(sql)
+        CONN.commit()
+
 
     @classmethod
     def get_all(cls):
-        """ Return a list containing Employee objects per row in the table """
-        sql = """
-            SELECT *
-            FROM employees
-        """
+        if cls == Employee:
+            sql = """
+                SELECT * FROM employees
+            """
+        else:
+            sql = f"""
+                SELECT * FROM employees
+                WHERE job_title = '{helpers.pascal_to_words(cls.__name__)}'
+            """     
+
         rows = CURSOR.execute(sql).fetchall()
         return [cls.new_from_db(row) for row in rows]
 
@@ -112,7 +128,7 @@ class Employee:
             INSERT INTO employees (name, salary, job_title, hire_date)
             VALUES (?, ?, ?, ?)
         """
-        CURSOR.execute(sql, (self.name, self.salary, self.job_title, self.hire_date.strftime('%Y-%m-%d')))
+        CURSOR.execute(sql, (self.name, self.salary, self.job_title, self.hire_date))
         CONN.commit()
 
     @classmethod
@@ -129,7 +145,7 @@ class Employee:
             SET name = ?, salary = ?, job_title = ?, hire_date = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.name, self.salary, self.job_title, self.hire_date.strftime('%Y-%m-%d'), self.id))
+        CURSOR.execute(sql, (self.name, self.salary, self.job_title, self.hire_date, self.id))
         CONN.commit()
 
     def delete(self):
@@ -150,7 +166,7 @@ class Employee:
         return cls(
             row[1], #name
             row[2], #salary
-            parse_date(row[4]), #hire_date
+            row[4], #hire_date
             row[0], #id_
             row[3] #job_title
         )
