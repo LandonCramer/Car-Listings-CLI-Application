@@ -63,5 +63,18 @@
 #         else:
 #             print("Invalid choice")
 
+# def search_cars():
+# Remove any car from query with sale_id = True
+# 1. choose as many of the following v-types, or all
+# 2. choose new, used, or all
+# 3. choose make(s) or all
+# 4. choose model(s) available for that make or all 
+# 5. enter oldest year or any
+# 6. enter highest miles or any
+# 7. choose fuel type or any
+# 8. choose color or any
+# 9. choose transmission or any
+# 10. enter max price or any
+
 # if __name__ == "__main__":
 #     main()
