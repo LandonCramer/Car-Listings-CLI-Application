@@ -25,10 +25,16 @@ class Appointment:
         CONN.commit()
 
     @classmethod
-    def drop_table(cls, sql):
+    def drop_table(cls):
+        table_name = cls.__name__.lower() + 's'
+
+        sql = f"""
+            DROP TABLE IF EXISTS {table_name}
+        """
+        
         CURSOR.execute(sql)
         CONN.commit()
-
+        
     # ***********
     # PROPERTIES
     # ***********

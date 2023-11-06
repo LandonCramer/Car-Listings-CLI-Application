@@ -62,7 +62,7 @@ td3.save()
 # serv1.delete()
 # td1.delete()
 
-# sale3.balance = 9999
+# sale3.balance = 999999
 # serv3.reason_for_visit = "My feet smell like tortilla chips."
 # td3.notes = "My colon itches."
 

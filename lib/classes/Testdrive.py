@@ -9,7 +9,7 @@ class Testdrive(Appointment):
         self.notes = notes
 
     # *********************
-    # CREATE / DROP TABLES
+    # CREATE TABLE
     # *********************
 
     @classmethod
@@ -25,13 +25,6 @@ class Testdrive(Appointment):
             notes TEXT)
         """
         super().create_table(sql)
-
-    @classmethod
-    def drop_table(cls):
-        sql = """
-            DROP TABLE IF EXISTS testdrives
-        """
-        super().drop_table(sql)
 
     # ***********
     # PROPERTIES

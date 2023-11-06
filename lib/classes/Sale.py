@@ -10,7 +10,7 @@ class Sale(Appointment):
         self.status = status
 
     # *********************
-    # CREATE / DROP TABLES
+    # CREATE TABLE
     # *********************
 
     @classmethod
@@ -27,13 +27,6 @@ class Sale(Appointment):
             status INTEGER)
         """
         super().create_table(sql)
-
-    @classmethod
-    def drop_table(cls):
-        sql = """
-            DROP TABLE IF EXISTS sales
-        """
-        super().drop_table(sql)
  
     # ***********
     # PROPERTIES

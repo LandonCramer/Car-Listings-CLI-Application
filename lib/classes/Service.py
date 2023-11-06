@@ -11,7 +11,7 @@ class Service(Appointment):
         self.status = status
 
     # *********************
-    # CREATE / DROP TABLES
+    # CREATE TABLE
     # *********************
 
     @classmethod
@@ -29,13 +29,6 @@ class Service(Appointment):
             status INTEGER)
         """
         super().create_table(sql)
-
-    @classmethod
-    def drop_table(cls):
-        sql = """
-            DROP TABLE IF EXISTS services
-        """
-        super().drop_table(sql)
 
     # ***********
     # PROPERTIES
