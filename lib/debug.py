@@ -15,6 +15,5 @@ from classes.Manager import Manager
 # python lib/debug.py
 
 if __name__ == '__main__':
-    seed_db()
     print('Seeded database')
     import ipdb; ipdb.set_trace()

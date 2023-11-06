@@ -21,6 +21,7 @@ class Car:
         self.year = year
         self.price = price
         self.id_ = id_
+        # TODO Compute owner_id based on sale_id else None
         self.owner_id = owner_id
         self.sale_id = sale_id
         type(self).all.append(self)
