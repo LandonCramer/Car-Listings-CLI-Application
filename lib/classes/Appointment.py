@@ -138,7 +138,7 @@ class Appointment:
     @classmethod
     def get_all(cls):
         table_name = cls.__name__.lower() + 's'
-
+        
         sql = f"""
             SELECT * FROM {table_name}
         """
