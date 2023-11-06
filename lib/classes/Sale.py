@@ -1,6 +1,6 @@
 from classes.__init__ import CURSOR, CONN
 
-class Sale:
+class Sale():
     all = {}
 
     def __init__(self, balance=50_000, status=True, id=None):
@@ -18,9 +18,8 @@ class Sale:
             CREATE TABLE IF NOT EXISTS sales (
             id INTEGER PRIMARY KEY,
             appt_id INTEGER,
-            FOREIGN KEY (appt_id) REFERENCES appointments(id) ON DELETE CASCADE,
             balance INTEGER,
-            status: TEXT)
+            status TEXT)
         """
         CURSOR.execute(sql)
         CONN.commit()
@@ -63,7 +62,7 @@ class Sale:
     def id(self):
         return self._id
     @id.setter
-    def id_(self, id):
+    def id(self, id):
         if not id:
             self._id = None
         elif not isinstance(id, int) or isinstance(id, bool):

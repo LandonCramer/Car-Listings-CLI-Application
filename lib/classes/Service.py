@@ -19,8 +19,8 @@ class Service:
             CREATE TABLE IF NOT EXISTS services (
             id INTEGER PRIMARY KEY,
             appt_id INTEGER,
-            FOREIGN KEY (appt_id) REFERENCES appointments(id) ON DELETE CASCADE,
             reason_for_visit TEXT,
+            estimate INTEGER,
             status TEXT)     
         """
         CURSOR.execute(sql)
@@ -60,7 +60,7 @@ class Service:
         elif estimate <= 0:
             raise ValueError("Estimate must be greater than 0.")
         else:
-            self._estimate = estimate
+            self._estimate = estimate or 'Test'
     
     @property
     def status(self):
@@ -70,13 +70,13 @@ class Service:
         if not isinstance(status, bool):
             raise TypeError("Active state must be a boolean.")
         else:
-            self._status = "Active" if status else "Closed"
+            self._status = status
 
     @property
     def id(self):
         return self._id
     @id.setter
-    def id_(self, id):
+    def id(self, id):
         if not id:
             self._id = None
         elif not isinstance(id, int) or isinstance(id, bool):
@@ -94,8 +94,8 @@ class Service:
 
     def save(self):
         sql = """
-            INSERT INTO sales (reason_for_visit, estimate, status)
-            VALUES (?, ?, ?)
+            INSERT INTO sales (appt_id, reason_for_visit, estimate, status)
+            VALUES (?, ?, ?, ?)
         """
         CURSOR.execute(sql, (self.reason_for_visit, self.estimate, self.status))
         CONN.commit()

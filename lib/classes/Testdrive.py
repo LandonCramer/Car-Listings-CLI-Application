@@ -17,7 +17,6 @@ class Testdrive:
             CREATE TABLE IF NOT EXISTS testdrives (
             id INTEGER PRIMARY KEY,
             appt_id INTEGER,
-            FOREIGN KEY (appt_id) REFERENCES appointments(id) ON DELETE CASCADE,
             notes TEXT)
         """
         CURSOR.execute(sql)
@@ -51,7 +50,7 @@ class Testdrive:
     def id(self):
         return self._id
     @id.setter
-    def id_(self, id):
+    def id(self, id):
         if not id:
             self._id = None
         elif not isinstance(id, int) or isinstance(id, bool):
@@ -69,10 +68,10 @@ class Testdrive:
 
     def save(self):
         sql = """
-            INSERT INTO testdrive (notes)
+            INSERT INTO testdrives (notes)
             VALUES (?)
         """
-        CURSOR.execute(sql, (self.notes))
+        CURSOR.execute(sql, (self.notes,))
         CONN.commit()
 
         self.id = CURSOR.lastrowid
