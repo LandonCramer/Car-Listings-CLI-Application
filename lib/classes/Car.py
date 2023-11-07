@@ -364,12 +364,29 @@ class Car:
         return self
 
     # ! Class Methods
+    # TODO Is there a cleaner way to filter out duplicate cars?
     @classmethod
-    def cars_in_shop(cls):
-        
+    def cars_w_appts(cls):
+        CURSOR.execute(f"""
+        SELECT DISTINCT cars.*
+        FROM cars
+        JOIN appointments ON cars.id = appointments.car_id
+        """
+        )
+        rows = CURSOR.fetchall()
+        return [Car.instance_from_db(row) for row in rows] if rows else None
 
+    @classmethod
     def test_driven_cars(cls):
-        pass
+        CURSOR.execute(f"""
+        SELECT DISTINCT cars.*
+        FROM cars
+        JOIN appointments ON cars.id = appointments.car_id
+        WHERE type = 'TESTDRIVE'
+        """
+        )
+        rows = CURSOR.fetchall()
+        return [Car.instance_from_db(row) for row in rows] if rows else None
 
     def owned_cars(cls):
         pass

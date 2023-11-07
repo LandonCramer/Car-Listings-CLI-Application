@@ -303,7 +303,7 @@ class Appointment:
             """
         else:
             raise ValueError('We do not offer that service.')
-          
+
         CURSOR.execute(sql, tuple(all_values))
         CONN.commit()
 
