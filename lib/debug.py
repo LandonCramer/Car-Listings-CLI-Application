@@ -30,6 +30,9 @@ def reset_db():
     Employee.create_table()
     for car in fleet:
         car.save()
+    car1=Car.find_by_id(1)
+    car2=Car.find_by_id(2)
+    car3=Car.find_by_id(3)
     s1.save()
     s2.save()
     st1.save()
