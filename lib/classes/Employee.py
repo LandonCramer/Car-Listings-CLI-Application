@@ -203,11 +203,10 @@ class Employee:
         return employees
     
     @classmethod
-    def salesman_of_the_month(cls):
+    def employee_of_the_month(cls, role):
         one_month_ago = datetime.now() - timedelta(days=30)
-        salesmen = cls.get_employees_by_role('Salesman')
-        return max(salesmen, key=lambda x: len(x.appts()))
-
+        valid_emps = cls.get_employees_by_role(role)
+        return max(valid_emps, key=lambda x: len([appt for appt in x.appts() if appt.date > one_month_ago]))
 
     def appts(self):
         return Appointment.get_by_employee_id(self.id_)
