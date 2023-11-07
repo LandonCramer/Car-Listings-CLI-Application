@@ -236,27 +236,27 @@ class Appointment:
   
         appointment.save()
         cls.all[appointment.id_] = appointment
-        
+
         return appointment
     
     def update(self):
         if self.type_ == 'SALE':
             sql = """
-                UPDATE sales
+                UPDATE appointments
                 SET balance = ?, status = ?
                 WHERE id = ?
             """
             updated = (self.balance, self.status, self.id_)
         elif self.type_ == 'SERVICE':
             sql = """
-                UPDATE services
+                UPDATE appointments
                 SET reason_for_visit = ?, estimate = ?, status = ?
                 WHERE id = ?
             """
             updated = (self.reason_for_visit, self.estimate, self.status, self.id_)
         elif self.type_ == 'TESTDRIVE':
             sql = """
-                UPDATE testdrives
+                UPDATE appointments
                 SET notes = ?
                 WHERE id = ?
             """
@@ -270,9 +270,9 @@ class Appointment:
     def delete(self):
         sql = """
             DELETE FROM appointments
-            WHERE type_ = ? AND id = ?
+            WHERE id = ?
         """
-        CURSOR.execute(sql, (self.type_, self.id_,))
+        CURSOR.execute(sql, (self.id_,))
         CONN.commit()
 
         del type(self).all[self.id_]
