@@ -7,9 +7,10 @@ from classes.Appointment import Appointment
 
 class Employee:
     def __init__(self, name, salary, hire_date, id_=None, job_title = None):
+        dt_obj = hire_date if hire_date else datetime.now()
         self.name = name
         self.salary = salary
-        self.hire_date = hire_date
+        self.hire_date = dt_obj
         self.id_ = id_
         self.job_title = type(self).__name__
     
@@ -39,16 +40,15 @@ class Employee:
         else:
             self._salary = salary
 
-    # @property
-    # def hire_date(self):
-    #     return self._hire_date
-    # @hire_date.setter
-    # def hire_date(self, hire_date):
-    #     print(hire_date)
-    #     if isinstance(hire_date, datetime):
-    #         self._hire_date = hire_date
-    #     else:
-    #         raise TypeError('Date must be a valid datetime object.')
+    @property
+    def hire_date(self):
+        return self._hire_date
+    @hire_date.setter
+    def hire_date(self, hire_date):
+        if isinstance(hire_date, datetime):
+            self._hire_date = hire_date
+        else:
+            raise TypeError('Date must be a valid datetime object.')
 
     @property
     def id_(self):
@@ -134,34 +134,16 @@ class Employee:
         CONN.commit()
 
     # TODO How to make the class constructor dynamic?
-    # TODO Lazy evaluate datetime.now() and pass to class constructor.
     # 2023-11-07T09:01:07.865477
     @classmethod
     def create(cls, job_title, name, salary, hire_date=None):
         """ Initialize a new Employee instance and save the object to the database """
-        from classes.Salesman import Salesman
-        from classes.ServiceTech import ServiceTech
-        from classes.Manager import Manager
-        
         if not hire_date:
             hire_date = datetime.now()
         elif not isinstance(hire_date, str):
             raise TypeError('Date must be a valid datetime object or a date string in ISO format.')
         else:
             hire_date = datetime.fromisoformat(hire_date)
-
-        if job_title == 'Salesman':
-            employee = Salesman(name, salary, hire_date)
-        elif job_title == 'ServiceTech':
-            employee = ServiceTech(name, salary, hire_date)
-        elif job_title == 'Manager':
-            employee = Manager(name, salary, hire_date)
-        else:
-            raise ValueError(
-                'Job title must be one of the following: "Salesman", "ServiceTech", or "Manager".'
-            )
-        employee.save()
-        return employee
 
     def update(self):
         """ Update the table row corresponding to the current Employee instance """
