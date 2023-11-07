@@ -125,7 +125,6 @@ class Car:
         else:
             self._color = color
 
-    # TODO Should we store the bool or the auto/manual in the db?
     @property
     def transmission(self):
         return 'Automatic' if self._transmission else 'Manual'
@@ -261,11 +260,11 @@ class Car:
         )
         CONN.commit()
     
-    # @classmethod
-    # def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id):
-    #     new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id)
-    #     new_car.save()
-    #     return new_car
+    @classmethod
+    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id):
+        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id)
+        new_car.save()
+        return new_car
     
     @classmethod
     def instance_from_db(cls, row):
@@ -287,7 +286,6 @@ class Car:
 
     @classmethod
     def get_all(cls):
-
         CURSOR.execute(
             '''
             SELECT * FROM cars;
@@ -307,23 +305,6 @@ class Car:
         )
         row = CURSOR.fetchone()
         return cls.instance_from_db(row) if row else None
-    
-    # TODO find_by_name seems inappropriate for Car because there is nothing stopping identical cars from existing.
-    # TODO What other unique property besides name can we query cars by?
-    # @classmethod
-    # def find_by_name(cls, name):
-    #     CURSOR.execute(
-    #         '''
-    #         SELECT * FROM cars
-    #         WHERE id = ?
-    #         ''',
-    #         (name,)
-    #     )
-    #     row = CURSOR.fetchone()
-    #     return cls.instance(row) if row else None
-    
-    # def find_or_create_by(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id, owner_id, sale_id):
-    #     return cls.find_by_name()
 
     # ! ORM Instance Methods
 
@@ -388,6 +369,7 @@ class Car:
         rows = CURSOR.fetchall()
         return [Car.instance_from_db(row) for row in rows] if rows else None
 
+    @classmethod
     def cars_in_shop(cls):
         CURSOR.execute(f"""
         SELECT DISTINCT cars.*
@@ -398,16 +380,20 @@ class Car:
         )
         rows = CURSOR.fetchall()
         return [Car.instance_from_db(row) for row in rows] if rows else None
-
+    
+    @classmethod
     def top_cars(cls):
-        pass
-
+        pass 
+    
+    @classmethod
     def search_cars(cls):
         pass
 
+    @classmethod
     def filter_cars(cls):
         pass
 
+    @classmethod
     def get_cars_by_person(cls):
         pass
 

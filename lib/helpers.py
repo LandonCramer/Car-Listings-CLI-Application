@@ -1,6 +1,6 @@
 # python helpers.py
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 
 current_date = datetime.now()
@@ -16,6 +16,11 @@ def parse_date(date):
         raise TypeError(
             'Date must be a valid datetime object or a date string in ISO format.'
             )
+
+def rand_date(interval=(5*365)):
+    current_time = datetime.now()
+    start_date = current_time - timedelta(days=interval)
+    return start_date + timedelta(days=random.randint(0, (current_time - start_date).days))
 
 def pascal_to_words(string):
     return ' '.join(re.findall(r'[A-Z][a-z0-9]*', string))
@@ -176,9 +181,13 @@ def rand_car():
         )
 
 def generate_fleet():
+
     fleet = []
 
     for _ in range(50):
         fleet.append(rand_car())
     
     return fleet
+
+if __name__ == '__main__':
+    import ipdb; ipdb.set_trace()

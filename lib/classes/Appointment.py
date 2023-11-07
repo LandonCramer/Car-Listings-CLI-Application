@@ -1,5 +1,5 @@
 from datetime import datetime
-from helpers import parse_date
+import helpers
 from classes.__init__ import CURSOR, CONN
 
 class Appointment:
@@ -137,15 +137,15 @@ class Appointment:
         if row[0] == 'SALE':
             a, b, c, d, e, f, g = relevant_values
             from classes.Sale import Sale
-            updated = Sale(a, datetime.fromisoformat(b), c, d, e, f, g)
+            updated = Sale(a, helpers.parse_date(b), c, d, e, f, g)
         elif row[0] == 'SERVICE':
             a, b, c, d, e, f, g, h = relevant_values
             from classes.Service import Service
-            updated = Service(a, datetime.fromisoformat(b), c, d, e, f, g, h)
+            updated = Service(a, helpers.parse_date(b), c, d, e, f, g, h)
         elif row[0] == 'TESTDRIVE':
             a, b, c, d, e, f = relevant_values
             from classes.Testdrive import Testdrive
-            updated = Testdrive(a, datetime.fromisoformat(b), c, d, e, f)
+            updated = Testdrive(a, helpers.parse_date(b), c, d, e, f)
         else:
             raise ValueError("Invalid class name.")
         
@@ -170,6 +170,18 @@ class Appointment:
         
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
+
+    @classmethod
+    def find_by_id(cls, id_):
+        CURSOR.execute(
+            '''
+            SELECT * FROM appointments
+            WHERE id = ?
+            ''',
+            (id_,)
+        )
+        row = CURSOR.fetchone()
+        return cls.instance_from_db(row) if row else None
 
     @classmethod
     def get_by_date(cls, date):
@@ -290,7 +302,7 @@ class Appointment:
 
         for key in all_keys:
             if key == '_date':
-                all_values.append(datetime.isoformat(attr_dict[key]))
+                all_values.append(helpers.parse_date(attr_dict[key]))
             elif key in attr_dict.keys():
                 all_values.append(attr_dict[key])
             else:

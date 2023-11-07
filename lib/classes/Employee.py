@@ -5,14 +5,10 @@ from classes.Customer import Customer
 from classes.Car import Car
 from classes.Appointment import Appointment
 
-
-# I added Job_title and hire_date not sure if you want it but just in case...
-
 class Employee:
     def __init__(self, name, salary, hire_date, id_ = None, job_title = None):
         self.name = name
         self.salary = salary
-        
         self.hire_date = hire_date
         self.id_ = id_
         self.job_title = helpers.pascal_to_words(type(self).__name__)
@@ -89,7 +85,6 @@ class Employee:
         CURSOR.execute(sql)
         CONN.commit()
 
-
     @classmethod
     def get_all(cls):
         if cls == Employee:
@@ -123,13 +118,13 @@ class Employee:
             INSERT INTO employees (name, salary, job_title, hire_date)
             VALUES (?, ?, ?, ?)
         """
-        CURSOR.execute(sql, (self.name, self.salary, self.job_title, datetime.isoformat(self.hire_date)))
+        CURSOR.execute(sql, (self.name, self.salary, self.job_title, helpers.parse_date(self.hire_date)))
         CONN.commit()
 
     @classmethod
     def create(cls, name, salary, job_title, hire_date):
         """ Initialize a new Employee instance and save the object to the database """
-        employee = Employee(name, salary, job_title, hire_date)
+        employee = cls(name, salary, job_title, hire_date)
         employee.save()
         return employee
 
@@ -158,12 +153,11 @@ class Employee:
         return cls(
             row[1], #name
             row[2], #salary
-            datetime.fromisoformat(row[4]), #hire_date
+            helpers.parse_date(row[4]), #hire_date
             row[0], #id_
             row[3] #job_title
         )
     
-
     @classmethod
     def get_employees_by_role(cls, role):
         sql = """
@@ -178,6 +172,39 @@ class Employee:
     def employee_of_the_month(cls):
         pass
 
+    def appts(self):
+        CURSOR.execute(f"""
+            SELECT * FROM appointments
+            WHERE employee_id = {self.id_}
+            """
+            )
+        rows = CURSOR.fetchall()
+        return [Appointment.instance_from_db(row) for row in rows] if rows else None
+
+    def test_drives(self):
+        if self.job_title in ('Salesman', 'Manager'):
+            return [appt for appt in self.appts() if appt.type_ == 'TESTDRIVE'] if self.appts() else None
+        else:
+            raise ValueError(
+                'Only Salesmen and Managers have access to Testdrives.'
+            )
+    
+    def services(self):
+        if self.job_title in ('Service Tech', 'Manager'):
+            return [appt for appt in self.appts() if appt.type_ == 'SERVICE'] if self.appts() else None
+        else:
+            raise ValueError(
+                'Only Service Techs and Managers have access to Services.'
+            )
+    
+    def sales(self):
+        if self.job_title in ('Salesman', 'Manager'):
+            return [appt for appt in self.appts() if appt.type_ == 'SALE'] if self.appts() else None
+        else:
+            raise ValueError(
+                'Only Service Techs and Managers have access to Services.'
+            )
+    
     # def cars(self):
     #     sql = """
     #         SELECT cars.*
@@ -188,29 +215,28 @@ class Employee:
     #     rows = CURSOR.execute(sql, (self.id_,)).fetchall()
     #     return [Car.instance_from_db(row) for row in rows]
     
-    def cars(self):
-        return [car for car in Car.get_cars_by_employee_id(self.id)]
-        sql = '''
+    # def cars(self):
+    #     return [car for car in Car.get_cars_by_employee_id(self.id)]
+    #     sql = '''
 
-        '''
+    #     '''
 
-
-    def customers(self):
-        sql = """
-            SELECT customers.* 
-            FROM customers 
-            INNER JOIN employees_customers ON customers.id = employees_customers.customer_id
-            WHERE employees_customers.employee_id = ?
-        """
-        rows = CURSOR.execute(sql, (self.id_,)).fetchall()
-        return [Customer.instance_from_db(row) for row in rows]
+    # def customers(self):
+    #     sql = """
+    #         SELECT customers.* 
+    #         FROM customers 
+    #         INNER JOIN employees_customers ON customers.id = employees_customers.customer_id
+    #         WHERE employees_customers.employee_id = ?
+    #     """
+    #     rows = CURSOR.execute(sql, (self.id_,)).fetchall()
+    #     return [Customer.instance_from_db(row) for row in rows]
     
-    def appointments(self):
-        sql = """
-            SELECT appointments.*
-            FROM appointments
-            INNER JOIN employees_appointments ON appointments.id = employees_appointments.appointment_id
-            WHERE employees_appointments.employee_id = ?
-        """
-        rows = CURSOR.execute(sql, (self.id_,)).fetchall()
-        return [Appointment.instance_from_db(row) for row in rows]
+    # def appointments(self):
+    #     sql = """
+    #         SELECT appointments.*
+    #         FROM appointments
+    #         INNER JOIN employees_appointments ON appointments.id = employees_appointments.appointment_id
+    #         WHERE employees_appointments.employee_id = ?
+    #     """
+    #     rows = CURSOR.execute(sql, (self.id_,)).fetchall()
+    #     return [Appointment.instance_from_db(row) for row in rows]

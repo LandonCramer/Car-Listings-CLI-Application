@@ -8,21 +8,13 @@ from classes.Customer import Customer
 import helpers
 from classes.Salesman import Salesman
 from classes.ServiceTech import ServiceTech
+from classes.Manager import Manager
 from classes.Employee import Employee
+from faker import Faker
 
 # python lib/debug.py
 
-
-cust = Customer('Landon', 9995558765, 1)
-s1 = Salesman('Matteo', 75_000, datetime.now(), 1)
-s2 = Salesman('Conner', 71000, datetime.now(), 2)
-st1 = ServiceTech('Matteo', 75_000, datetime.now(), 1)
-st2 = ServiceTech('Conner', 71000, datetime.now(), 2)
-fleet = helpers.generate_fleet()
-car1 = fleet[0]
-car2 = fleet[1]
-car3 = fleet[2]
-
+fake = Faker()
 
 def reset_db():
     Car.drop_table()
@@ -31,22 +23,32 @@ def reset_db():
     Customer.create_table()
     Employee.drop_table()
     Employee.create_table()
-    for car in fleet:
+    for car in helpers.generate_fleet():
         car.save()
+    s1 = Salesman(fake.name(), 75_000, helpers.rand_date())
+    s2 = Salesman(fake.name(), 71000, helpers.rand_date())
+    s3 = Salesman(fake.name(), 75_000, helpers.rand_date())
+    s4 = Salesman(fake.name(), 71000, helpers.rand_date())
+    st1 = ServiceTech(fake.name(), 75_000, helpers.rand_date())
+    st2 = ServiceTech(fake.name(), 71000, helpers.rand_date())
+    man = Manager(fake.name(), 75_000, helpers.rand_date())
     s1.save()
     s2.save()
     st1.save()
     st2.save()
-    cust1 = Customer('Landon', 9995558765, datetime.now(), 1)
-    cust2 = Customer('Connor', 8456777765, datetime.now(), 2)
-    cust3 = Customer('Landon', 9995558765, datetime.now(), 3)
-    cust4 = Customer('Connor', 8456777765, datetime.now(), 4)
-    cust5 = Customer('Landon', 9995558765, datetime.now(), 5)
-    cust6 = Customer('Connor', 8456777765, datetime.now(), 6)
-    cust7 = Customer('Landon', 9995558765, datetime.now(), 7)
-    cust8 = Customer('Connor', 8456777765, datetime.now(), 8)
-    cust9 = Customer('Landon', 9995558765, datetime.now(), 9)
-    cust10 = Customer('Connor', 8456777765, datetime.now(), 10)
+    s3.save()
+    s4.save()
+    man.save()
+    cust1 = Customer(fake.name(), 9995558765, helpers.rand_date())
+    cust2 = Customer(fake.name(), 8456777765, helpers.rand_date())
+    cust3 = Customer(fake.name(), 9995558765, helpers.rand_date())
+    cust4 = Customer(fake.name(), 8456777765, helpers.rand_date())
+    cust5 = Customer(fake.name(), 9995558765, helpers.rand_date())
+    cust6 = Customer(fake.name(), 8456777765, helpers.rand_date())
+    cust7 = Customer(fake.name(), 9995558765, helpers.rand_date())
+    cust8 = Customer(fake.name(), 8456777765, helpers.rand_date())
+    cust9 = Customer(fake.name(), 9995558765, helpers.rand_date())
+    cust10 = Customer(fake.name(), 8456777765, helpers.rand_date())
     cust1.save()
     cust2.save()
     cust3.save()
@@ -59,21 +61,21 @@ def reset_db():
     cust10.save()
     Appointment.drop_table()
     Appointment.create_table()
-    sale1 = Sale('SALE', datetime.now(), 1, 1, 1, 69_000, 'Active')
-    sale2 = Sale('SALE', datetime.now(), 2, 2, 2, 9_000, 'Closed')
-    sale3 = Sale('SALE', datetime.now(), 3, 3, 3, 6_000, 'Active')
-    sale4 = Sale('SALE', datetime.now(), 4, 2, 4, 19_000, 'Closed')
-    sale5 = Sale('SALE', datetime.now(), 5, 3, 5, 16_000, 'Active')
-    serv1 = Service('SERVICE', datetime.now(), 1, 1, 4, 'Radio says demonic-sounding things in Latin on every station.', 200, 'Active')
-    serv2 = Service('SERVICE', datetime.now(), 1, 2, 5, 'I put Monster Energy into the gastank and now it does not run.', 550, 'Closed')
-    serv3 = Service('SERVICE', datetime.now(), 2, 3, 6, 'The car smells like feet.', 400, 'Active')
-    serv4 = Service('SERVICE', datetime.now(), 2, 2, 7, 'The car only goes reverse when my eyes are closed.', 550, 'Closed')
-    serv5 = Service('SERVICE', datetime.now(), 3, 3, 8, 'Will painting flames onto my car make it go faster?', 400, 'Active')
-    td1 = Testdrive('TESTDRIVE', datetime.now(), 1, 1, 1, "The guy drove thru a McDonalds and ordered a 50-pc chicken nugget.")
-    td2 = Testdrive('TESTDRIVE', datetime.now(), 3, 3, 3, "Dude crashed into lightpole then tried to bribe me with an expired Chuck E Cheese coupon.")
-    td3 = Testdrive('TESTDRIVE', datetime.now(), 6, 3, 3, "The customer kept telling me about her toenail collection.")
-    td4 = Testdrive('TESTDRIVE', datetime.now(), 7, 1, 3, "Person did not show up.")
-    td5 = Testdrive('TESTDRIVE', datetime.now(), 2, 2, 3, "Testdrive actually went well.")
+    sale1 = Sale('SALE', helpers.rand_date(30), 1, 1, 1, 69_000, 'Active')
+    sale2 = Sale('SALE', helpers.rand_date(30), 2, 2, 2, 9_000, 'Closed')
+    sale3 = Sale('SALE', helpers.rand_date(30), 3, 3, 3, 6_000, 'Active')
+    sale4 = Sale('SALE', helpers.rand_date(30), 4, 2, 4, 19_000, 'Closed')
+    sale5 = Sale('SALE', helpers.rand_date(30), 5, 3, 5, 16_000, 'Active')
+    serv1 = Service('SERVICE', helpers.rand_date(30), 1, 1, 4, 'Radio says demonic-sounding things in Latin on every station.', 200, 'Active')
+    serv2 = Service('SERVICE', helpers.rand_date(30), 1, 2, 5, 'I put Monster Energy into the gastank and now it does not run.', 550, 'Closed')
+    serv3 = Service('SERVICE', helpers.rand_date(30), 2, 3, 6, 'The car smells like feet.', 400, 'Active')
+    serv4 = Service('SERVICE', helpers.rand_date(30), 2, 2, 7, 'The car only goes reverse when my eyes are closed.', 550, 'Closed')
+    serv5 = Service('SERVICE', helpers.rand_date(30), 3, 3, 8, 'Will painting flames onto my car make it go faster?', 400, 'Active')
+    td1 = Testdrive('TESTDRIVE', helpers.rand_date(30), 1, 1, 1, "The guy drove thru a McDonalds and ordered a 50-pc chicken nugget.")
+    td2 = Testdrive('TESTDRIVE', helpers.rand_date(30), 3, 3, 3, "Dude crashed into lightpole then tried to bribe me with an expired Chuck E Cheese coupon.")
+    td3 = Testdrive('TESTDRIVE', helpers.rand_date(30), 6, 3, 3, "The customer kept telling me about her toenail collection.")
+    td4 = Testdrive('TESTDRIVE', helpers.rand_date(30), 7, 1, 3, "Person did not show up.")
+    td5 = Testdrive('TESTDRIVE', helpers.rand_date(30), 2, 2, 3, "Testdrive actually went well.")
 
     sale1.save()
     sale2.save()

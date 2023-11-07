@@ -31,7 +31,7 @@ class Customer:
     def phone(self, phone):
         if not re.match('^\d{10}$', phone):
             raise ValueError('Phone number must be a valid 10 digit integer.')
-        #TODO if phone found in db raise ValueError
+        # TODO if phone found in db raise ValueError
         else:
             self._phone = phone
 
@@ -108,7 +108,7 @@ class Customer:
             INSERT INTO customers (name, phone, join_date)
             VALUES (?, ?, ?)
         """
-        CURSOR.execute(sql, (self.name, self.phone, datetime.isoformat(self.join_date)))
+        CURSOR.execute(sql, (self.name, self.phone, helpers.parse_date(self.join_date)))
         CONN.commit()
 
     @classmethod
@@ -144,7 +144,7 @@ class Customer:
         return cls(
             row[1], #name
             row[2], #phone
-            datetime.fromisoformat(row[3]), #join_date
+            helpers.parse_date(row[3]), #join_date
             row[0] #id_
         )
     
