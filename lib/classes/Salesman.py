@@ -9,7 +9,7 @@ class Salesman(Employee):
         super().save()
 
     @classmethod
-    def create(cls, job_title, name, salary, hire_date=None):
+    def create(cls, name, salary, hire_date=None):
         employee = cls(name, salary, hire_date)
         employee.save()
         return employee

@@ -136,7 +136,7 @@ class Employee:
     # TODO How to make the class constructor dynamic?
     # 2023-11-07T09:01:07.865477
     @classmethod
-    def create(cls, job_title, name, salary, hire_date=None):
+    def create(cls, name, salary, hire_date=None):
         """ Initialize a new Employee instance and save the object to the database """
         if not hire_date:
             hire_date = datetime.now()
