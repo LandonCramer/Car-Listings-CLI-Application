@@ -138,4 +138,3 @@ class Customer:
             row[0] #id_
         )
     
-  

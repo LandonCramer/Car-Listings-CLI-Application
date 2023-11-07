@@ -115,44 +115,43 @@ def rand_fuel_type():
     return random.choices(options, weights=weights , k=1)[0]
 
 def rand_color():
-    return random.choice(['grey', 'black', 'white'])
-    # colors = [
-    #     'Black',
-    #     'Grey',
-    #     'White',
-    #     'Blue',
-    #     'Red',
-    #     'Gold',
-    #     'Green',
-    #     'Pink',
-    #     'Purple'
-    # ]
-    # weight = [
-    #     0.19,
-    #     0.29,
-    #     0.26,
-    #     0.23,
-    #     0.0125,
-    #     0.0125,
-    #     0.0005,
-    #     0.0005
-    # ]
-    # print(sum(weight))
+    colors = [
+        'Black',
+        'Grey',
+        'White',
+        'Blue',
+        'Red',
+        'Gold',
+        'Green'
+    ]
+    weights = [
+        0.19,
+        0.29,
+        0.26,
+        0.23,
+        0.01,
+        0.01,
+        0.01
+    ]
+    return random.choices(colors, weights=weights, k=1)[0]
+
+def rand_bool():
+    bools = [True, False]
+    weights = [0.75, 0.25]
+    return random.choices(bools, weights=weights, k=1)[0]
 
 def rand_car():
     from classes.Car import Car
     make_and_model = rand_vehicle()
     return Car(
         make_and_model[2],
-        # TODO Should we weight new so only a certain percentage of cars are used?
-        random.choice([True, False]),
+        rand_bool(),
         make_and_model[0], 
         make_and_model[1],
         rand_miles(),
         rand_fuel_type(),
         rand_color(),
-        # TODO Should we weight new so only a certain percentage of cars are manual?
-        random.choice([True, False]),
+        rand_bool(),
         rand_year()
         )
 
