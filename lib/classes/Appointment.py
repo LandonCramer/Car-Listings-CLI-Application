@@ -1,5 +1,5 @@
 from datetime import datetime
-import helpers
+from helpers import parse_date
 from classes.__init__ import CURSOR, CONN
 
 class Appointment:
@@ -19,7 +19,6 @@ class Appointment:
     # CREATE / DROP TABLES
     # *********************
 
-    # TODO ON DELETE CASCADE - when a customer gets deleted, delete their appointments.
     @classmethod
     def create_table(cls):
         sql = """
@@ -47,7 +46,7 @@ class Appointment:
         sql = f"""
             DROP TABLE IF EXISTS appointments
         """
-        
+
         CURSOR.execute(sql)
         CONN.commit()
 
@@ -71,6 +70,8 @@ class Appointment:
     @date.setter
     def date(self, date):
         if isinstance(date, datetime):
+            self._date = parse_date(date)
+        elif isinstance(date, str):
             self._date = date
         else:
             raise TypeError('Date must be a valid Date object or string.')
@@ -138,15 +139,15 @@ class Appointment:
         if row[0] == 'SALE':
             a, b, c, d, e, f, g = relevant_values
             from classes.Sale import Sale
-            updated = Sale(a, helpers.parse_date(b), c, d, e, f, g)
+            updated = Sale(a, b, c, d, e, f, g)
         elif row[0] == 'SERVICE':
             a, b, c, d, e, f, g, h = relevant_values
             from classes.Service import Service
-            updated = Service(a, helpers.parse_date(b), c, d, e, f, g, h)
+            updated = Service(a, b, c, d, e, f, g, h)
         elif row[0] == 'TESTDRIVE':
             a, b, c, d, e, f = relevant_values
             from classes.Testdrive import Testdrive
-            updated = Testdrive(a, helpers.parse_date(b), c, d, e, f)
+            updated = Testdrive(a, b, c, d, e, f)
         else:
             raise ValueError("Invalid class name.")
         
@@ -155,156 +156,43 @@ class Appointment:
 
         return updated
 
-    # TODO Changed this one to protect from SQL injection, update others.
     @classmethod
-    def get_all(cls):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = """
-                SELECT * FROM appointments
-            """
-            rows = CURSOR.execute(sql).fetchall()
-            return [cls.instance_from_db(row) for row in rows]
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE type = ?
-            """     
-            rows = CURSOR.execute(sql, (appt_type,)).fetchall()
-            return [cls.instance_from_db(row) for row in rows]
-
-    # TODO Changed this one to prevent initializations of Appointment instances. Update others.
-    @classmethod
-    def find_by_id(cls, id_):
-        from classes.Sale import Sale
-        from classes.Service import Service
-        from classes.Testdrive import Testdrive
-        CURSOR.execute(
-            '''
-            SELECT * FROM appointments
-            WHERE id = ?
-            ''',
-            (id_,)
-        )
-        row = CURSOR.fetchone()
-        if row[1] == 'SALE':
-            return Sale.instance_from_db(row) if row else None
-        elif row[1] == 'SERVICE':
-            return Service.instance_from_db(row) if row else None
-        elif row[1] == 'TESTDRIVE':
-            return Testdrive.instance_from_db(row) if row else None
-        else:
-            raise ValueError(
-                'Appointment type must be one of the the following: "SALE", "SERVICE", or "TESTDRIVE".'
-            )
-
-    @classmethod
-    def get_by_date(cls, date):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{date}'
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{date}' AND type = '{appt_type}'
-            """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_by_customer_id(cls, id):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{id}'
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{id}' AND type = '{appt_type}'
-            """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_by_employee_id(cls, id):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE employee_id = '{id}'
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE employee_id = '{id}' AND type = '{appt_type}'
-            """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_by_car_id(cls, id):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{id}'
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{id}' AND type = '{appt_type}'
-            """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-    
-    @classmethod
-    def get_active(cls):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = """
-                SELECT * FROM appointments
-                WHERE status = "Active"
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE status = "Active" AND type = '{appt_type}'
-            """
+    def get_by(cls, param='all', value=None):
+        search_params = ['all', 'date', 'customer_id', 'employee_id', 'car_id', 'status']
         
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-    
-    @classmethod
-    def get_closed(cls):
+        if param not in search_params:
+            raise ValueError("Incorrect search parameter inputted.")
+        
         appt_type = cls.__name__.upper()
 
         if appt_type == 'APPOINTMENT':
-            sql = """
-                SELECT * FROM appointments
-                WHERE status = "Closed"
-            """
+            if param == 'all':
+                sql = """
+                    SELECT * FROM appointments
+                """
+            else:
+                sql = f"""
+                    SELECT * FROM appointments
+                    WHERE {param} = '{value}'
+                """
         else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE status = "Closed" AND type = '{appt_type}'
-            """
+            if param == 'all':
+                sql = f"""
+                    SELECT * FROM appointments
+                    WHERE type = '{appt_type}'
+                """    
+            else:
+                sql = f"""
+                    SELECT * FROM appointments
+                    WHERE type = '{appt_type}' AND {param} = '{value}'
+                """
 
         rows = CURSOR.execute(sql).fetchall()
+        
+        if not rows:
+            print('No results found.')
+            return
+        
         return [cls.instance_from_db(row) for row in rows]
 
     # *************
@@ -317,21 +205,19 @@ class Appointment:
         all_values = []
 
         for key in all_keys:
-            if key == '_date':
-                all_values.append(helpers.parse_date(attr_dict[key]))
-            elif key in attr_dict.keys():
+            if key in attr_dict.keys():
                 all_values.append(attr_dict[key])
             else:
                 all_values.append('*')
 
         if self.type_ == 'SALE' or self.type_ == 'SERVICE' or self.type_ == 'TESTDRIVE':
-            sql = f"""
+            sql = """
                 INSERT INTO appointments (type, date, customer_id, employee_id, car_id, balance, reason_for_visit, estimate, notes, status)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
         else:
             raise ValueError('We do not offer that service.')
-
+          
         CURSOR.execute(sql, tuple(all_values))
         CONN.commit()
 
@@ -351,30 +237,31 @@ class Appointment:
             a, b, c, d, e, f = args
             appointment = cls(a, b, c, d, e, f)
         else:
-            raise ValueError("Invalid class name.")
-
+            raise ValueError("Appointments can only be created from the Sale, Service, or Testdrive classes.")
+  
         appointment.save()
         cls.all[appointment.id_] = appointment
+
         return appointment
     
     def update(self):
         if self.type_ == 'SALE':
             sql = """
-                UPDATE sales
+                UPDATE appointments
                 SET balance = ?, status = ?
                 WHERE id = ?
             """
             updated = (self.balance, self.status, self.id_)
         elif self.type_ == 'SERVICE':
             sql = """
-                UPDATE services
+                UPDATE appointments
                 SET reason_for_visit = ?, estimate = ?, status = ?
                 WHERE id = ?
             """
             updated = (self.reason_for_visit, self.estimate, self.status, self.id_)
         elif self.type_ == 'TESTDRIVE':
             sql = """
-                UPDATE testdrives
+                UPDATE appointments
                 SET notes = ?
                 WHERE id = ?
             """
@@ -388,9 +275,9 @@ class Appointment:
     def delete(self):
         sql = """
             DELETE FROM appointments
-            WHERE type_ = ? AND id = ?
+            WHERE id = ?
         """
-        CURSOR.execute(sql, (self.type_, self.id_,))
+        CURSOR.execute(sql, (self.id_,))
         CONN.commit()
 
         del type(self).all[self.id_]

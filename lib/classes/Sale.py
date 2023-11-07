@@ -8,7 +8,7 @@ class Sale(Appointment):
         super().__init__(type_, date, customer_id, employee_id, car_id, id_)
         self.balance = balance
         self.status = status
-
+ 
     # ***********
     # PROPERTIES
     # ***********
