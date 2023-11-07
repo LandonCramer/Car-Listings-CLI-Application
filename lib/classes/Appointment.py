@@ -19,7 +19,7 @@ class Appointment:
     # CREATE / DROP TABLES
     # *********************
 
-    # TODO ON DELETE CASCADE
+    # TODO ON DELETE CASCADE - when a customer gets deleted, delete their appointments.
     @classmethod
     def create_table(cls):
         sql = """

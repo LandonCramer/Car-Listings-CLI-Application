@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 import helpers
 from classes.__init__ import CURSOR, CONN
 from classes.Customer import Customer
-from classes.Car import Car
 from classes.Appointment import Appointment
 
 class Employee:
@@ -135,6 +134,7 @@ class Employee:
         CURSOR.execute(sql, (self.name, self.salary, self.job_title, helpers.parse_date(self.hire_date)))
         CONN.commit()
 
+    # TODO Fix for this error: *** TypeError: create() missing 2 required positional arguments: 'salary' and 'hire_date'
     @classmethod
     def create(cls, der_cls, name, salary, hire_date):
         """ Initialize a new Employee instance and save the object to the database """

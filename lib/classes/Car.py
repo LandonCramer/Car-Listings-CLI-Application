@@ -10,7 +10,7 @@ class Car:
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
-    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_ = None):
+    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_=None):
         self.vehicle_type = vehicle_type
         self.new = new
         self.make = make
@@ -314,7 +314,6 @@ class Car:
         return self
 
     # ! Class Methods
-    # TODO Is there a cleaner way to filter out duplicate cars?
     @classmethod
     def cars_w_appts(cls):
         CURSOR.execute(f"""
@@ -339,12 +338,24 @@ class Car:
         return [Car.instance_from_db(row) for row in rows] if rows else None
 
     @classmethod
-    def cars_in_shop(cls):
+    def cars_serviced(cls):
         CURSOR.execute(f"""
         SELECT DISTINCT cars.*
         FROM cars
         JOIN appointments ON cars.id = appointments.car_id
         WHERE type = 'SERVICE'
+        """
+        )
+        rows = CURSOR.fetchall()
+        return [Car.instance_from_db(row) for row in rows] if rows else None
+    
+    @classmethod
+    def cars_in_shop(cls):
+        CURSOR.execute(f"""
+        SELECT DISTINCT cars.*
+        FROM cars
+        JOIN appointments ON cars.id = appointments.car_id
+        WHERE type = 'SERVICE' AND status = 'Active'
         """
         )
         rows = CURSOR.fetchall()
