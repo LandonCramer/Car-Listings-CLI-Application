@@ -366,7 +366,7 @@ class Car:
     # ! Class Methods
     @classmethod
     def cars_in_shop(cls):
-        pass
+        
 
     def test_driven_cars(cls):
         pass
@@ -412,7 +412,12 @@ class Car:
         return employees
         
     def customers(self): 
-        pass
+        from classes.Customer import Customer
+        cust_ids = {appt.customer_id for appt in self.appts()}
+        custs = []
+        for id_ in cust_ids:
+            custs.append(Customer.find_by_id(id_))
+        return custs
 
     def list_details(self):
         print(f'--- {self.year} {self.make.upper()} {self.model.upper()} ---\nColor: {self.color}\nFuel Type: {self._fuel_type}\nMiles: {self.miles}\nCondition: {self.condition}\nPrice: {self.price}')
