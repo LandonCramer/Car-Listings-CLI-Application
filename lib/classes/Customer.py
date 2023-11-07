@@ -103,6 +103,18 @@ class Customer:
         )
         row = CURSOR.fetchone()
         return cls.instance_from_db(row) if row else None
+    
+    @classmethod
+    def find_by_phone(cls, phone):
+        CURSOR.execute(
+            '''
+            SELECT * FROM customers
+            WHERE phone = ?
+            ''',
+            (phone,)
+        )
+        row = CURSOR.fetchone()
+        return cls.instance_from_db(row) if row else None
 
     def save(self):
         """ Insert a new row with the name, phone, and join date (join date converted to a string, Format YYYY-MM-DD) """
@@ -177,3 +189,12 @@ class Customer:
         for id_ in employee_ids:
             employees.append(Employee.find_by_id(id_))
         return employees
+    
+    @classmethod
+    def phone_numbers(cls):
+        CURSOR.execute("""
+            SELECT phone FROM customers
+            """)
+        rows = CURSOR.fetchall()
+        return [row[0] for row in rows] if rows else None
+    

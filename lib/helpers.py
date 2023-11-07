@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta
 import random
 
+
 current_date = datetime.now()
 year_range = range(current_date.year - 100, current_date.year + 1)
 miles_range = range(300_001)
@@ -195,6 +196,23 @@ def generate_fleet():
         fleet.append(rand_car())
     
     return fleet
+
+#CLI functions
+def create_customer():
+    from classes.Customer import Customer
+    phone = input('Welcome to the dealership.\nPlease enter your phone:\n')
+    
+    if phone in Customer.phone_numbers():
+        yn = input(f"Are you {Customer.find_by_phone(phone).name}? Y/N:\n")
+        if yn.lower() == "y":
+            pass
+        elif yn.lower() == "n":
+            new_phone = input("That number is already taken by another customer please provide another:\n")
+            name = input('Please enter your name:\n')
+            try:
+                new_customer = Customer.create(name, new_phone, datetime.now())
+            except Exception as e:
+                print('Invalid customer data.')
 
 if __name__ == '__main__':
     import ipdb; ipdb.set_trace()
