@@ -237,7 +237,7 @@ class Appointment:
             a, b, c, d, e, f = args
             appointment = cls(a, b, c, d, e, f)
         else:
-            raise ValueError("Invalid class name.")
+            raise ValueError("Appointments can only be created from the Sale, Service, or Testdrive classes.")
   
         appointment.save()
         cls.all[appointment.id_] = appointment
