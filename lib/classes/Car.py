@@ -1,6 +1,7 @@
 import random
 from classes.__init__ import CURSOR, CONN
 from helpers import current_date
+from classes.Appointment import Appointment
 
 class Car:
     all = []
@@ -392,13 +393,21 @@ class Car:
 
     # ! Instance Methods
     def appts(self):
-        pass
+        CURSOR.execute(f"""
+            SELECT * FROM appointments
+            WHERE car_id = {self.id}
+            
+            """
+            )
+        rows = CURSOR.fetchall()
+        return [Appointment.instance_from_db(row) for row in rows] if rows else None
+        
 
     def services(self):
-        pass
+        return [appt for appt in self.appts() if appt.type_ == 'SERVICE']
 
     def test_drives(self):
-        pass
+        return [appt for appt in self.appts() if appt.type_ == 'TESTDRIVE']
 
     def assoc_people(self):
         pass
