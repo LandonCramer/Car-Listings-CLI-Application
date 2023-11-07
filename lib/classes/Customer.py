@@ -45,7 +45,7 @@ class Customer:
         if isinstance(join_date, datetime):
             self._join_date = join_date
         else:
-            raise TypeError('Date must be a valid Date object')
+            raise TypeError('Date must be a valid datetime object.')
     
     @property
     def id_(self):

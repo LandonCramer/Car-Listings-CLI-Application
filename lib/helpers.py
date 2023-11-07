@@ -30,7 +30,6 @@ def bound_rand_date(dt_obj, current_date=None):
             'Arguments must be datetime objects.'
         )
 
-
 # TODO Add regex checkers to make sure all user input phones and dates are in the right format. 
 
 def datetime_to_dict(dt):

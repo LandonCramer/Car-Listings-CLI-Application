@@ -6,7 +6,7 @@ from classes.Car import Car
 from classes.Appointment import Appointment
 
 class Employee:
-    def __init__(self, name, salary, hire_date, id_=None, job_title=None):
+    def __init__(self, name, salary, hire_date=None, id_=None, job_title=None):
         dt_obj = hire_date if hire_date else datetime.now()
         self.name = name
         self.salary = salary
@@ -133,9 +133,8 @@ class Employee:
         CURSOR.execute(sql, (self.name, self.salary, self.job_title, helpers.parse_date(self.hire_date)))
         CONN.commit()
 
-    # 2023-11-07T09:01:07.865477
     @classmethod
-    def create(cls, name, salary, hire_date=None):
+    def create(cls, der_cls, name, salary, hire_date):
         """ Initialize a new Employee instance and save the object to the database """
         if cls.__name__ == 'Employee':
             raise ValueError(
@@ -143,11 +142,10 @@ class Employee:
             )
         elif not hire_date:
             hire_date = datetime.now()
-        elif not isinstance(hire_date, str):
+        elif not isinstance(hire_date, datetime):
             raise TypeError('Date must be a valid datetime object or a date string in ISO format.')
-        else:
-            hire_date = datetime.fromisoformat(hire_date)
-        employee = cls(name, salary, hire_date)
+
+        employee = der_cls(name, salary, hire_date)
         employee.save()
         return employee
 

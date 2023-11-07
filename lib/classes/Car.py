@@ -95,7 +95,7 @@ class Car:
     def miles(self, miles):
         if not isinstance(miles, int) or isinstance(miles, bool):
             raise TypeError('Miles must be an integer.')
-        elif miles not in range(0, 300_000):
+        elif miles not in range(300_000):
             raise ValueError('Mileage must be less than 300,000.')
         else:
             self._miles = miles
@@ -178,19 +178,6 @@ class Car:
         else:
             self._id_ = id_
 
-
-    @property
-    def sale_id(self):
-        return self._sale_id 
-    @sale_id.setter
-    def sale_id(self, sale_id):
-        if not sale_id:
-            self._sale_id = None
-        elif not isinstance(sale_id, int) or isinstance(sale_id, bool):
-            raise TypeError("Appointment ID must be an integer.")
-        else:
-            self._sale_id = sale_id
-
     # TODO Bell curve weights. Right now all cars seems to be poor for some reason.
     @property
     def condition(self):
@@ -229,9 +216,7 @@ class Car:
                 fuel_type TEXT,
                 color TEXT,
                 transmission INTEGER,
-                price INTEGER,
-                owner_id INTEGER,
-                sale_id INTEGER
+                price INTEGER
             );
             '''
         )
@@ -296,7 +281,7 @@ class Car:
         CURSOR.execute(
             '''
             INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''',
             (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_)
         )
