@@ -2,6 +2,7 @@ import random
 from classes.__init__ import CURSOR, CONN
 from helpers import current_date
 from classes.Appointment import Appointment
+from classes.Testdrive import Testdrive
 
 class Car:
 
@@ -9,7 +10,7 @@ class Car:
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
-    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_ = None, owner_id = None, sale_id = None):
+    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_=None):
         self.vehicle_type = vehicle_type
         self.new = new
         self.make = make
@@ -21,9 +22,6 @@ class Car:
         self.year = year
         self.price = price
         self.id_ = id_
-        # TODO Compute owner_id based on sale_id else None
-        self.owner_id = owner_id
-        self.sale_id = sale_id
 
     # ! Properties
     @property
@@ -38,7 +36,6 @@ class Car:
         else:
             self._vehicle_type = vehicle_type
 
-    # TODO Should we store the bool or the new/used in the db?
     @property
     def new(self):
         return 'New' if self._new else 'Used'
@@ -98,7 +95,7 @@ class Car:
     def miles(self, miles):
         if not isinstance(miles, int) or isinstance(miles, bool):
             raise TypeError('Miles must be an integer.')
-        elif miles not in range(0, 300_000):
+        elif miles not in range(300_000):
             raise ValueError('Mileage must be less than 300,000.')
         else:
             self._miles = miles
@@ -125,7 +122,6 @@ class Car:
         else:
             self._color = color
 
-    # TODO Should we store the bool or the auto/manual in the db?
     @property
     def transmission(self):
         return 'Automatic' if self._transmission else 'Manual'
@@ -182,30 +178,6 @@ class Car:
         else:
             self._id_ = id_
 
-    @property
-    def owner_id(self):
-        return self._owner_id
-    @owner_id.setter
-    def owner_id(self, owner_id):
-        if not owner_id:
-            self._owner_id = None
-        elif not isinstance(owner_id, int) or isinstance(owner_id, bool):
-            raise TypeError("Owner ID must be an integer.")
-        else:
-            self._owner__id = owner_id
-
-    @property
-    def sale_id(self):
-        return self._sale_id 
-    @sale_id.setter
-    def sale_id(self, sale_id):
-        if not sale_id:
-            self._sale_id = None
-        elif not isinstance(sale_id, int) or isinstance(sale_id, bool):
-            raise TypeError("Appointment ID must be an integer.")
-        else:
-            self._sale_id = sale_id
-
     # TODO Bell curve weights. Right now all cars seems to be poor for some reason.
     @property
     def condition(self):
@@ -244,9 +216,7 @@ class Car:
                 fuel_type TEXT,
                 color TEXT,
                 transmission INTEGER,
-                price INTEGER,
-                owner_id INTEGER,
-                sale_id INTEGER
+                price INTEGER
             );
             '''
         )
@@ -262,8 +232,8 @@ class Car:
         CONN.commit()
     
     @classmethod
-    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id):
-        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id)
+    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None):
+        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None)
         new_car.save()
         return new_car
     
@@ -280,14 +250,11 @@ class Car:
                 bool(row[9]), # transmission
                 row[5], # year
                 row[10], # price
-                row[0], # id_
-                row[11], # owner_id
-                row[12] # sale_id
+                row[0] # id_
                 )
 
     @classmethod
     def get_all(cls):
-
         CURSOR.execute(
             '''
             SELECT * FROM cars;
@@ -307,33 +274,16 @@ class Car:
         )
         row = CURSOR.fetchone()
         return cls.instance_from_db(row) if row else None
-    
-    # TODO find_by_name seems inappropriate for Car because there is nothing stopping identical cars from existing.
-    # TODO What other unique property besides name can we query cars by?
-    # @classmethod
-    # def find_by_name(cls, name):
-    #     CURSOR.execute(
-    #         '''
-    #         SELECT * FROM cars
-    #         WHERE id = ?
-    #         ''',
-    #         (name,)
-    #     )
-    #     row = CURSOR.fetchone()
-    #     return cls.instance(row) if row else None
-    
-    # def find_or_create_by(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id, owner_id, sale_id):
-    #     return cls.find_by_name()
 
     # ! ORM Instance Methods
 
     def save(self):
         CURSOR.execute(
             '''
-            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id, owner_id, sale_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''',
-            (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_, self.owner_id, self.sale_id)
+            (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_)
         )
         CONN.commit()
         self.id = CURSOR.lastrowid
@@ -343,10 +293,10 @@ class Car:
         CURSOR.execute(
             '''
             UPDATE cars
-            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?, owner_id = ?, sale_id = ?
+            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?
             WHERE id = ?
             ''',
-            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owner_id, self.sale_id)
+            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_)
         )
         CONN.commit()
         return self
@@ -365,40 +315,86 @@ class Car:
 
     # ! Class Methods
     @classmethod
-    def cars_in_shop(cls):
-        
+    def cars_w_appts(cls):
+        CURSOR.execute(f"""
+        SELECT DISTINCT cars.*
+        FROM cars
+        JOIN appointments ON cars.id = appointments.car_id
+        """
+        )
+        rows = CURSOR.fetchall()
+        return [Car.instance_from_db(row) for row in rows] if rows else None
 
+    @classmethod
     def test_driven_cars(cls):
-        pass
+        CURSOR.execute(f"""
+        SELECT DISTINCT cars.*
+        FROM cars
+        JOIN appointments ON cars.id = appointments.car_id
+        WHERE type = 'TESTDRIVE'
+        """
+        )
+        rows = CURSOR.fetchall()
+        return [Car.instance_from_db(row) for row in rows] if rows else None
 
-    def owned_cars(cls):
-        pass
+    @classmethod
+    def cars_serviced(cls):
+        CURSOR.execute(f"""
+        SELECT DISTINCT cars.*
+        FROM cars
+        JOIN appointments ON cars.id = appointments.car_id
+        WHERE type = 'SERVICE'
+        """
+        )
+        rows = CURSOR.fetchall()
+        return [Car.instance_from_db(row) for row in rows] if rows else None
+    
+    @classmethod
+    def cars_in_shop(cls):
+        CURSOR.execute(f"""
+        SELECT DISTINCT cars.*
+        FROM cars
+        JOIN appointments ON cars.id = appointments.car_id
+        WHERE type = 'SERVICE' AND status = 'Active'
+        """
+        )
+        rows = CURSOR.fetchall()
+        return [Car.instance_from_db(row) for row in rows] if rows else None
+    
+    @classmethod
+    def top_cars(cls, list_len):
+        driven_car_ids = {}
+        for testdrive in Testdrive.get_all():
+            if testdrive.car_id in driven_car_ids.keys():
+                driven_car_ids[testdrive.car_id] = driven_car_ids[testdrive.car_id] + 1
+            else:
+                driven_car_ids[testdrive.car_id] = 1
+        tuple_list = [(key, value) for key, value in driven_car_ids.items()]
+        top_cars = []
+        for car in sorted(tuple_list, key=lambda x: x[1])[:list_len]:
+            top_cars.append(cls.find_by_id(car[1]))
+        return top_cars
 
-    def top_cars(cls):
-        pass
-
+    @classmethod
     def search_cars(cls):
         pass
 
+    @classmethod
     def filter_cars(cls):
-        pass
-
-    def get_cars_by_person(cls):
         pass
 
     # ! Instance Methods
     def appts(self):
-        CURSOR.execute(f"""
-            SELECT * FROM appointments
-            WHERE car_id = {self.id}
-            
-            """
-            )
-        rows = CURSOR.fetchall()
-        return [Appointment.instance_from_db(row) for row in rows] if rows else None
+        return Appointment.get_by('car_id', self.id_)
         
     def services(self):
         return [appt for appt in self.appts() if appt.type_ == 'SERVICE']
+
+    def open_tickets(self):
+        return [service for service in self.services() if service.status == 'Active']
+
+    def service_history(self):
+        return [service for service in self.services() if service.status == 'Closed']
 
     def test_drives(self):
         return [appt for appt in self.appts() if appt.type_ == 'TESTDRIVE']

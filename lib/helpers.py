@@ -1,17 +1,49 @@
 # python helpers.py
-import re
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 
 current_date = datetime.now()
 year_range = range(current_date.year - 100, current_date.year + 1)
 miles_range = range(300_001)
 
-def parse_date(datetime_obj):
-    return f'{datetime_obj.month}/{datetime_obj.day}/{datetime_obj.year}'
+def parse_date(date):
+    if isinstance(date, str):
+        return datetime.fromisoformat(date)
+    elif isinstance(date, datetime):
+        return date.isoformat()
+    else:
+        raise TypeError(
+            'Date must be a valid datetime object or a date string in ISO format.'
+            )
 
-def pascal_to_words(string):
-    return ' '.join(re.findall(r'[A-Z][a-z0-9]*', string))
+def rand_date(interval=(1*365)):
+    current_time = datetime.now()
+    start_date = current_time - timedelta(days=interval)
+    return start_date + timedelta(days=random.randint(0, (current_time - start_date).days))
+
+def bound_rand_date(dt_obj, current_date=None):
+    if isinstance(dt_obj, datetime):
+        current_date = datetime.now()
+        return rand_date((current_date - dt_obj).days)
+    else:
+        raise ValueError(
+            'Arguments must be datetime objects.'
+        )
+
+# TODO Add regex checkers to make sure all user input phones and dates are in the right format. 
+
+def datetime_to_dict(dt):
+    date_dict = {
+        'year': dt.year,
+        'month': dt.month,
+        'day': dt.day,
+        'hour': dt.hour,
+        'minute': dt.minute,
+        'second': dt.second,
+        'weekday': dt.weekday(),  # 0 for Monday, 1 for Tuesday, ..., 6 for Sunday
+        'week': dt.isocalendar()[1]  # ISO week number
+    }
+    return date_dict
 
 # ! Random Fleet Generation Functions
 
@@ -156,9 +188,13 @@ def rand_car():
         )
 
 def generate_fleet():
+
     fleet = []
 
     for _ in range(50):
         fleet.append(rand_car())
     
     return fleet
+
+if __name__ == '__main__':
+    import ipdb; ipdb.set_trace()

@@ -2,9 +2,11 @@ import re
 from classes.__init__ import CURSOR, CONN
 import helpers
 from datetime import datetime
+from classes.Car import Car
+from classes.Appointment import Appointment
 
 class Customer:
-    def __init__(self, name, phone, join_date, id_ = None):
+    def __init__(self, name, phone, join_date, id_=None):
         self._name = name
         self._phone = phone
         self._join_date = join_date
@@ -31,21 +33,19 @@ class Customer:
     def phone(self, phone):
         if not re.match('^\d{10}$', phone):
             raise ValueError('Phone number must be a valid 10 digit integer.')
-        #TODO if phone found in db raise ValueError
+        # TODO if phone found in db raise ValueError
         else:
             self._phone = phone
 
     @property
     def join_date(self):
-        return helpers.parse_date(self._join_date)
+        return self._join_date
     @join_date.setter
     def join_date(self, join_date):
         if isinstance(join_date, datetime):
-            self._join_date = helpers.parse_date(join_date)
-        elif isinstance(join_date, str):
             self._join_date = join_date
         else:
-            raise TypeError('Date must be a valid Date object or string.')
+            raise TypeError('Date must be a valid datetime object.')
     
     @property
     def id_(self):
@@ -110,13 +110,13 @@ class Customer:
             INSERT INTO customers (name, phone, join_date)
             VALUES (?, ?, ?)
         """
-        CURSOR.execute(sql, (self.name, self.phone, self.join_date))
+        CURSOR.execute(sql, (self.name, self.phone, helpers.parse_date(self.join_date)))
         CONN.commit()
 
     @classmethod
     def create(cls, name, phone, join_date):
         """ Initialize a new Customer instance and save the object to the database """
-        customer = Customer(name, phone, join_date)
+        customer = cls(name, phone, join_date)
         customer.save()
         return customer
 
@@ -127,7 +127,7 @@ class Customer:
             SET name = ?, phone = ?, join_date = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.name, self.phone, self.join_date.strftime('%Y-%m-%d'), self.id))
+        CURSOR.execute(sql, (self.name, self.phone, self.join_date, self.id))
         CONN.commit()
 
     def delete(self):
@@ -146,7 +146,34 @@ class Customer:
         return cls(
             row[1], #name
             row[2], #phone
-            row[3], #joindate
+            helpers.parse_date(row[3]), #join_date
             row[0] #id_
         )
     
+    def cars_owned(self):
+        CURSOR.execute('''
+            SELECT * 
+            FROM cars
+            WHERE owner_id = ?
+            ''',
+            (self.id_,)
+            )
+        rows = CURSOR.fetchall()
+        return [Car.instance_from_db(row) for row in rows] if rows else None
+
+    def appts(self):
+        return Appointment.get_by('customer_id', self.id_)
+    
+    def cars_test_driven(self):
+        return [Car.find_by_id(appt.car_id) for appt in self.appts() if appt.type_ == 'TESTDRIVE']
+    
+    def cars_test_driven(self):
+        return [Car.find_by_id(appt.car_id) for appt in self.appts() if appt.type_ == 'SERVICE']
+
+    def employees(self):
+        from classes.Employee import Employee
+        employee_ids = {appt.employee_id for appt in self.appts()}
+        employees = []
+        for id_ in employee_ids:
+            employees.append(Employee.find_by_id(id_))
+        return employees
