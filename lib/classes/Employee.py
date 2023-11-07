@@ -209,7 +209,7 @@ class Employee:
         return max(valid_emps, key=lambda x: len([appt for appt in x.appts() if appt.date > one_month_ago]))
 
     def appts(self):
-        return Appointment.get_by_employee_id(self.id_)
+        return Appointment.get_by('employee_id', self.id_)
 
     def test_drives(self):
         if self.job_title in ('Salesman', 'Manager'):

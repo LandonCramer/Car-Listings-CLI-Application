@@ -162,7 +162,7 @@ class Customer:
         return [Car.instance_from_db(row) for row in rows] if rows else None
 
     def appts(self):
-        return Appointment.get_by_customer_id(self.id_)
+        return Appointment.get_by('customer_id', self.id_)
     
     def cars_test_driven(self):
         return [Car.find_by_id(appt.car_id) for appt in self.appts() if appt.type_ == 'TESTDRIVE']

@@ -385,7 +385,7 @@ class Car:
 
     # ! Instance Methods
     def appts(self):
-        return Appointment.get_by_car_id(self.id_)
+        return Appointment.get_by('car_id', self.id_)
         
     def services(self):
         return [appt for appt in self.appts() if appt.type_ == 'SERVICE']
