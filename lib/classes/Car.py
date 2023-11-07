@@ -4,7 +4,6 @@ from helpers import current_date
 from classes.Appointment import Appointment
 
 class Car:
-    all = []
 
     # ! Approved Types
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
@@ -25,7 +24,6 @@ class Car:
         # TODO Compute owner_id based on sale_id else None
         self.owner_id = owner_id
         self.sale_id = sale_id
-        type(self).all.append(self)
 
     # ! Properties
     @property
@@ -254,9 +252,6 @@ class Car:
         )
         CONN.commit()
 
-    # FOREIGN KEY owner_id INTEGER references customers(id)
-    # FOREIGN KEY sale_id INTEGER references appointments(id)
-
     @classmethod
     def drop_table(cls):
         CURSOR.execute(
@@ -273,7 +268,7 @@ class Car:
         return new_car
     
     @classmethod
-    def new_from_db(cls, row):
+    def instance_from_db(cls, row):
         return cls(
                 row[1], # vehicle_type
                 bool(row[2]), # new
@@ -299,7 +294,7 @@ class Car:
             '''
         )
         rows = CURSOR.fetchall()
-        return [cls.new_from_db(row) for row in rows]
+        return [cls.instance_from_db(row) for row in rows]
     
     @classmethod
     def find_by_id(cls, id_):
@@ -311,7 +306,7 @@ class Car:
             (id_,)
         )
         row = CURSOR.fetchone()
-        return cls.new_from_db(row) if row else None
+        return cls.instance_from_db(row) if row else None
     
     # TODO find_by_name seems inappropriate for Car because there is nothing stopping identical cars from existing.
     # TODO What other unique property besides name can we query cars by?
@@ -325,7 +320,7 @@ class Car:
     #         (name,)
     #     )
     #     row = CURSOR.fetchone()
-    #     return cls.new_from_db(row) if row else None
+    #     return cls.instance(row) if row else None
     
     # def find_or_create_by(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id, owner_id, sale_id):
     #     return cls.find_by_name()
@@ -371,7 +366,7 @@ class Car:
     # ! Class Methods
     @classmethod
     def cars_in_shop(cls):
-        pass
+        
 
     def test_driven_cars(cls):
         pass
@@ -402,21 +397,27 @@ class Car:
         rows = CURSOR.fetchall()
         return [Appointment.instance_from_db(row) for row in rows] if rows else None
         
-
     def services(self):
         return [appt for appt in self.appts() if appt.type_ == 'SERVICE']
 
     def test_drives(self):
         return [appt for appt in self.appts() if appt.type_ == 'TESTDRIVE']
 
-    def assoc_people(self):
-        pass
-
     def employees(self):
-        pass
-
+        from classes.Employee import Employee
+        employee_ids = {appt.employee_id for appt in self.appts()}
+        employees = []
+        for id_ in employee_ids:
+            employees.append(Employee.find_by_id(id_))
+        return employees
+        
     def customers(self): 
-        pass
+        from classes.Customer import Customer
+        cust_ids = {appt.customer_id for appt in self.appts()}
+        custs = []
+        for id_ in cust_ids:
+            custs.append(Customer.find_by_id(id_))
+        return custs
 
     def list_details(self):
         print(f'--- {self.year} {self.make.upper()} {self.model.upper()} ---\nColor: {self.color}\nFuel Type: {self._fuel_type}\nMiles: {self.miles}\nCondition: {self.condition}\nPrice: {self.price}')

@@ -8,7 +8,7 @@ class Customer:
         self._name = name
         self._phone = phone
         self._join_date = join_date
-        self._id = id_
+        self._id_ = id_
     
     @property
     def name(self):
@@ -92,6 +92,18 @@ class Customer:
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
 
+    @classmethod
+    def find_by_id(cls, id_):
+        CURSOR.execute(
+            '''
+            SELECT * FROM customers
+            WHERE id = ?
+            ''',
+            (id_,)
+        )
+        row = CURSOR.fetchone()
+        return cls.instance_from_db(row) if row else None
+
     def save(self):
         """ Insert a new row with the name, phone, and join date (join date converted to a string, Format YYYY-MM-DD) """
         sql = """
@@ -130,7 +142,7 @@ class Customer:
 #New for Monday
 
     @classmethod
-    def new_from_db(cls, row):
+    def instance_from_db(cls, row):
         return cls(
             row[1], #name
             row[2], #phone
@@ -138,4 +150,3 @@ class Customer:
             row[0] #id_
         )
     
-  
