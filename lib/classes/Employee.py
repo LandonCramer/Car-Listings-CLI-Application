@@ -191,7 +191,7 @@ class Employee:
     
     @classmethod
     def employee_of_the_month(cls):
-        pass
+        one_month_ago = 
 
     def appts(self):
         return Appointment.get_by_employee_id(self.id_)
