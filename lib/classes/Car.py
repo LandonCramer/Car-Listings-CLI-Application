@@ -39,7 +39,6 @@ class Car:
         else:
             self._vehicle_type = vehicle_type
 
-    # TODO Should we store the bool or the new/used in the db?
     @property
     def new(self):
         return 'New' if self._new else 'Used'
@@ -410,6 +409,12 @@ class Car:
         
     def services(self):
         return [appt for appt in self.appts() if appt.type_ == 'SERVICE']
+
+    def open_tickets(self):
+        return [service for service in self.services() if service.status == 'Active']
+
+    def service_history(self):
+        return [service for service in self.services() if service.status == 'Closed']
 
     def test_drives(self):
         return [appt for appt in self.appts() if appt.type_ == 'TESTDRIVE']

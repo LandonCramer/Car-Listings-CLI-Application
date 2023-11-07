@@ -6,6 +6,7 @@ from classes.Service import Service
 from classes.Testdrive import Testdrive
 from classes.Customer import Customer
 import helpers
+import random
 from classes.Salesman import Salesman
 from classes.ServiceTech import ServiceTech
 from classes.Manager import Manager
@@ -15,40 +16,64 @@ from faker import Faker
 # python lib/debug.py
 
 fake = Faker()
+current_date = datetime.now()
+
+fleet = helpers.generate_fleet()
+for car in fleet:
+    car.save()
+sm1 = Salesman(fake.name(), 75_000, helpers.rand_date())
+sm2 = Salesman(fake.name(), 71000, helpers.rand_date())
+sm3 = Salesman(fake.name(), 75_000, helpers.rand_date())
+sm4 = Salesman(fake.name(), 71000, helpers.rand_date())
+st1 = ServiceTech(fake.name(), 75_000, helpers.rand_date())
+st2 = ServiceTech(fake.name(), 71000, helpers.rand_date())
+man = Manager(fake.name(), 75_000, helpers.rand_date())
+
+sm1.save()
+sm2.save()
+st1.save()
+st2.save()
+sm3.save()
+sm4.save()
+man.save()
+
+employees = Employee.get_all()
+
+cust1 = Customer(fake.name(), 9995558765, helpers.rand_date())
+cust2 = Customer(fake.name(), 8456777765, helpers.rand_date())
+cust3 = Customer(fake.name(), 9995558765, helpers.rand_date())
+cust4 = Customer(fake.name(), 8456777765, helpers.rand_date())
+cust5 = Customer(fake.name(), 9995558765, helpers.rand_date())
+cust6 = Customer(fake.name(), 8456777765, helpers.rand_date())
+cust7 = Customer(fake.name(), 9995558765, helpers.rand_date())
+cust8 = Customer(fake.name(), 8456777765, helpers.rand_date())
+cust9 = Customer(fake.name(), 9995558765, helpers.rand_date())
+cust10 = Customer(fake.name(), 8456777765, helpers.rand_date())
+
+cust1.save()
+cust2.save()
+cust3.save()
+cust4.save()
+cust5.save()
+cust6.save()
+cust7.save()
+cust8.save()
+cust9.save()
+cust10.save()
+
+customers = Customer.get_all()
 
 def reset_db():
+    cust1 = customers[0]
+    cust2 = customers[1]
+    cust4 = customers[3]
+    cust5 = customers[4]
+    cust7 = customers[6]
+    
     Car.drop_table()
     Car.create_table()
     Customer.drop_table()
     Customer.create_table()
-    Employee.drop_table()
-    Employee.create_table()
-    for car in helpers.generate_fleet():
-        car.save()
-    # s1 = Salesman(fake.name(), 75_000, helpers.rand_date())
-    # s2 = Salesman(fake.name(), 71000, helpers.rand_date())
-    # s3 = Salesman(fake.name(), 75_000, helpers.rand_date())
-    # s4 = Salesman(fake.name(), 71000, helpers.rand_date())
-    # st1 = ServiceTech(fake.name(), 75_000, helpers.rand_date())
-    # st2 = ServiceTech(fake.name(), 71000, helpers.rand_date())
-    # man = Manager(fake.name(), 75_000, helpers.rand_date())
-    # s1.save()
-    # s2.save()
-    # st1.save()
-    # st2.save()
-    # s3.save()
-    # s4.save()
-    # man.save()
-    cust1 = Customer(fake.name(), 9995558765, helpers.rand_date())
-    cust2 = Customer(fake.name(), 8456777765, helpers.rand_date())
-    cust3 = Customer(fake.name(), 9995558765, helpers.rand_date())
-    cust4 = Customer(fake.name(), 8456777765, helpers.rand_date())
-    cust5 = Customer(fake.name(), 9995558765, helpers.rand_date())
-    cust6 = Customer(fake.name(), 8456777765, helpers.rand_date())
-    cust7 = Customer(fake.name(), 9995558765, helpers.rand_date())
-    cust8 = Customer(fake.name(), 8456777765, helpers.rand_date())
-    cust9 = Customer(fake.name(), 9995558765, helpers.rand_date())
-    cust10 = Customer(fake.name(), 8456777765, helpers.rand_date())
     cust1.save()
     cust2.save()
     cust3.save()
@@ -59,13 +84,15 @@ def reset_db():
     cust8.save()
     cust9.save()
     cust10.save()
+    Employee.drop_table()
+    Employee.create_table()
     Appointment.drop_table()
     Appointment.create_table()
-    sale1 = Sale('SALE', helpers.rand_date(30), 1, 1, 1, 69_000, 'Active')
-    sale2 = Sale('SALE', helpers.rand_date(30), 2, 2, 2, 9_000, 'Closed')
-    sale3 = Sale('SALE', helpers.rand_date(30), 3, 3, 3, 6_000, 'Active')
-    sale4 = Sale('SALE', helpers.rand_date(30), 4, 2, 4, 19_000, 'Closed')
-    sale5 = Sale('SALE', helpers.rand_date(30), 5, 3, 5, 16_000, 'Active')
+    sale1 = Sale('SALE', helpers.rand_date(helpers.bound_rand_date(cust1.join_date)), cust1.id_, sm1.id_, fleet[0].id_, 69_000, 'Active')
+    sale2 = Sale('SALE', helpers.rand_date((current_date - cust1.join_date)), cust2.id_, sm1.id_, fleet[2].id_, 9_000, 'Closed')
+    sale3 = Sale('SALE', helpers.rand_date((current_date - cust1.join_date)), cust4.id_, sm2.id_, fleet[41].id_, 6_000, 'Active')
+    sale4 = Sale('SALE', helpers.rand_date((current_date - cust1.join_date)), cust5.id_, sm3.id_, fleet[33].id_, 19_000, 'Closed')
+    sale5 = Sale('SALE', helpers.rand_date((current_date - cust1.join_date)), cust7.id_, man.id_, fleet[12].id_, 16_000, 'Active')
     serv1 = Service('SERVICE', helpers.rand_date(30), 1, 1, 4, 'Radio says demonic-sounding things in Latin on every station.', 200, 'Active')
     serv2 = Service('SERVICE', helpers.rand_date(30), 1, 2, 5, 'I put Monster Energy into the gastank and now it does not run.', 550, 'Closed')
     serv3 = Service('SERVICE', helpers.rand_date(30), 2, 3, 6, 'The car smells like feet.', 400, 'Active')

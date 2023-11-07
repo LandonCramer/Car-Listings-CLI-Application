@@ -22,6 +22,12 @@ def rand_date(interval=(5*365)):
     start_date = current_time - timedelta(days=interval)
     return start_date + timedelta(days=random.randint(0, (current_time - start_date).days))
 
+def bound_rand_date(dt_obj, current_date=None):
+    current_date = datetime.now()
+    print(current_date, dt_obj)
+    return rand_date((current_date - dt_obj).days)
+
+
 # TODO Add regex checkers to make sure all user input phones and dates are in the right format. 
 
 def datetime_to_dict(dt):

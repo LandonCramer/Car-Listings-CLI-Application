@@ -6,7 +6,7 @@ from classes.Car import Car
 from classes.Appointment import Appointment
 
 class Customer:
-    def __init__(self, name, phone, join_date, id_ = None):
+    def __init__(self, name, phone, join_date, id_=None):
         self._name = name
         self._phone = phone
         self._join_date = join_date
@@ -150,7 +150,7 @@ class Customer:
             row[0] #id_
         )
     
-    def cars(self):
+    def cars_owned(self):
         CURSOR.execute('''
             SELECT * 
             FROM cars
@@ -164,6 +164,12 @@ class Customer:
     def appts(self):
         return Appointment.get_by_customer_id(self.id_)
     
+    def cars_test_driven(self):
+        return [Car.find_by_id(appt.car_id) for appt in self.appts() if appt.type_ == 'TESTDRIVE']
+    
+    def cars_test_driven(self):
+        return [Car.find_by_id(appt.car_id) for appt in self.appts() if appt.type_ == 'SERVICE']
+
     def employees(self):
         from classes.Employee import Employee
         employee_ids = {appt.employee_id for appt in self.appts()}

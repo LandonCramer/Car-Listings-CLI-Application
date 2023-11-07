@@ -6,7 +6,7 @@ from classes.Car import Car
 from classes.Appointment import Appointment
 
 class Employee:
-    def __init__(self, name, salary, hire_date, id_=None, job_title = None):
+    def __init__(self, name, salary, hire_date, id_=None, job_title=None):
         dt_obj = hire_date if hire_date else datetime.now()
         self.name = name
         self.salary = salary
@@ -133,17 +133,23 @@ class Employee:
         CURSOR.execute(sql, (self.name, self.salary, self.job_title, helpers.parse_date(self.hire_date)))
         CONN.commit()
 
-    # TODO How to make the class constructor dynamic?
     # 2023-11-07T09:01:07.865477
     @classmethod
     def create(cls, name, salary, hire_date=None):
         """ Initialize a new Employee instance and save the object to the database """
-        if not hire_date:
+        if cls.__name__ == 'Employee':
+            raise ValueError(
+                'Can only be called on Salesmen, Service Techs, and Manager instances.'
+            )
+        elif not hire_date:
             hire_date = datetime.now()
         elif not isinstance(hire_date, str):
             raise TypeError('Date must be a valid datetime object or a date string in ISO format.')
         else:
             hire_date = datetime.fromisoformat(hire_date)
+        employee = cls(name, salary, hire_date)
+        employee.save()
+        return employee
 
     def update(self):
         """ Update the table row corresponding to the current Employee instance """
