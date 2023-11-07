@@ -242,12 +242,12 @@ class Appointment:
         if appt_type == 'APPOINTMENT':
             sql = f"""
                 SELECT * FROM appointments
-                WHERE date = '{id}'
+                WHERE employee_id = '{id}'
             """
         else:
             sql = f"""
                 SELECT * FROM appointments
-                WHERE date = '{id}' AND type = '{appt_type}'
+                WHERE employee_id = '{id}' AND type = '{appt_type}'
             """
 
         rows = CURSOR.execute(sql).fetchall()

@@ -16,7 +16,8 @@ def parse_date(date):
             'Date must be a valid datetime object or a date string in ISO format.'
             )
 
-def rand_date(interval=(5*365)):
+# TODO Change default interval back to (5*365)
+def rand_date(interval=(2*30)):
     current_time = datetime.now()
     start_date = current_time - timedelta(days=interval)
     return start_date + timedelta(days=random.randint(0, (current_time - start_date).days))

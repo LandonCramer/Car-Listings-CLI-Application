@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import helpers
 from classes.__init__ import CURSOR, CONN
 from classes.Customer import Customer
@@ -6,6 +6,7 @@ from classes.Car import Car
 from classes.Appointment import Appointment
 
 class Employee:
+    all = []
     def __init__(self, name, salary, hire_date=None, id_=None, job_title=None):
         dt_obj = hire_date if hire_date else datetime.now()
         self.name = name
@@ -13,6 +14,7 @@ class Employee:
         self.hire_date = dt_obj
         self.id_ = id_
         self.job_title = type(self).__name__
+        type(self).all.append(self)
     
     @property
     def name(self):
@@ -168,7 +170,6 @@ class Employee:
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
 
-#Monday new code
     @classmethod
     def instance_from_db(cls, row):
         return cls(
@@ -181,17 +182,33 @@ class Employee:
     
     @classmethod
     def get_employees_by_role(cls, role):
-        sql = """
+        from classes.Salesman import Salesman; from classes.ServiceTech import ServiceTech; from classes.Manager import Manager
+        CURSOR.execute("""
             SELECT *
             FROM employees
             WHERE job_title = ?
-        """
-        rows = CURSOR.execute(sql, (role,)).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
+            """,
+            (role,))
+        rows = CURSOR.fetchall()
+        if role == 'Salesman':
+            employees = [Salesman.instance_from_db(row) for row in rows] if rows else None
+        elif role == 'ServiceTech':
+            employees = [ServiceTech.instance_from_db(row) for row in rows] if rows else None
+        elif role == 'Manager':
+            employees = [Manager.instance_from_db(row) for row in rows] if rows else None
+        else:
+            raise ValueError(
+                'Job title must be one of the the following: "Salesman", "ServiceTech", or "Manager".'
+            )
+        return employees
     
     @classmethod
-    def employee_of_the_month(cls):
-        pass
+    def salesman_of_the_month(cls):
+        one_month_ago = datetime.now() - timedelta(days=30)
+        for employee in cls.get_employees_by_role('Salesman'):
+                print(employee)
+                # print(len(employee.sales() if employee.sales() else None))
+
 
     def appts(self):
         return Appointment.get_by_employee_id(self.id_)
