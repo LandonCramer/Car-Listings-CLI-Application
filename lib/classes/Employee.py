@@ -205,9 +205,8 @@ class Employee:
     @classmethod
     def salesman_of_the_month(cls):
         one_month_ago = datetime.now() - timedelta(days=30)
-        for employee in cls.get_employees_by_role('Salesman'):
-                print(employee)
-                # print(len(employee.sales() if employee.sales() else None))
+        salesmen = cls.get_employees_by_role('Salesman')
+        return max(salesmen, key=lambda x: len(x.appts()))
 
 
     def appts(self):
