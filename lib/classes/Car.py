@@ -388,8 +388,16 @@ class Car:
         rows = CURSOR.fetchall()
         return [Car.instance_from_db(row) for row in rows] if rows else None
 
-    def owned_cars(cls):
-        pass
+    def cars_in_shop(cls):
+        CURSOR.execute(f"""
+        SELECT DISTINCT cars.*
+        FROM cars
+        JOIN appointments ON cars.id = appointments.car_id
+        WHERE type = 'SERVICE'
+        """
+        )
+        rows = CURSOR.fetchall()
+        return [Car.instance_from_db(row) for row in rows] if rows else None
 
     def top_cars(cls):
         pass
