@@ -19,6 +19,7 @@ class Appointment:
     # CREATE / DROP TABLES
     # *********************
 
+    # TODO ON DELETE CASCADE
     @classmethod
     def create_table(cls):
         sql = """

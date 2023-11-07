@@ -1,5 +1,4 @@
 # python helpers.py
-import re
 from datetime import datetime, timedelta
 import random
 
@@ -23,9 +22,13 @@ def rand_date(interval=(5*365)):
     return start_date + timedelta(days=random.randint(0, (current_time - start_date).days))
 
 def bound_rand_date(dt_obj, current_date=None):
-    current_date = datetime.now()
-    print(current_date, dt_obj)
-    return rand_date((current_date - dt_obj).days)
+    if isinstance(dt_obj, datetime):
+        current_date = datetime.now()
+        return rand_date((current_date - dt_obj).days)
+    else:
+        raise ValueError(
+            'Arguments must be datetime objects.'
+        )
 
 
 # TODO Add regex checkers to make sure all user input phones and dates are in the right format. 

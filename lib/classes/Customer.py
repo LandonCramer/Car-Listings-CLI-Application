@@ -116,7 +116,7 @@ class Customer:
     @classmethod
     def create(cls, name, phone, join_date):
         """ Initialize a new Customer instance and save the object to the database """
-        customer = Customer(name, phone, join_date)
+        customer = cls(name, phone, join_date)
         customer.save()
         return customer
 

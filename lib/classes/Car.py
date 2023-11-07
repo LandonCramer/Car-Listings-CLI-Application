@@ -10,7 +10,7 @@ class Car:
     VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
     FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
-    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_ = None, owner_id = None, sale_id = None):
+    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_ = None):
         self.vehicle_type = vehicle_type
         self.new = new
         self.make = make
@@ -22,9 +22,6 @@ class Car:
         self.year = year
         self.price = price
         self.id_ = id_
-        # TODO Compute owner_id based on sale_id else None
-        self.owner_id = owner_id
-        self.sale_id = sale_id
 
     # ! Properties
     @property
@@ -181,17 +178,6 @@ class Car:
         else:
             self._id_ = id_
 
-    @property
-    def owner_id(self):
-        return self._owner_id
-    @owner_id.setter
-    def owner_id(self, owner_id):
-        if not owner_id:
-            self._owner_id = None
-        elif not isinstance(owner_id, int) or isinstance(owner_id, bool):
-            raise TypeError("Owner ID must be an integer.")
-        else:
-            self._owner__id = owner_id
 
     @property
     def sale_id(self):
@@ -261,8 +247,8 @@ class Car:
         CONN.commit()
     
     @classmethod
-    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id):
-        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id)
+    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None):
+        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None)
         new_car.save()
         return new_car
     
@@ -279,9 +265,7 @@ class Car:
                 bool(row[9]), # transmission
                 row[5], # year
                 row[10], # price
-                row[0], # id_
-                row[11], # owner_id
-                row[12] # sale_id
+                row[0] # id_
                 )
 
     @classmethod
@@ -311,10 +295,10 @@ class Car:
     def save(self):
         CURSOR.execute(
             '''
-            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id, owner_id, sale_id)
+            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''',
-            (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_, self.owner_id, self.sale_id)
+            (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_)
         )
         CONN.commit()
         self.id = CURSOR.lastrowid
@@ -324,10 +308,10 @@ class Car:
         CURSOR.execute(
             '''
             UPDATE cars
-            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?, owner_id = ?, sale_id = ?
+            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?
             WHERE id = ?
             ''',
-            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owner_id, self.sale_id)
+            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_)
         )
         CONN.commit()
         return self
