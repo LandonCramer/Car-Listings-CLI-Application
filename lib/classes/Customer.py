@@ -4,7 +4,6 @@ import helpers
 from datetime import datetime
 from classes.Car import Car
 from classes.Appointment import Appointment
-from classes.Employee import Employee
 
 class Customer:
     def __init__(self, name, phone, join_date, id_ = None):
@@ -163,14 +162,7 @@ class Customer:
         return [Car.instance_from_db(row) for row in rows] if rows else None
 
     def appts(self):
-        CURSOR.execute('''
-            SELECT * FROM appointments
-            WHERE customer_id = ?
-            ''',
-            (self.id_,)
-            )
-        rows = CURSOR.fetchall()
-        return [Appointment.instance_from_db(row) for row in rows] if rows else None
+        return Appointment.get_by_customer_id(self.id_)
     
     def employees(self):
         from classes.Employee import Employee

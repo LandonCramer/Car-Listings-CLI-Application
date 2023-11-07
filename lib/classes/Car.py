@@ -2,6 +2,7 @@ import random
 from classes.__init__ import CURSOR, CONN
 from helpers import current_date
 from classes.Appointment import Appointment
+from classes.Testdrive import Testdrive
 
 class Car:
 
@@ -382,9 +383,19 @@ class Car:
         return [Car.instance_from_db(row) for row in rows] if rows else None
     
     @classmethod
-    def top_cars(cls):
-        pass 
-    
+    def top_cars(cls, list_len):
+        driven_car_ids = {}
+        for testdrive in Testdrive.get_all():
+            if testdrive.car_id in driven_car_ids.keys():
+                driven_car_ids[testdrive.car_id] = driven_car_ids[testdrive.car_id] + 1
+            else:
+                driven_car_ids[testdrive.car_id] = 1
+        tuple_list = [(key, value) for key, value in driven_car_ids.items()]
+        top_cars = []
+        for car in sorted(tuple_list, key=lambda x: x[1])[:list_len]:
+            top_cars.append(cls.find_by_id(car[1]))
+        return top_cars
+
     @classmethod
     def search_cars(cls):
         pass
@@ -393,20 +404,9 @@ class Car:
     def filter_cars(cls):
         pass
 
-    @classmethod
-    def get_cars_by_person(cls):
-        pass
-
     # ! Instance Methods
     def appts(self):
-        CURSOR.execute(f"""
-            SELECT * FROM appointments
-            WHERE car_id = ?            
-            """,
-            (self.id,)
-            )
-        rows = CURSOR.fetchall()
-        return [Appointment.instance_from_db(row) for row in rows] if rows else None
+        return Appointment.get_by_car_id(self.id_)
         
     def services(self):
         return [appt for appt in self.appts() if appt.type_ == 'SERVICE']

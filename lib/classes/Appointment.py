@@ -154,7 +154,7 @@ class Appointment:
 
         return updated
 
-    # TODO Changed this one to protect from SQL injection
+    # TODO Changed this one to protect from SQL injection, update others.
     @classmethod
     def get_all(cls):
         appt_type = cls.__name__.upper()
@@ -173,8 +173,12 @@ class Appointment:
             rows = CURSOR.execute(sql, (appt_type,)).fetchall()
             return [cls.instance_from_db(row) for row in rows]
 
+    # TODO Changed this one to prevent initializations of Appointment instances. Update others.
     @classmethod
     def find_by_id(cls, id_):
+        from classes.Sale import Sale
+        from classes.Service import Service
+        from classes.Testdrive import Testdrive
         CURSOR.execute(
             '''
             SELECT * FROM appointments
@@ -183,7 +187,16 @@ class Appointment:
             (id_,)
         )
         row = CURSOR.fetchone()
-        return cls.instance_from_db(row) if row else None
+        if row[1] == 'SALE':
+            return Sale.instance_from_db(row) if row else None
+        elif row[1] == 'SERVICE':
+            return Service.instance_from_db(row) if row else None
+        elif row[1] == 'TESTDRIVE':
+            return Testdrive.instance_from_db(row) if row else None
+        else:
+            raise ValueError(
+                'Appointment type must be one of the the following: "SALE", "SERVICE", or "TESTDRIVE".'
+            )
 
     @classmethod
     def get_by_date(cls, date):

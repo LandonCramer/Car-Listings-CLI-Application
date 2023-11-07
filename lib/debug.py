@@ -76,6 +76,16 @@ def reset_db():
     td3 = Testdrive('TESTDRIVE', helpers.rand_date(30), 6, 3, 3, "The customer kept telling me about her toenail collection.")
     td4 = Testdrive('TESTDRIVE', helpers.rand_date(30), 7, 1, 3, "Person did not show up.")
     td5 = Testdrive('TESTDRIVE', helpers.rand_date(30), 2, 2, 3, "Testdrive actually went well.")
+    td6 = Testdrive('TESTDRIVE', helpers.rand_date(30), 1, 1, 1, "The guy drove thru a McDonalds and ordered a 50-pc chicken nugget.")
+    td7 = Testdrive('TESTDRIVE', helpers.rand_date(30), 3, 3, 34, "Dude crashed into lightpole then tried to bribe me with an expired Chuck E Cheese coupon.")
+    td8 = Testdrive('TESTDRIVE', helpers.rand_date(30), 6, 3, 31, "The customer kept telling me about her toenail collection.")
+    td9 = Testdrive('TESTDRIVE', helpers.rand_date(30), 7, 1, 4, "Person did not show up.")
+    td10 = Testdrive('TESTDRIVE', helpers.rand_date(30), 2, 2, 4, "Testdrive actually went well.")
+    td11 = Testdrive('TESTDRIVE', helpers.rand_date(30), 1, 1, 1, "The guy drove thru a McDonalds and ordered a 50-pc chicken nugget.")
+    td12 = Testdrive('TESTDRIVE', helpers.rand_date(30), 3, 3, 1, "Dude crashed into lightpole then tried to bribe me with an expired Chuck E Cheese coupon.")
+    td13 = Testdrive('TESTDRIVE', helpers.rand_date(30), 6, 3, 4, "The customer kept telling me about her toenail collection.")
+    td14 = Testdrive('TESTDRIVE', helpers.rand_date(30), 7, 1, 33, "Person did not show up.")
+    td15 = Testdrive('TESTDRIVE', helpers.rand_date(30), 2, 2, 3, "Testdrive actually went well.")
 
     sale1.save()
     sale2.save()
@@ -92,6 +102,16 @@ def reset_db():
     td3.save()
     td4.save()
     td5.save()
+    td6.save()
+    td7.save()
+    td8.save()
+    td9.save()
+    td10.save()
+    td11.save()
+    td12.save()
+    td13.save()
+    td14.save()
+    td15.save()
 
 
 

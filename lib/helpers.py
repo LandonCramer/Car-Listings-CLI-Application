@@ -22,9 +22,6 @@ def rand_date(interval=(5*365)):
     start_date = current_time - timedelta(days=interval)
     return start_date + timedelta(days=random.randint(0, (current_time - start_date).days))
 
-def pascal_to_words(string):
-    return ' '.join(re.findall(r'[A-Z][a-z0-9]*', string))
-
 def datetime_to_dict(dt):
     date_dict = {
         'year': dt.year,

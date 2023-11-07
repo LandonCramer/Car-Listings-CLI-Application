@@ -11,7 +11,7 @@ class Employee:
         self.salary = salary
         self.hire_date = hire_date
         self.id_ = id_
-        self.job_title = helpers.pascal_to_words(type(self).__name__)
+        self.job_title = type(self).__name__
     
     @property
     def name(self):
@@ -94,14 +94,18 @@ class Employee:
         else:
             sql = f"""
                 SELECT * FROM employees
-                WHERE job_title = '{helpers.pascal_to_words(cls.__name__)}'
+                WHERE job_title = '{cls.__name__}'
             """     
 
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
 
+    # TODO
     @classmethod
     def find_by_id(cls, id_):
+        from classes.Salesman import Salesman
+        from classes.ServiceTech import ServiceTech
+        from classes.Manager import Manager
         CURSOR.execute(
             '''
             SELECT * FROM employees
@@ -110,7 +114,16 @@ class Employee:
             (id_,)
         )
         row = CURSOR.fetchone()
-        return cls.instance_from_db(row) if row else None
+        if row[3] == 'Salesman':
+            return Salesman.instance_from_db(row) if row else None
+        elif row[3] == 'ServiceTech':
+            return ServiceTech.instance_from_db(row) if row else None
+        elif row[3] == 'Manager':
+            return Manager.instance_from_db(row) if row else None
+        else:
+            raise ValueError(
+                'Job title must be one of the the following: "Salesman", "ServiceTech", or "Manager".'
+            )
     
     def save(self):
         """ Insert a new row with the name, salary, and hire date (hire date converted to a string, Format YYYY-MM-DD) """
@@ -173,13 +186,7 @@ class Employee:
         pass
 
     def appts(self):
-        CURSOR.execute(f"""
-            SELECT * FROM appointments
-            WHERE employee_id = {self.id_}
-            """
-            )
-        rows = CURSOR.fetchall()
-        return [Appointment.instance_from_db(row) for row in rows] if rows else None
+        return Appointment.get_by_employee_id(self.id_)
 
     def test_drives(self):
         if self.job_title in ('Salesman', 'Manager'):
