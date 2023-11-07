@@ -46,7 +46,7 @@ class Appointment:
         sql = f"""
             DROP TABLE IF EXISTS appointments
         """
-        
+
         CURSOR.execute(sql)
         CONN.commit()
 
@@ -157,126 +157,35 @@ class Appointment:
         return updated
 
     @classmethod
-    def get_all(cls):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = """
-                SELECT * FROM appointments
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE type = '{appt_type}'
-            """     
+    def get_by(cls, param='all', value=None):
+        search_params = ['all', 'date', 'customer_id', 'employee_id', 'car_id', 'status']
         
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_by_date(cls, date):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{date}'
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{date}' AND type = '{appt_type}'
-            """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_by_customer_id(cls, id):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{id}'
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{id}' AND type = '{appt_type}'
-            """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_by_employee_id(cls, id):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{id}'
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{id}' AND type = '{appt_type}'
-            """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def get_by_car_id(cls, id):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{id}'
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE date = '{id}' AND type = '{appt_type}'
-            """
-
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-    
-    @classmethod
-    def get_active(cls):
-        appt_type = cls.__name__.upper()
-
-        if appt_type == 'APPOINTMENT':
-            sql = """
-                SELECT * FROM appointments
-                WHERE status = "Active"
-            """
-        else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE status = "Active" AND type = '{appt_type}'
-            """
+        if param not in search_params:
+            raise ValueError("Incorrect search parameter inputted.")
         
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-    
-    @classmethod
-    def get_closed(cls):
         appt_type = cls.__name__.upper()
 
         if appt_type == 'APPOINTMENT':
-            sql = """
-                SELECT * FROM appointments
-                WHERE status = "Closed"
-            """
+            if param == 'all':
+                sql = """
+                    SELECT * FROM appointments
+                """
+            else:
+                sql = f"""
+                    SELECT * FROM appointments
+                    WHERE {param} = '{value}'
+                """
         else:
-            sql = f"""
-                SELECT * FROM appointments
-                WHERE status = "Closed" AND type = '{appt_type}'
-            """
+            if param == 'all':
+                sql = f"""
+                    SELECT * FROM appointments
+                    WHERE type = '{appt_type}'
+                """    
+            else:
+                sql = f"""
+                    SELECT * FROM appointments
+                    WHERE type = '{appt_type}' AND {param} = '{value}'
+                """
 
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
@@ -327,6 +236,7 @@ class Appointment:
   
         appointment.save()
         cls.all[appointment.id_] = appointment
+        
         return appointment
     
     def update(self):
