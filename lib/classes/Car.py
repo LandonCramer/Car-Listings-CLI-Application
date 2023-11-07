@@ -401,9 +401,9 @@ class Car:
     def appts(self):
         CURSOR.execute(f"""
             SELECT * FROM appointments
-            WHERE car_id = {self.id}
-            
-            """
+            WHERE car_id = ?            
+            """,
+            (self.id,)
             )
         rows = CURSOR.fetchall()
         return [Appointment.instance_from_db(row) for row in rows] if rows else None

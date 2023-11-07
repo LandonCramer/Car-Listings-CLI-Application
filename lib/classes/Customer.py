@@ -2,6 +2,9 @@ import re
 from classes.__init__ import CURSOR, CONN
 import helpers
 from datetime import datetime
+from classes.Car import Car
+from classes.Appointment import Appointment
+from classes.Employee import Employee
 
 class Customer:
     def __init__(self, name, phone, join_date, id_ = None):
@@ -148,3 +151,31 @@ class Customer:
             row[0] #id_
         )
     
+    def cars(self):
+        CURSOR.execute('''
+            SELECT * 
+            FROM cars
+            WHERE owner_id = ?
+            ''',
+            (self.id_,)
+            )
+        rows = CURSOR.fetchall()
+        return [Car.instance_from_db(row) for row in rows] if rows else None
+
+    def appts(self):
+        CURSOR.execute('''
+            SELECT * FROM appointments
+            WHERE customer_id = ?
+            ''',
+            (self.id_,)
+            )
+        rows = CURSOR.fetchall()
+        return [Appointment.instance_from_db(row) for row in rows] if rows else None
+    
+    def employees(self):
+        from classes.Employee import Employee
+        employee_ids = {appt.employee_id for appt in self.appts()}
+        employees = []
+        for id_ in employee_ids:
+            employees.append(Employee.find_by_id(id_))
+        return employees

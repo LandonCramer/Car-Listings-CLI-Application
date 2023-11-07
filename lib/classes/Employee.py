@@ -202,41 +202,21 @@ class Employee:
             return [appt for appt in self.appts() if appt.type_ == 'SALE'] if self.appts() else None
         else:
             raise ValueError(
-                'Only Service Techs and Managers have access to Services.'
+                'Only Service Techs and Managers have access to Sales.'
             )
     
-    # def cars(self):
-    #     sql = """
-    #         SELECT cars.*
-    #         FROM cars
-    #         INNER JOIN employees_cars ON cars.id = employees_cars.car_id
-    #         WHERE employees_cars.employee_id = ?
-    #     """
-    #     rows = CURSOR.execute(sql, (self.id_,)).fetchall()
-    #     return [Car.instance_from_db(row) for row in rows]
+    def customers(self):
+        from classes.Customer import Customer
+        cust_ids = {appt.customer_id for appt in self.appts()}
+        custs = []
+        for id_ in cust_ids:
+            custs.append(Customer.find_by_id(id_))
+        return custs
     
-    # def cars(self):
-    #     return [car for car in Car.get_cars_by_employee_id(self.id)]
-    #     sql = '''
-
-    #     '''
-
-    # def customers(self):
-    #     sql = """
-    #         SELECT customers.* 
-    #         FROM customers 
-    #         INNER JOIN employees_customers ON customers.id = employees_customers.customer_id
-    #         WHERE employees_customers.employee_id = ?
-    #     """
-    #     rows = CURSOR.execute(sql, (self.id_,)).fetchall()
-    #     return [Customer.instance_from_db(row) for row in rows]
-    
-    # def appointments(self):
-    #     sql = """
-    #         SELECT appointments.*
-    #         FROM appointments
-    #         INNER JOIN employees_appointments ON appointments.id = employees_appointments.appointment_id
-    #         WHERE employees_appointments.employee_id = ?
-    #     """
-    #     rows = CURSOR.execute(sql, (self.id_,)).fetchall()
-    #     return [Appointment.instance_from_db(row) for row in rows]
+    def cars(self):
+        from classes.Car import Car
+        car_ids = {appt.car_id for appt in self.appts()}
+        cars = []
+        for id_ in car_ids:
+            cars.append(Car.find_by_id(id_))
+        return cars

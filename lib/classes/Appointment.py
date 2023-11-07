@@ -154,6 +154,7 @@ class Appointment:
 
         return updated
 
+    # TODO Changed this one to protect from SQL injection
     @classmethod
     def get_all(cls):
         appt_type = cls.__name__.upper()
@@ -162,14 +163,15 @@ class Appointment:
             sql = """
                 SELECT * FROM appointments
             """
+            rows = CURSOR.execute(sql).fetchall()
+            return [cls.instance_from_db(row) for row in rows]
         else:
             sql = f"""
                 SELECT * FROM appointments
-                WHERE type = '{appt_type}'
+                WHERE type = ?
             """     
-        
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
+            rows = CURSOR.execute(sql, (appt_type,)).fetchall()
+            return [cls.instance_from_db(row) for row in rows]
 
     @classmethod
     def find_by_id(cls, id_):
