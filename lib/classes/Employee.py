@@ -120,8 +120,20 @@ class Employee:
             """     
 
         rows = CURSOR.execute(sql).fetchall()
-        return [cls.new_from_db(row) for row in rows]
+        return [cls.instance_from_db(row) for row in rows]
 
+    @classmethod
+    def find_by_id(cls, id_):
+        CURSOR.execute(
+            '''
+            SELECT * FROM employees
+            WHERE id = ?
+            ''',
+            (id_,)
+        )
+        row = CURSOR.fetchone()
+        return cls.instance_from_db(row) if row else None
+    
     def save(self):
         """ Insert a new row with the name, salary, and hire date (hire date converted to a string, Format YYYY-MM-DD) """
         sql = """
@@ -162,7 +174,7 @@ class Employee:
 
 #Monday new code
     @classmethod
-    def new_from_db(cls, row):
+    def instance_from_db(cls, row):
         return cls(
             row[1], #name
             row[2], #salary
@@ -180,7 +192,7 @@ class Employee:
             WHERE job_title = ?
         """
         rows = CURSOR.execute(sql, (role,)).fetchall()
-        return [cls.new_from_db(row) for row in rows]
+        return [cls.instance_from_db(row) for row in rows]
     
     @classmethod
     def employee_of_the_month(cls):
@@ -194,7 +206,7 @@ class Employee:
     #         WHERE employees_cars.employee_id = ?
     #     """
     #     rows = CURSOR.execute(sql, (self.id_,)).fetchall()
-    #     return [Car.new_from_db(row) for row in rows]
+    #     return [Car.instance_from_db(row) for row in rows]
     
     def cars(self):
         return [car for car in Car.get_cars_by_employee_id(self.id)]
@@ -211,7 +223,7 @@ class Employee:
             WHERE employees_customers.employee_id = ?
         """
         rows = CURSOR.execute(sql, (self.id_,)).fetchall()
-        return [Customer.new_from_db(row) for row in rows]
+        return [Customer.instance_from_db(row) for row in rows]
     
     def appointments(self):
         sql = """
@@ -221,4 +233,4 @@ class Employee:
             WHERE employees_appointments.employee_id = ?
         """
         rows = CURSOR.execute(sql, (self.id_,)).fetchall()
-        return [Appointment.new_from_db(row) for row in rows]
+        return [Appointment.instance_from_db(row) for row in rows]

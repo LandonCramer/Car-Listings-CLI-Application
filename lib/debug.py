@@ -19,6 +19,9 @@ s2 = Salesman('Conner', 71000, datetime.now(), 2)
 st1 = ServiceTech('Matteo', 75_000, datetime.now(), 1)
 st2 = ServiceTech('Conner', 71000, datetime.now(), 2)
 fleet = helpers.generate_fleet()
+car1 = fleet[0]
+car2 = fleet[1]
+car3 = fleet[2]
 
 
 def reset_db():
@@ -30,9 +33,6 @@ def reset_db():
     Employee.create_table()
     for car in fleet:
         car.save()
-    car1=Car.find_by_id(1)
-    car2=Car.find_by_id(2)
-    car3=Car.find_by_id(3)
     s1.save()
     s2.save()
     st1.save()
@@ -56,8 +56,8 @@ def reset_db():
     td1 = Testdrive('TESTDRIVE', datetime.now(), 1, 1, 1, "The guy drove thru a McDonalds and ordered a 50-pc chicken nugget.")
     td2 = Testdrive('TESTDRIVE', datetime.now(), 3, 3, 3, "Dude crashed into lightpole then tried to bribe me with an expired Chuck E Cheese coupon.")
     td3 = Testdrive('TESTDRIVE', datetime.now(), 6, 3, 3, "The customer kept telling me about her toenail collection.")
-    td4 = Testdrive('TESTDRIVE', datetime.now(), 7, 3, 3, "Person did not show up.")
-    td5 = Testdrive('TESTDRIVE', datetime.now(), 2, 3, 3, "Testdrive actually went well.")
+    td4 = Testdrive('TESTDRIVE', datetime.now(), 7, 1, 3, "Person did not show up.")
+    td5 = Testdrive('TESTDRIVE', datetime.now(), 2, 2, 3, "Testdrive actually went well.")
 
     sale1.save()
     sale2.save()
