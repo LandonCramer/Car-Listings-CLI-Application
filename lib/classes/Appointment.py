@@ -70,8 +70,6 @@ class Appointment:
     @date.setter
     def date(self, date):
         if isinstance(date, datetime):
-            self._date = parse_date(date)
-        elif isinstance(date, str):
             self._date = date
         else:
             raise TypeError('Date must be a valid Date object or string.')
@@ -139,15 +137,15 @@ class Appointment:
         if row[0] == 'SALE':
             a, b, c, d, e, f, g = relevant_values
             from classes.Sale import Sale
-            updated = Sale(a, b, c, d, e, f, g)
+            updated = Sale(a, datetime.fromisoformat(b), c, d, e, f, g)
         elif row[0] == 'SERVICE':
             a, b, c, d, e, f, g, h = relevant_values
             from classes.Service import Service
-            updated = Service(a, b, c, d, e, f, g, h)
+            updated = Service(a, datetime.fromisoformat(b), c, d, e, f, g, h)
         elif row[0] == 'TESTDRIVE':
             a, b, c, d, e, f = relevant_values
             from classes.Testdrive import Testdrive
-            updated = Testdrive(a, b, c, d, e, f)
+            updated = Testdrive(a, datetime.fromisoformat(b), c, d, e, f)
         else:
             raise ValueError("Invalid class name.")
         
@@ -291,13 +289,15 @@ class Appointment:
         all_values = []
 
         for key in all_keys:
-            if key in attr_dict.keys():
+            if key == '_date':
+                all_values.append(datetime.isoformat(attr_dict[key]))
+            elif key in attr_dict.keys():
                 all_values.append(attr_dict[key])
             else:
                 all_values.append('*')
 
         if self.type_ == 'SALE' or self.type_ == 'SERVICE' or self.type_ == 'TESTDRIVE':
-            sql = """
+            sql = f"""
                 INSERT INTO appointments (type, date, customer_id, employee_id, car_id, balance, reason_for_visit, estimate, notes, status)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
@@ -324,7 +324,7 @@ class Appointment:
             appointment = cls(a, b, c, d, e, f)
         else:
             raise ValueError("Invalid class name.")
-  
+
         appointment.save()
         cls.all[appointment.id_] = appointment
         return appointment

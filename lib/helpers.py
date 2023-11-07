@@ -7,11 +7,31 @@ current_date = datetime.now()
 year_range = range(current_date.year - 100, current_date.year + 1)
 miles_range = range(300_001)
 
-def parse_date(datetime_obj):
-    return f'{datetime_obj.month}/{datetime_obj.day}/{datetime_obj.year}'
+def parse_date(date):
+    if isinstance(date, str):
+        return datetime.fromisoformat(date)
+    elif isinstance(date, datetime):
+        return date.isoformat()
+    else:
+        raise TypeError(
+            'Date must be a valid datetime object or a date string in ISO format.'
+            )
 
 def pascal_to_words(string):
     return ' '.join(re.findall(r'[A-Z][a-z0-9]*', string))
+
+def datetime_to_dict(dt):
+    date_dict = {
+        'year': dt.year,
+        'month': dt.month,
+        'day': dt.day,
+        'hour': dt.hour,
+        'minute': dt.minute,
+        'second': dt.second,
+        'weekday': dt.weekday(),  # 0 for Monday, 1 for Tuesday, ..., 6 for Sunday
+        'week': dt.isocalendar()[1]  # ISO week number
+    }
+    return date_dict
 
 # ! Random Fleet Generation Functions
 

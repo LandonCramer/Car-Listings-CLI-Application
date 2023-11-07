@@ -261,11 +261,11 @@ class Car:
         )
         CONN.commit()
     
-    @classmethod
-    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id):
-        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id)
-        new_car.save()
-        return new_car
+    # @classmethod
+    # def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id):
+    #     new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owner_id, sale_id)
+    #     new_car.save()
+    #     return new_car
     
     @classmethod
     def instance_from_db(cls, row):

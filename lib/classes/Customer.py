@@ -37,15 +37,13 @@ class Customer:
 
     @property
     def join_date(self):
-        return helpers.parse_date(self._join_date)
+        return self._join_date
     @join_date.setter
     def join_date(self, join_date):
         if isinstance(join_date, datetime):
-            self._join_date = helpers.parse_date(join_date)
-        elif isinstance(join_date, str):
             self._join_date = join_date
         else:
-            raise TypeError('Date must be a valid Date object or string.')
+            raise TypeError('Date must be a valid Date object')
     
     @property
     def id_(self):
@@ -110,7 +108,7 @@ class Customer:
             INSERT INTO customers (name, phone, join_date)
             VALUES (?, ?, ?)
         """
-        CURSOR.execute(sql, (self.name, self.phone, self.join_date))
+        CURSOR.execute(sql, (self.name, self.phone, datetime.isoformat(self.join_date)))
         CONN.commit()
 
     @classmethod
@@ -127,7 +125,7 @@ class Customer:
             SET name = ?, phone = ?, join_date = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.name, self.phone, self.join_date.strftime('%Y-%m-%d'), self.id))
+        CURSOR.execute(sql, (self.name, self.phone, self.join_date, self.id))
         CONN.commit()
 
     def delete(self):
@@ -146,7 +144,7 @@ class Customer:
         return cls(
             row[1], #name
             row[2], #phone
-            row[3], #joindate
+            datetime.fromisoformat(row[3]), #join_date
             row[0] #id_
         )
     

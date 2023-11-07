@@ -43,32 +43,15 @@ class Employee:
         else:
             self._salary = salary
 
-    # @property
-    # def job_title(self):
-    #     return self._job_title
-
-    # @job_title.setter
-    # def job_title(self):
-    #     self._job_title = str(type(self))
-    # def job_title(self, job_title):
-    #     if isinstance(job_title, str) and len(job_title) > 0:
-    #         self._job_title = job_title
-    #     else:
-    #         raise ValueError(
-    #             "job_title must be a non-empty string"
-    #         )
-    
     @property
     def hire_date(self):
         return self._hire_date
     @hire_date.setter
     def hire_date(self, hire_date):
         if isinstance(hire_date, datetime):
-            self._hire_date = helpers.parse_date(hire_date)
-        elif isinstance(hire_date, str):
             self._hire_date = hire_date
         else:
-            raise TypeError('Date must be a valid Date object or string.')
+            raise TypeError('Date must be a valid datetime object.')
 
     @property
     def id_(self):
@@ -140,7 +123,7 @@ class Employee:
             INSERT INTO employees (name, salary, job_title, hire_date)
             VALUES (?, ?, ?, ?)
         """
-        CURSOR.execute(sql, (self.name, self.salary, self.job_title, self.hire_date))
+        CURSOR.execute(sql, (self.name, self.salary, self.job_title, datetime.isoformat(self.hire_date)))
         CONN.commit()
 
     @classmethod
@@ -169,16 +152,13 @@ class Employee:
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
 
-
-
-
 #Monday new code
     @classmethod
     def instance_from_db(cls, row):
         return cls(
             row[1], #name
             row[2], #salary
-            row[4], #hire_date
+            datetime.fromisoformat(row[4]), #hire_date
             row[0], #id_
             row[3] #job_title
         )
