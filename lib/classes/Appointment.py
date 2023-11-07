@@ -188,6 +188,9 @@ class Appointment:
                 """
 
         rows = CURSOR.execute(sql).fetchall()
+        if not rows:
+            print('No results found.')
+            return
         return [cls.instance_from_db(row) for row in rows]
 
     # *************
