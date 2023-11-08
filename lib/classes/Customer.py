@@ -123,12 +123,19 @@ class Customer:
 
     @classmethod
     def get_by(cls, param='all', value=None):
+        if isinstance(value, str):
+            value.strip()
+        elif not isinstance(value, int):
+            raise TypeError(
+                'Value must be an integer, string, or valid MM/DD/YYYY date.'
+            )
+
         search_params = ['all', 'id', 'name', 'phone', 'join_date']
         
         if param not in search_params:
             raise ValueError("Incorrect search parameter inputted.")
-        
-        elif param == 'all':
+
+        if param == 'all':
             sql = """
                 SELECT * FROM customers
             """
@@ -144,8 +151,14 @@ class Customer:
             print('No results found.')
             return
         
-        return [cls.instance_from_db(row) for row in rows]
-
+        elif len(rows) == 1:
+            return cls.instance_from_db(rows[0])
+        else:
+            return [cls.instance_from_db(row) for row in rows]
+    
+    # ******
+    # UPDATE
+    # ******
 
     def update(self):
         """ Update the table row corresponding to the current Customer instance """
@@ -157,6 +170,10 @@ class Customer:
         CURSOR.execute(sql, (self.name, self.phone, self.join_date, self.id))
         CONN.commit()
 
+    # *******
+    # DESTROY
+    # *******
+
     def delete(self):
         """ Delete the table row corresponding to the current Customer instance """
         sql = """
@@ -166,29 +183,21 @@ class Customer:
         CURSOR.execute(sql, (self.id))
         CONN.commit()
 
-#New for Monday
-
-    
-    
-    def cars_owned(self):
-        CURSOR.execute('''
-            SELECT * 
-            FROM cars
-            WHERE owner_id = ?
-            ''',
-            (self.id_,)
-            )
-        rows = CURSOR.fetchall()
-        return [Car.instance_from_db(row) for row in rows] if rows else None
+    # ****************
+    # INSTANCE METHODS
+    # ****************
 
     def appts(self):
         return Appointment.get_by('customer_id', self.id_)
     
     def cars_test_driven(self):
-        return [Car.find_by_id(appt.car_id) for appt in self.appts() if appt.type_ == 'TESTDRIVE']
+        return [Car.get_by('id', appt.car_id) for appt in self.appts() if appt.type_ == 'TESTDRIVE'] if self.appts() else None
     
-    def cars_test_driven(self):
-        return [Car.find_by_id(appt.car_id) for appt in self.appts() if appt.type_ == 'SERVICE']
+    def cars_serviced(self):
+        return [Car.get_by('id', appt.car_id) for appt in self.appts() if appt.type_ == 'SERVICE' and appt.status == 'Closed'] if self.appts() else None
+
+    def cars_in_shop(self):
+        return [Car.get_by('id', appt.car_id) for appt in self.appts() if appt.type_ == 'SERVICE' and appt.status == 'Active'] if self.appts() else None
 
     def employees(self):
         from classes.Employee import Employee
@@ -198,6 +207,10 @@ class Customer:
             employees.append(Employee.find_by_id(id_))
         return employees
     
+    # ****************
+    # CLASS METHODS
+    # ****************
+
     @classmethod
     def phone_numbers(cls):
         CURSOR.execute("""

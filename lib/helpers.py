@@ -11,7 +11,7 @@ def parse_date(date):
     if isinstance(date, str):
         return datetime.strptime(date, '%m/%d/%Y')
     elif isinstance(date, datetime):
-        return datetime.strftime(date, '%m/%d/%Y')
+        return datetime.strftime(date, '%-m/%-d/%Y')
     else:
         raise TypeError(
             'Date must be a valid datetime object or a date string.'
