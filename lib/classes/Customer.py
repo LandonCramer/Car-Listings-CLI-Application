@@ -64,7 +64,6 @@ class Customer:
     def phone(self, phone):
         if not re.match('^\d{10}$', phone):
             raise ValueError('Phone number must be a valid 10 digit integer.')
-        # TODO if phone found in db raise ValueError
         else:
             self._phone = phone
 
@@ -135,7 +134,7 @@ class Customer:
         if param not in search_params:
             raise ValueError("Incorrect search parameter inputted.")
 
-        if param == 'all':
+        elif param == 'all':
             sql = """
                 SELECT * FROM customers
             """

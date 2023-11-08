@@ -14,6 +14,38 @@ class Employee:
         self.id_ = id_
         self.job_title = type(self).__name__
 
+    # *********************
+    # CREATE / DROP TABLES
+    # *********************
+
+    @classmethod
+    def create_table(cls):
+        """ Create a new table to persist the attributes of Employee instances"""
+        sql = """
+            CREATE TABLE IF NOT EXISTS employees (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                salary INTEGER,
+                job_title TEXT,
+                hire_date TEXT
+            )
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+    
+    @classmethod
+    def drop_table(cls):
+        sql = """
+            DROP TABLE IF EXISTS employees
+        """
+        
+        CURSOR.execute(sql)
+        CONN.commit()
+
+    # **********
+    # PROPERTIES
+    # **********
+
     @property
     def name(self):
         return self._name
@@ -61,30 +93,6 @@ class Employee:
             raise TypeError("ID must be an integer.")
         else:
             self._id_ = id_
-
-    @classmethod
-    def create_table(cls):
-        """ Create a new table to persist the attributes of Employee instances"""
-        sql = """
-            CREATE TABLE IF NOT EXISTS employees (
-                id INTEGER PRIMARY KEY,
-                name TEXT,
-                salary INTEGER,
-                job_title TEXT,
-                hire_date TEXT
-            )
-        """
-        CURSOR.execute(sql)
-        CONN.commit()
-    
-    @classmethod
-    def drop_table(cls):
-        sql = """
-            DROP TABLE IF EXISTS employees
-        """
-        
-        CURSOR.execute(sql)
-        CONN.commit()
 
     @classmethod
     def get_all(cls):

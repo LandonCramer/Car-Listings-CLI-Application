@@ -3,6 +3,7 @@ from helpers import parse_date
 from classes.__init__ import CURSOR, CONN
 
 class Appointment:
+    all ={}
 
     def __init__(self, type_, date, customer_id, employee_id, car_id, id_=None):
         self.type_ = type_
@@ -170,7 +171,7 @@ class Appointment:
             appointment = cls(a, b, c, d, e, f)
         else:
             raise ValueError("Appointments can only be created from the Sale, Service, or Testdrive classes.")
-  
+
         appointment.save()
         cls.all[appointment.id_] = appointment
 
@@ -209,7 +210,7 @@ class Appointment:
     # ****
 
     @classmethod
-    def get_by(cls, param='all', value=None):
+    def get_by(cls, param='all', value=''):
         if isinstance(value, str):
             value.strip()
         elif not isinstance(value, int):
@@ -251,7 +252,6 @@ class Appointment:
         if not rows:
             print('No results found.')
             return
-        
         elif len(rows) == 1:
             return cls.instance_from_db(rows[0])
         else:
