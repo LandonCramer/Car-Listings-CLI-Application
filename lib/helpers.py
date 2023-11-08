@@ -2,6 +2,15 @@
 from datetime import datetime, timedelta
 import random
 import re
+from rich import print
+from rich import box
+from rich.text import Text
+from rich.panel import Panel
+from rich.table import Table
+from rich.console import Console
+
+
+
 
 def current_date():
     return datetime.now()
@@ -213,8 +222,13 @@ def browse_cars(customer, salesman):
 
 def to_sales(customer):
     from classes.Salesman import Salesman
-    salesman = Salesman.find_by_id(random.randint(0, len(Salesman.get_all())))
-    choice = input("Enter a number for your choice:\n1. Browse Cars\n2. My Cars\n3. Sell Car\n4. Return to Lobby\n")
+
+    salesman = Salesman.find_by_id(random.randint(0, len(Salesman.get_all()) -1))
+    text = Text("Enter a number for your choice:\n1. Browse Cars\n2. My Cars\n3. Sell Car\n4. Return to Lobby")
+    text.stylize('cyan')
+    print(Panel.fit(text))
+    choice = input()
+
     if int(choice) == 1:
         browse_cars(customer, salesman)
     elif int(choice) == 2:
@@ -225,10 +239,16 @@ def to_sales(customer):
     elif int(choice) == 4:
         pass
     else:
-        print("Not a valid choice.")
+        text = Text("Not a valid choice.")
+        text.stylize('magenta')
+        print(Panel.fit(text))
         to_sales(customer)
+
 def to_lobby(customer):
-    choice = input("Enter a number for your choice:\n1. Sales\n2. Service\n3. Leave Dealership\n")
+    text = Text("Enter a number for your choice:\n1. Sales\n2. Service\n3. Leave Dealership")
+    text.stylize('cyan')
+    print(Panel.fit(text))
+    choice = input()
     if int(choice) == 1:
         to_sales(customer)
     elif int(choice) == 2:
@@ -236,41 +256,49 @@ def to_lobby(customer):
     elif int(choice) == 3:
         pass
     else:
-        print("Not a valid choice.")
+        text = Text("Not a valid choice.")
+        text.stylize('magenta')
+        print(Panel.fit(text))
         to_lobby(customer)
 
 def welcome():
-    print('Welcome to the dealership.\n')
+    text = Text("*** WELCOME TO THE DEALERSHIP ***")
+    text.stylize('bold blue')
+    print(Panel.fit(text))
 
 def create_customer():
     from classes.Customer import Customer
-    phone = input('Please enter your phone:\n')
+    text = Text('Please enter your phone:')
+    text.stylize('green')
+    print(text)
+    phone = input()
     phone = phone.strip()
     if not re.match('^\d{10}$', phone):
-        print('Phone must be a 10 digit number with no spaces or special characters.')
+        text = Text('Phone must be a 10 digit number with no spaces or special characters.')
+        text.stylize('magenta')
+        print(Panel.fit(text))
         create_customer()
     else:
         if phone in Customer.phone_numbers():
             searched_customer = Customer.get_by('phone', phone)
-            yn = input(f"Are you {searched_customer.name}? Y/N:\n")
+            text = Text(f"Are you {searched_customer.name}? Y/N:")
+            text.stylize('yellow')
+            print(Panel.fit(text))
+            yn = input()
             if yn.lower() == "y":
                 to_lobby(searched_customer)
             elif yn.lower() == "n":
-                new_phone = input("Provided number is already taken by another customer. Please provide another:\n")
-                name = input('Please enter your name:\n')
-                try:
-                    new_customer = Customer.create(name, new_phone, datetime.now())
-                    to_lobby(new_customer)
-                except Exception as e:
-                    print('Invalid customer data.')
+                text = Text("That phone number is already in use.")
+                text.stylize('magenta')
+                print(Panel.fit(text))
+                create_customer()
         else:
-            name = input("Please enter your name:\n")
-            
-            try:
-                new_customer = Customer.create(name, phone, datetime.now())
-                to_lobby(new_customer)
-            except Exception as e:
-                print('Invalid customer data.')
+            text = Text("Please enter your name:")
+            text.stylize('green')
+            print(text)
+            name = input()
+            new_customer = Customer.create(name, phone, datetime.now())
+            to_lobby(new_customer)
 
 if __name__ == '__main__':
     import ipdb; ipdb.set_trace()
