@@ -436,14 +436,14 @@ class Car:
     # TODO
     @classmethod
     def search_cars(cls, search_dict):
-        vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price = search_dict.vehicle_type, search_dict.new, search_dict.make, search_dict.model, search_dict.year, search_dict.miles, search_dict.fuel_type, search_dict.color, search_dict.transmission, search_dict.price
+        # vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price = search_dict.vehicle_type, search_dict.new, search_dict.make, search_dict.model, search_dict.year, search_dict.miles, search_dict.fuel_type, search_dict.color, search_dict.transmission, search_dict.price
         search_params = []
         for key, value in search_dict.items():
-            if not isinstance(value, int):
-                if value == 'any':
+            if value[0] == 'any':
                     search_params.append('NOT NULL')
+            elif not isinstance(value, int):
                 elif len(value) == 1:
-                    search_params.append(value)
+                    search_params.append(value[0])
             elif key == 'miles' and value == 'any':
                 search_params.append('NOT NULL')
             elif key == 'price' and value == 'any':
@@ -457,8 +457,9 @@ class Car:
                         result_string = result_string + f"{val}"
                     else:
                         result_string = result_string + f" OR {val}"
+                search_params.append(result_string)
 
-            
+        print(search_params)
 
 
 
