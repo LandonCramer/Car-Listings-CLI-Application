@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta
 import random
 
+
 current_date = datetime.now()
 year_range = range(current_date.year - 100, current_date.year + 1)
 miles_range = range(300_001)
@@ -195,6 +196,64 @@ def generate_fleet():
         fleet.append(rand_car())
     
     return fleet
+
+#CLI functions
+def browse_cars(customer, salesman):
+    print(customer, salesman)
+
+def to_sales(customer):
+    from classes.Salesman import Salesman
+    salesman = Salesman.find_by_id(random.randint(0, len(Salesman.get_all())))
+    choice = input("Enter a number for your choice:\n1. Browse Cars\n2. My Cars\n3. Sell Car\n4. Return to Lobby\n")
+    if int(choice) == 1:
+        browse_cars(customer, salesman)
+    elif int(choice) == 2:
+        #my_cars(customer, salesman)
+        pass
+    elif int(choice) == 3:
+        pass
+    elif int(choice) == 4:
+        pass
+    else:
+        print("Not a valid choice.")
+        to_sales(customer)
+def to_lobby(customer):
+    choice = input("Enter a number for your choice:\n1. Sales\n2. Service\n3. Leave Dealership\n")
+    if int(choice) == 1:
+        to_sales(customer)
+    elif int(choice) == 2:
+        pass
+    elif int(choice) == 3:
+        pass
+    else:
+        print("Not a valid choice.")
+        to_lobby(customer)
+
+def create_customer():
+    from classes.Customer import Customer
+    phone = input('Welcome to the dealership.\nPlease enter your phone:\n')
+    
+    if phone in Customer.phone_numbers():
+        current_customer = Customer.find_by_phone(phone)
+        yn = input(f"Are you {current_customer.name}? Y/N:\n")
+        if yn.lower() == "y":
+            to_lobby(current_customer)
+        elif yn.lower() == "n":
+            new_phone = input("That number is already taken by another customer please provide another:\n")
+            name = input('Please enter your name:\n')
+            try:
+                new_customer = Customer.create(name, new_phone, datetime.now())
+                to_lobby(new_customer)
+            except Exception as e:
+                print('Invalid customer data.')
+    else:
+        name = input("Please enter your name:\n")
+        
+        try:
+            new_customer = Customer.create(name, phone, datetime.now())
+            to_lobby(new_customer)
+        except Exception as e:
+            print('Invalid customer data.')
 
 if __name__ == '__main__':
     import ipdb; ipdb.set_trace()
