@@ -1,6 +1,7 @@
 # python helpers.py
 from datetime import datetime, timedelta
 import random
+import re
 
 def current_date():
     return datetime.now()
@@ -238,31 +239,38 @@ def to_lobby(customer):
         print("Not a valid choice.")
         to_lobby(customer)
 
+def welcome():
+    print('Welcome to the dealership.\n')
+
 def create_customer():
     from classes.Customer import Customer
-    phone = input('Welcome to the dealership.\nPlease enter your phone:\n')
-    
-    if phone in Customer.phone_numbers():
-        current_customer = Customer.find_by_phone(phone)
-        yn = input(f"Are you {current_customer.name}? Y/N:\n")
-        if yn.lower() == "y":
-            to_lobby(current_customer)
-        elif yn.lower() == "n":
-            new_phone = input("That number is already taken by another customer please provide another:\n")
-            name = input('Please enter your name:\n')
+    phone = input('Please enter your phone:\n')
+    phone = phone.strip()
+    if not re.match('^\d{10}$', phone):
+        print('Phone must be a 10 digit number with no spaces or special characters.')
+        create_customer()
+    else:
+        if phone in Customer.phone_numbers():
+            searched_customer = Customer.get_by('phone', phone)
+            yn = input(f"Are you {searched_customer.name}? Y/N:\n")
+            if yn.lower() == "y":
+                to_lobby(searched_customer)
+            elif yn.lower() == "n":
+                new_phone = input("Provided number is already taken by another customer. Please provide another:\n")
+                name = input('Please enter your name:\n')
+                try:
+                    new_customer = Customer.create(name, new_phone, datetime.now())
+                    to_lobby(new_customer)
+                except Exception as e:
+                    print('Invalid customer data.')
+        else:
+            name = input("Please enter your name:\n")
+            
             try:
-                new_customer = Customer.create(name, new_phone, datetime.now())
+                new_customer = Customer.create(name, phone, datetime.now())
                 to_lobby(new_customer)
             except Exception as e:
                 print('Invalid customer data.')
-    else:
-        name = input("Please enter your name:\n")
-        
-        try:
-            new_customer = Customer.create(name, phone, datetime.now())
-            to_lobby(new_customer)
-        except Exception as e:
-            print('Invalid customer data.')
 
 if __name__ == '__main__':
     import ipdb; ipdb.set_trace()
