@@ -12,6 +12,37 @@ class Customer:
         self._join_date = join_date
         self._id_ = id_
     
+    # *********************
+    # CREATE / DROP TABLES
+    # *********************
+
+    @classmethod
+    def create_table(cls):
+        """ Create a new table to persist the attributes of Customer instances"""
+        sql = """
+            CREATE TABLE IF NOT EXISTS customers (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                phone TEXT,
+                join_date TEXT
+            )
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+
+    @classmethod
+    def drop_table(cls):
+        sql = """
+            DROP TABLE IF EXISTS customers
+        """
+        
+        CURSOR.execute(sql)
+        CONN.commit()   
+
+    # ***********
+    # PROPERTIES
+    # ***********
+
     @property
     def name(self):
         return self._name
@@ -57,64 +88,9 @@ class Customer:
         else:
             self._id_ = id_
 
-
-# ORM METHODS
-    @classmethod
-    def create_table(cls):
-        """ Create a new table to persist the attributes of Customer instances"""
-        sql = """
-            CREATE TABLE IF NOT EXISTS customers (
-                id INTEGER PRIMARY KEY,
-                name TEXT,
-                phone TEXT,
-                join_date TEXT
-            )
-        """
-        CURSOR.execute(sql)
-        CONN.commit()
-
-    @classmethod
-    def drop_table(cls):
-        sql = """
-            DROP TABLE IF EXISTS customers
-        """
-        
-        CURSOR.execute(sql)
-        CONN.commit()   
-
-    @classmethod
-    def get_all(cls):
-        """ Return a list containing Customer objects per row in the table """
-        sql = """
-            SELECT *
-            FROM customers
-        """
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
-    def find_by_id(cls, id_):
-        CURSOR.execute(
-            '''
-            SELECT * FROM customers
-            WHERE id = ?
-            ''',
-            (id_,)
-        )
-        row = CURSOR.fetchone()
-        return cls.instance_from_db(row) if row else None
-    
-    @classmethod
-    def find_by_phone(cls, phone):
-        CURSOR.execute(
-            '''
-            SELECT * FROM customers
-            WHERE phone = ?
-            ''',
-            (phone,)
-        )
-        row = CURSOR.fetchone()
-        return cls.instance_from_db(row) if row else None
+    # ******
+    # CREATE
+    # ******
 
     def save(self):
         """ Insert a new row with the name, phone, and join date (join date converted to a string, Format YYYY-MM-DD) """
@@ -131,6 +107,45 @@ class Customer:
         customer = cls(name, phone, join_date)
         customer.save()
         return customer
+
+    @classmethod
+    def instance_from_db(cls, row):
+        return cls(
+            row[1], #name
+            row[2], #phone
+            helpers.parse_date(row[3]), #join_date
+            row[0] #id_
+        )
+
+    # ****
+    # READ
+    # ****
+
+    @classmethod
+    def get_by(cls, param='all', value=None):
+        search_params = ['all', 'id', 'name', 'phone', 'join_date']
+        
+        if param not in search_params:
+            raise ValueError("Incorrect search parameter inputted.")
+        
+        elif param == 'all':
+            sql = """
+                SELECT * FROM customers
+            """
+        else:
+            sql = f"""
+                SELECT * FROM customers
+                WHERE {param} = '{value}'
+            """
+
+        rows = CURSOR.execute(sql).fetchall()
+        
+        if not rows:
+            print('No results found.')
+            return
+        
+        return [cls.instance_from_db(row) for row in rows]
+
 
     def update(self):
         """ Update the table row corresponding to the current Customer instance """
@@ -153,14 +168,7 @@ class Customer:
 
 #New for Monday
 
-    @classmethod
-    def instance_from_db(cls, row):
-        return cls(
-            row[1], #name
-            row[2], #phone
-            helpers.parse_date(row[3]), #join_date
-            row[0] #id_
-        )
+    
     
     def cars_owned(self):
         CURSOR.execute('''

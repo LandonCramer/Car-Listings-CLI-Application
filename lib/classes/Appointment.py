@@ -207,6 +207,13 @@ class Appointment:
 
     @classmethod
     def get_by(cls, param='all', value=None):
+        if isinstance(value, str):
+            value.strip()
+        elif not isinstance(value, int):
+            raise TypeError(
+                'Value must be an integer, string, or valid datetime object'
+            )
+
         search_params = ['all', 'id', 'date', 'customer_id', 'employee_id', 'car_id', 'status']
         
         if param not in search_params:
@@ -242,7 +249,10 @@ class Appointment:
             print('No results found.')
             return
         
-        return [cls.instance_from_db(row) for row in rows]
+        elif param == 'id':
+            return cls.instance_from_db(rows[0])
+        else:
+            return [cls.instance_from_db(row) for row in rows]
 
     # ******
     # UPDATE

@@ -9,12 +9,12 @@ miles_range = range(300_001)
 
 def parse_date(date):
     if isinstance(date, str):
-        return datetime.fromisoformat(date)
+        return datetime.strptime(date, '%m/%d/%Y')
     elif isinstance(date, datetime):
-        return date.isoformat()
+        return datetime.strftime(date, '%m/%d/%Y')
     else:
         raise TypeError(
-            'Date must be a valid datetime object or a date string in ISO format.'
+            'Date must be a valid datetime object or a date string.'
             )
 
 def rand_date(interval=(1*365)):
