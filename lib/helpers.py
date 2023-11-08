@@ -97,12 +97,12 @@ random_car_stuff = {
     'Jeep': [
         ("Wrangler", 'SUV'),
         ("Cherokee", 'SUV'),
-        ("Grand Cherokee", 'SUV'),
+        ("Liberty", 'SUV'),
         ("Gladiator", 'TRUCK'),
         ("Compass", 'SUV'),
         ("Renegade", 'SUV'),
         ("Wagoneer", 'VAN'),
-        ("Grand Wagoneer", 'VAN'),
+        ("Grand Cherokee", 'VAN'),
         ("Commander", 'SUV'),
         ("Patriot", 'SUV')
     ],
@@ -215,8 +215,15 @@ def generate_fleet():
 # CLI FUNCTIONS
 # *********************
 
-def browse_cars(customer, salesman):
-    print(customer, salesman)
+#customer, salesman
+def browse_cars():
+    search_dict = {}
+    menu('Vehicle Types: Sedan, Coupe, Van, Truck, SUV')
+    user_input("Enter desired vehicle type(s) separated by commas or 'any' to see all.")
+    
+    vehicle_types = [vehicle.strip().upper() for vehicle in input().split(',')]
+    search_dict['vehicle_types'] = vehicle_types 
+    
 
 def to_sales(customer):
     from classes.Salesman import Salesman

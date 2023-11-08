@@ -437,22 +437,47 @@ class Car:
     @classmethod
     def search_cars(cls, search_dict):
         vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price = search_dict.vehicle_type, search_dict.new, search_dict.make, search_dict.model, search_dict.year, search_dict.miles, search_dict.fuel_type, search_dict.color, search_dict.transmission, search_dict.price
+        search_params = []
+        for key, value in search_dict.items():
+            if not isinstance(value, int):
+                if value == 'any':
+                    search_params.append('NOT NULL')
+                elif len(value) == 1:
+                    search_params.append(value)
+            elif key == 'miles' and value == 'any':
+                search_params.append('NOT NULL')
+            elif key == 'price' and value == 'any':
+                search_params.append('NOT NULL')
+            elif key == 'year' and value == 'any':
+                search_params.append('NOT NULL')
+            else:
+                result_string = ''
+                for val in value:
+                    if value.index(val) == 0:
+                        result_string = result_string + f"{val}"
+                    else:
+                        result_string = result_string + f" OR {val}"
 
-        CURSOR.execute('''
-            SELECT DISTINCT cars.*
-            FROM cars
-            WHERE vehicle_type = ?
-            AND new = ?
-            AND make = ?
-            AND model = ?
-            AND year > ?
-            AND miles < ?
-            AND fuel_type = ?
-            AND color = ?
-            AND transmission = ?
-            AND price = ?
-                       
-            ''')
+            
+
+
+
+        # CURSOR.execute('''
+        #     SELECT DISTINCT cars.*
+        #     FROM cars
+        #     WHERE vehicle_type = ?
+        #     AND new = ?
+        #     AND make = ?
+        #     AND model = ?
+        #     AND year > ?
+        #     AND miles < ?
+        #     AND fuel_type = ?
+        #     AND color = ?
+        #     AND transmission = ?
+        #     AND price < ?
+        #     AND owned = '0'         
+        #     ''',
+        #     tuple(search_params))
         
 
     # ****************
