@@ -219,34 +219,70 @@ def generate_fleet():
 def browse_cars():
     from classes.Car import Car
     search_dict = {}
-    menu('Vehicle Types: Sedan, Coupe, Van, Truck, SUV')
-    user_input("Enter desired vehicle type(s) separated by commas or Any to see all.")
-    vehicle_types = [vehicle.strip().upper() for vehicle in input().split(',')]
-    search_dict['vehicle_types'] = vehicle_types 
+
+    def choose_type():
+        valid_inputs = ['SEDAN', 'COUPE', 'VAN', 'TRUCK', 'SUV', 'ANY']
+
+        menu('Vehicle Types: Sedan, Coupe, Van, Truck, SUV')
+        user_input("Enter desired vehicle type(s) separated by commas or Any to see all.")
+        choice = input()
+
+        if choice.upper().strip() not in valid_inputs:
+            error('That is is not a valid vehicle type.')
+            choose_type()
+        else:
+            vehicle_types = [vehicle.strip().upper() for vehicle in choice.split(',')]
+            search_dict['vehicle_types'] = vehicle_types
+            choose_condition()
     
-    menu("Condition: New, Used")
-    user_input("Enter New, Used, or Any:")
-    new = [input()]
-    search_dict["new"]= new
+    def choose_condition():
+        valid_inputs = ['used', 'new', 'any']
+
+        menu("Condition: New, Used")
+        user_input("Enter New, Used, or Any:")
+        choice = input()
+
+        if choice.lower().strip() not in valid_inputs:
+            error('That is is not a valid vehicle condition.')
+            choose_condition()
+        else:
+            search_dict["new"] = [choice.title()]
+            choose_make()
+
+    def choose_make():
+        valid_inputs = ['Ford', 'Chevrolet', 'Audi', 'Jeep', 'Kia', 'Toyota']
     
-    menu("Makes: Ford, Chevrolet, Audi, Jeep, Kia, Toyota")
-    user_input("Enter desired vehicle make(s) separated by commas or Any to see all.")
-    makes = [make.strip().title() for make in input().split(',')]
-    search_dict["makes"] = makes
+        menu("Makes: Ford, Chevrolet, Audi, Jeep, Kia, Toyota")
+        user_input("Enter desired vehicle make(s) separated by commas or Any to see all.")
+        choice = input()
+
+        if choice.title() not in valid_inputs:
+            error('That is is not a valid make.')
+            choose_make()
+        else:
+            makes = [make.strip().title() for make in choice.split(',')]
+            search_dict["makes"] = makes
+            choose_year()
 
     model = "NOT NULL"
     search_dict["model"] = model
-  
-    user_input("Please enter a year representing the oldest car you would like to see or Any to see all.")
-    choice = input()
-    if not choice.lower() == "any":
-        year = int(choice)
-        search_dict["year"] = year 
-    else:
-        search_dict["year"] = "any"
 
-    user_input("Please enter the maximum mileage you would like to see or Any to see all.")
-    choice = input()
+    def choose_year():
+        user_input("Please enter a year representing the oldest car you would like to see or Any to see all.")
+        choice = input()
+        
+        if choice.lower().strip() == 'any':
+            search_dict["year"] = "any"
+        elif not isinstance(choice, int) or len(str(choice)) != 4:
+            error("Please input a valid year.")
+            choose_year()
+        else:
+            search_dict["year"] = choice
+            choose_mileage()
+    
+    def choose_mileage():
+        user_input("Please enter the maximum mileage you would like to see or Any to see all.")
+        choice = input()
     if not choice.lower() == "any":
         miles = int(choice)
         search_dict["miles"] = miles
