@@ -197,7 +197,10 @@ def generate_fleet():
     
     return fleet
 
-#CLI functions
+# *********************
+# CLI FUNCTIONS
+# *********************
+
 def browse_cars(customer, salesman):
     print(customer, salesman)
 
