@@ -198,13 +198,12 @@ class Customer:
     def cars_in_shop(self):
         return [Car.get_by('id', appt.car_id) for appt in self.appts() if appt.type_ == 'SERVICE' and appt.status == 'Active'] if self.appts() else None
 
-    # TODO
     def employees(self):
         from classes.Employee import Employee
         employee_ids = {appt.employee_id for appt in self.appts()}
         employees = []
         for id_ in employee_ids:
-            employees.append(Employee.find_by_id(id_))
+            employees.append(Employee.get_by('id', id_))
         return employees
     
     # *************

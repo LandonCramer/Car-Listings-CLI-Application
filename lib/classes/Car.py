@@ -444,22 +444,20 @@ class Car:
     def test_drives(self):
         return [appt for appt in self.appts() if appt.type_ == 'TESTDRIVE']
 
-    # TODO
     def employees(self):
         from classes.Employee import Employee
         employee_ids = {appt.employee_id for appt in self.appts()}
         employees = []
         for id_ in employee_ids:
-            employees.append(Employee.find_by_id(id_))
+            employees.append(Employee.get_by('id', id_))
         return employees
 
-    # TODO   
     def customers(self): 
         from classes.Customer import Customer
         cust_ids = {appt.customer_id for appt in self.appts()}
         custs = []
         for id_ in cust_ids:
-            custs.append(Customer.find_by_id(id_))
+            custs.append(Customer.get_by('id', id_))
         return custs
 
     def list_details(self):
