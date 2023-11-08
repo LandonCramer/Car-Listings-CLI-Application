@@ -94,44 +94,10 @@ class Employee:
         else:
             self._id_ = id_
 
-    @classmethod
-    def get_all(cls):
-        if cls == Employee:
-            sql = """
-                SELECT * FROM employees
-            """
-        else:
-            sql = f"""
-                SELECT * FROM employees
-                WHERE job_title = '{cls.__name__}'
-            """     
+    # ******
+    # CREATE
+    # ******
 
-        rows = CURSOR.execute(sql).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    # TODO How to make the class constructor dynamic?
-    @classmethod
-    def find_by_id(cls, id_):
-        from classes.Salesman import Salesman; from classes.ServiceTech import ServiceTech; from classes.Manager import Manager
-        CURSOR.execute(
-            '''
-            SELECT * FROM employees
-            WHERE id = ?
-            ''',
-            (id_,)
-        )
-        row = CURSOR.fetchone()
-        if row[3] == 'Salesman':
-            return Salesman.instance_from_db(row) if row else None
-        elif row[3] == 'ServiceTech':
-            return ServiceTech.instance_from_db(row) if row else None
-        elif row[3] == 'Manager':
-            return Manager.instance_from_db(row) if row else None
-        else:
-            raise ValueError(
-                'Job title must be one of the the following: "Salesman", "ServiceTech", or "Manager".'
-            )
-    
     def save(self):
         """ Insert a new row with the name, salary, and hire date (hire date converted to a string, Format YYYY-MM-DD) """
         sql = """
@@ -158,6 +124,84 @@ class Employee:
         employee.save()
         return employee
 
+    @classmethod
+    def instance_from_db(cls, row):
+        return cls(
+            row[1], #name
+            row[2], #salary
+            helpers.parse_date(row[4]), #hire_date
+            row[0], #id_
+            row[3] #job_title
+        )
+
+    # ****
+    # READ
+    # ****
+
+    @classmethod
+    def get_by(cls, param='all', value=''):
+        from classes.Salesman import Salesman; from classes.ServiceTech import ServiceTech; from classes.Manager import Manager;
+        if isinstance(value, str):
+            value.strip()
+        elif not isinstance(value, int):
+            raise TypeError(
+                'Value must be an integer, string, or valid valid MM/DD/YYYY date.'
+            )
+
+        search_params = ['all', 'id', 'name', 'salary', 'job_title', 'hire_date']
+        
+        if param not in search_params:
+            raise ValueError("Incorrect search parameter inputted.")
+        
+        emp_type = cls.__name__
+
+        if emp_type.upper() == 'EMPLOYEE':
+            if param == 'all':
+                sql = """
+                    SELECT * FROM employees
+                """
+            else:
+                sql = f"""
+                    SELECT * FROM employees
+                    WHERE {param} = '{value}'
+                """
+        else:
+            if param == 'all':
+                sql = f"""
+                    SELECT * FROM employees
+                    WHERE job_title = '{emp_type}'
+                """    
+            else:
+                sql = f"""
+                    SELECT * FROM employees
+                    WHERE job_title = '{emp_type}' AND {param} = '{value}'
+                """
+
+        rows = CURSOR.execute(sql).fetchall()
+        sub_class = rows[0][3] if rows else None
+
+        if not rows:
+            print('No results found.')
+            return
+        elif len(rows) == 1:
+            if sub_class == 'Salesman':
+                return Salesman.instance_from_db(rows[0])
+            elif sub_class == 'ServiceTech':
+                return ServiceTech.instance_from_db(rows[0])
+            if sub_class == 'Manager':
+                return Manager.instance_from_db(rows[0])
+        else:
+            if sub_class == 'Salesman':
+                return [Salesman.instance_from_db(row) for row in rows]
+            elif sub_class == 'ServiceTech':
+                return [ServiceTech.instance_from_db(row) for row in rows]
+            if sub_class == 'Manager':
+                return [Manager.instance_from_db(row) for row in rows]
+
+    # ******
+    # UPDATE
+    # ******
+
     def update(self):
         """ Update the table row corresponding to the current Employee instance """
         sql = """
@@ -168,6 +212,10 @@ class Employee:
         CURSOR.execute(sql, (self.name, self.salary, self.job_title, self.hire_date, self.id))
         CONN.commit()
 
+    # *******
+    # DESTROY
+    # *******
+
     def delete(self):
         """ Delete the table row corresponding to the current Employee instance """
         sql = """
@@ -177,48 +225,24 @@ class Employee:
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
 
-    @classmethod
-    def instance_from_db(cls, row):
-        return cls(
-            row[1], #name
-            row[2], #salary
-            helpers.parse_date(row[4]), #hire_date
-            row[0], #id_
-            row[3] #job_title
-        )
-    
-    @classmethod
-    def get_employees_by_role(cls, role):
-        from classes.Salesman import Salesman; from classes.ServiceTech import ServiceTech; from classes.Manager import Manager
-        CURSOR.execute("""
-            SELECT *
-            FROM employees
-            WHERE job_title = ?
-            """,
-            (role,))
-        rows = CURSOR.fetchall()
-        if role == 'Salesman':
-            employees = [Salesman.instance_from_db(row) for row in rows] if rows else None
-        elif role == 'ServiceTech':
-            employees = [ServiceTech.instance_from_db(row) for row in rows] if rows else None
-        elif role == 'Manager':
-            employees = [Manager.instance_from_db(row) for row in rows] if rows else None
-        else:
-            raise ValueError(
-                'Job title must be one of the the following: "Salesman", "ServiceTech", or "Manager".'
-            )
-        return employees
-    
+    # *************
+    # CLASS METHODS
+    # *************
+
     @classmethod
     def employee_of_the_month(cls, role):
         one_month_ago = datetime.now() - timedelta(days=30)
-        valid_emps = cls.get_employees_by_role(role)
+        valid_emps = cls.get_by('job_title', role)
         return max(valid_emps, key=lambda x: len([appt for appt in x.appts() if appt.date > one_month_ago]))
+
+    # ****************
+    # INSTANCE METHODS
+    # ****************
 
     def appts(self):
         return Appointment.get_by('employee_id', self.id_)
 
-    def test_drives(self):
+    def testdrives(self):
         if self.job_title in ('Salesman', 'Manager'):
             return [appt for appt in self.appts() if appt.type_ == 'TESTDRIVE'] if self.appts() else None
         else:
@@ -257,3 +281,5 @@ class Employee:
         for id_ in car_ids:
             cars.append(Car.find_by_id(id_))
         return cars
+    
+   

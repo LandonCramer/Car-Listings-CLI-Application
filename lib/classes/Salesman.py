@@ -8,3 +8,7 @@ class Salesman(Employee):
     @classmethod
     def create(cls, name, salary, hire_date=None):
         return super().create(cls, name, salary, hire_date)
+    
+    @classmethod
+    def get_by(cls, param='all', value=''):
+        return super().get_by(param, value)
