@@ -6,7 +6,7 @@ from classes.Testdrive import Testdrive
 
 class Car:
 
-    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_=None):
+    def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_=None, owned=False):
         self.vehicle_type = vehicle_type
         self.new = new
         self.make = make
@@ -17,6 +17,7 @@ class Car:
         self.transmission = transmission
         self.year = year
         self.price = price
+        self.owned = owned
         self.id_ = id_
 
     # **************
@@ -45,7 +46,8 @@ class Car:
                 fuel_type TEXT,
                 color TEXT,
                 transmission INTEGER,
-                price INTEGER
+                price INTEGER,
+                owned INTEGER
             );
             '''
         )
@@ -216,6 +218,16 @@ class Car:
             raise TypeError("ID must be an integer.")
         else:
             self._id_ = id_
+    
+    @property
+    def owned(self):
+        return self._owned
+    @owned.setter
+    def owned(self, owned):
+        if not isinstance(owned, int):
+            raise TypeError("Owned must be an boolean.")
+        else:
+            self._owned = owned
 
     # TODO Bell curve weights. Right now all cars seems to be poor for some reason.
     @property
@@ -246,18 +258,18 @@ class Car:
     def save(self):
         CURSOR.execute(
             '''
-            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO cars (vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id, owned)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''',
-            (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_)
+            (self._vehicle_type, self._new, self.make, self.model, self.year, self.miles, self._fuel_type, self.color, self._transmission, self.price, self.id_, self.owned)
         )
         CONN.commit()
         self.id = CURSOR.lastrowid
         return self
 
     @classmethod
-    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None):
-        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None)
+    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None, owned=False):
+        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_, owned)
         new_car.save()
         return new_car
     
@@ -274,6 +286,7 @@ class Car:
                 row[9], # transmission
                 row[5], # year
                 row[10], # price
+                bool(row[11]), # owned
                 row[0] # id_
                 )
 
@@ -326,10 +339,10 @@ class Car:
         CURSOR.execute(
             '''
             UPDATE cars
-            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?
+            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ? owned = ?
             WHERE id = ?
             ''',
-            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_)
+            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owned)
         )
         CONN.commit()
         return self
@@ -402,6 +415,11 @@ class Car:
         return [Car.instance_from_db(row) for row in rows] if rows else None
     
     @classmethod
+    def owned_cars(cls):
+        from classes.Sale import Sale
+        return [Car.get_by('id', value.car_id) for value in Sale.all.values()]
+
+    @classmethod
     def top_cars(cls, list_len):
         driven_car_ids = {}
         for testdrive in Testdrive.get_by():
@@ -417,13 +435,25 @@ class Car:
 
     # TODO
     @classmethod
-    def search_cars(cls):
-        pass
+    def search_cars(cls, search_dict):
+        vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price = search_dict.vehicle_type, search_dict.new, search_dict.make, search_dict.model, search_dict.year, search_dict.miles, search_dict.fuel_type, search_dict.color, search_dict.transmission, search_dict.price
 
-    # TODO
-    @classmethod
-    def filter_cars(cls):
-        pass
+        CURSOR.execute('''
+            SELECT DISTINCT cars.*
+            FROM cars
+            WHERE vehicle_type = ?
+            AND new = ?
+            AND make = ?
+            AND model = ?
+            AND year > ?
+            AND miles < ?
+            AND fuel_type = ?
+            AND color = ?
+            AND transmission = ?
+            AND price = ?
+                       
+            ''')
+        
 
     # ****************
     # INSTANCE METHODS
@@ -444,22 +474,20 @@ class Car:
     def test_drives(self):
         return [appt for appt in self.appts() if appt.type_ == 'TESTDRIVE']
 
-    # TODO
     def employees(self):
         from classes.Employee import Employee
         employee_ids = {appt.employee_id for appt in self.appts()}
         employees = []
         for id_ in employee_ids:
-            employees.append(Employee.find_by_id(id_))
+            employees.append(Employee.get_by('id', id_))
         return employees
 
-    # TODO   
     def customers(self): 
         from classes.Customer import Customer
         cust_ids = {appt.customer_id for appt in self.appts()}
         custs = []
         for id_ in cust_ids:
-            custs.append(Customer.find_by_id(id_))
+            custs.append(Customer.get_by('id', id_))
         return custs
 
     def list_details(self):
