@@ -218,4 +218,3 @@ class Customer:
             """)
         rows = CURSOR.fetchall()
         return [row[0] for row in rows] if rows else None
-    
