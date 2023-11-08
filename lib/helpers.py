@@ -252,6 +252,7 @@ def to_lobby(customer):
     if int(choice) == 1:
         to_sales(customer)
     elif int(choice) == 2:
+        #to_service(customer)
         pass
     elif int(choice) == 3:
         pass
