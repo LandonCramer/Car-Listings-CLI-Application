@@ -234,32 +234,31 @@ def browse_cars():
     makes = [make.strip().title() for make in input().split(',')]
     search_dict["makes"] = makes
 
-    model = "NOT NULL"
+    model = ["NOT NULL"]
     search_dict["model"] = model
-  
+
     user_input("Please enter a year representing the oldest car you would like to see or Any to see all.")
     choice = input()
     if not choice.lower() == "any":
         year = int(choice)
-        search_dict["year"] = year 
+        search_dict["year"] = [year] 
     else:
-        search_dict["year"] = "any"
+        search_dict["year"] = ["any"]
 
     user_input("Please enter the maximum mileage you would like to see or Any to see all.")
     choice = input()
     if not choice.lower() == "any":
         miles = int(choice)
-        search_dict["miles"] = miles
+        search_dict["miles"] = [miles]
     else:
-        search_dict["miles"] = "any"
+        search_dict["miles"] = ["any"]
 
-   
     menu('Fuel Types: Gas, Diesel, Electric, Hybrid')
     user_input("Enter desired fuel type(s) separated by commas or Any to see all.")
     fuel_types = [fuel_type.strip().upper() for fuel_type in input().split(',')]
     search_dict['fuel_types'] = fuel_types 
     
-    colors = "NOT NULL"
+    colors = ["NOT NULL"]
     search_dict["colors"] = colors
 
     menu("Transmission: Manual, Automatic")
@@ -271,14 +270,11 @@ def browse_cars():
     choice = input()
     if not choice.lower() == "any":
         price = int(choice)
-        search_dict["price"] = price
+        search_dict["price"] = [price]
     else:
-        search_dict["price"] = "any"
+        search_dict["price"] = ["any"]
+
     Car.search_cars(search_dict)
-
-
-
-
 
 def to_sales(customer):
     from classes.Salesman import Salesman

@@ -437,27 +437,51 @@ class Car:
     @classmethod
     def search_cars(cls, search_dict):
         # vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price = search_dict.vehicle_type, search_dict.new, search_dict.make, search_dict.model, search_dict.year, search_dict.miles, search_dict.fuel_type, search_dict.color, search_dict.transmission, search_dict.price
+        print(search_dict)
+
         search_params = []
-        for key, value in search_dict.items():
-            if value[0] == 'any':
-                    search_params.append('NOT NULL')
-            elif not isinstance(value, int):
-                elif len(value) == 1:
-                    search_params.append(value[0])
-            elif key == 'miles' and value == 'any':
+
+        for key, value_list in search_dict.items():
+            if value_list[0] == 'any':
                 search_params.append('NOT NULL')
-            elif key == 'price' and value == 'any':
-                search_params.append('NOT NULL')
-            elif key == 'year' and value == 'any':
-                search_params.append('NOT NULL')
+            elif all(isinstance(item, int) for item in value_list):
+                search_params.append(value_list[0])
             else:
                 result_string = ''
-                for val in value:
-                    if value.index(val) == 0:
+                for val in value_list:
+                    if value_list.index(val) == 0:
                         result_string = result_string + f"{val}"
                     else:
                         result_string = result_string + f" OR {val}"
                 search_params.append(result_string)
+        
+
+
+
+        
+        
+        
+        
+        # for key, value in search_dict.items():
+        #     if value[0] == 'any':
+        #             search_params.append('NOT NULL')
+        #     elif not isinstance(value, int):
+        #         elif len(value) == 1:
+        #             search_params.append(value[0])
+        #     elif key == 'miles' and value == 'any':
+        #         search_params.append('NOT NULL')
+        #     elif key == 'price' and value == 'any':
+        #         search_params.append('NOT NULL')
+        #     elif key == 'year' and value == 'any':
+        #         search_params.append('NOT NULL')
+        #     else:
+        #         result_string = ''
+        #         for val in value:
+        #             if value.index(val) == 0:
+        #                 result_string = result_string + f"{val}"
+        #             else:
+        #                 result_string = result_string + f" OR {val}"
+        #         search_params.append(result_string)
 
         print(search_params)
 
