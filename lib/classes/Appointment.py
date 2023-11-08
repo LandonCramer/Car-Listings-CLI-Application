@@ -124,10 +124,55 @@ class Appointment:
         else:
             self._id_ = id_
 
-    # **************
-    # CLASS METHODS
-    # **************
+    # ******
+    # CREATE
+    # ******
 
+    def save(self):
+        attr_dict = self.__dict__
+        all_keys = ['_type_', '_date', '_customer_id', '_employee_id', '_car_id', '_balance', '_reason_for_visit', '_estimate', '_notes', '_status']
+        all_values = []
+
+        for key in all_keys:
+            if key in attr_dict.keys():
+                all_values.append(attr_dict[key])
+            else:
+                all_values.append('*')
+
+        if self.type_ == 'SALE' or self.type_ == 'SERVICE' or self.type_ == 'TESTDRIVE':
+            sql = """
+                INSERT INTO appointments (type, date, customer_id, employee_id, car_id, balance, reason_for_visit, estimate, notes, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """
+        else:
+            raise ValueError('We do not offer that service.')
+        
+        CURSOR.execute(sql, tuple(all_values))
+        CONN.commit()
+
+        self.id_ = CURSOR.lastrowid
+        type(self).all[self.id_] = self
+
+    @classmethod
+    def create(cls, *args):
+
+        if cls.__name__ == 'Sale':
+            a, b, c, d, e, f, g = args
+            appointment = cls(a, b, c, d, e, f, g)
+        elif cls.__name__ == 'Service':
+            a, b, c, d, e, f, g, h = args
+            appointment = cls(a, b, c, d, e, f, g, h)
+        elif cls.__name__ == 'Testdrive':
+            a, b, c, d, e, f = args
+            appointment = cls(a, b, c, d, e, f)
+        else:
+            raise ValueError("Appointments can only be created from the Sale, Service, or Testdrive classes.")
+  
+        appointment.save()
+        cls.all[appointment.id_] = appointment
+
+        return appointment
+    
     @classmethod
     def instance_from_db(cls, row):
         instance_id = row[0]
@@ -156,9 +201,13 @@ class Appointment:
 
         return updated
 
+    # ****
+    # READ
+    # ****
+
     @classmethod
     def get_by(cls, param='all', value=None):
-        search_params = ['all', 'date', 'customer_id', 'employee_id', 'car_id', 'status']
+        search_params = ['all', 'id', 'date', 'customer_id', 'employee_id', 'car_id', 'status']
         
         if param not in search_params:
             raise ValueError("Incorrect search parameter inputted.")
@@ -195,55 +244,10 @@ class Appointment:
         
         return [cls.instance_from_db(row) for row in rows]
 
-    # *************
-    # CRUD METHODS
-    # *************
+    # ******
+    # UPDATE
+    # ******
 
-    def save(self):
-        attr_dict = self.__dict__
-        all_keys = ['_type_', '_date', '_customer_id', '_employee_id', '_car_id', '_balance', '_reason_for_visit', '_estimate', '_notes', '_status']
-        all_values = []
-
-        for key in all_keys:
-            if key in attr_dict.keys():
-                all_values.append(attr_dict[key])
-            else:
-                all_values.append('*')
-
-        if self.type_ == 'SALE' or self.type_ == 'SERVICE' or self.type_ == 'TESTDRIVE':
-            sql = """
-                INSERT INTO appointments (type, date, customer_id, employee_id, car_id, balance, reason_for_visit, estimate, notes, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """
-        else:
-            raise ValueError('We do not offer that service.')
-          
-        CURSOR.execute(sql, tuple(all_values))
-        CONN.commit()
-
-        self.id_ = CURSOR.lastrowid
-        type(self).all[self.id_] = self
-
-    @classmethod
-    def create(cls, *args):
-
-        if cls.__name__ == 'Sale':
-            a, b, c, d, e, f, g = args
-            appointment = cls(a, b, c, d, e, f, g)
-        elif cls.__name__ == 'Service':
-            a, b, c, d, e, f, g, h = args
-            appointment = cls(a, b, c, d, e, f, g, h)
-        elif cls.__name__ == 'Testdrive':
-            a, b, c, d, e, f = args
-            appointment = cls(a, b, c, d, e, f)
-        else:
-            raise ValueError("Appointments can only be created from the Sale, Service, or Testdrive classes.")
-  
-        appointment.save()
-        cls.all[appointment.id_] = appointment
-
-        return appointment
-    
     def update(self):
         if self.type_ == 'SALE':
             sql = """
@@ -271,6 +275,10 @@ class Appointment:
 
         CURSOR.execute(sql, updated)
         CONN.commit()
+
+    # *******
+    # DESTROY
+    # *******
 
     def delete(self):
         sql = """
