@@ -8,9 +8,7 @@ from rich.text import Text
 from rich.panel import Panel
 from rich.table import Table
 from rich.console import Console
-
-
-
+from richstyling import user_input, menu, error, listing, details, qualifier
 
 def current_date():
     return datetime.now()
@@ -223,10 +221,8 @@ def browse_cars(customer, salesman):
 def to_sales(customer):
     from classes.Salesman import Salesman
 
-    salesman = Salesman.find_by_id(random.randint(0, len(Salesman.get_all()) -1))
-    text = Text("Enter a number for your choice:\n1. Browse Cars\n2. My Cars\n3. Sell Car\n4. Return to Lobby")
-    text.stylize('cyan')
-    print(Panel.fit(text))
+    salesman = Salesman.get_by('id', random.randint(0, len(Salesman.get_by()) -1))
+    menu("Enter a number for your choice:\n1. Browse Cars\n2. My Cars\n3. Sell Car\n4. Return to Lobby")
     choice = input()
 
     if int(choice) == 1:
@@ -239,15 +235,11 @@ def to_sales(customer):
     elif int(choice) == 4:
         pass
     else:
-        text = Text("Not a valid choice.")
-        text.stylize('magenta')
-        print(Panel.fit(text))
+        error("Not a valid choice.")
         to_sales(customer)
 
 def to_lobby(customer):
-    text = Text("Enter a number for your choice:\n1. Sales\n2. Service\n3. Leave Dealership")
-    text.stylize('cyan')
-    print(Panel.fit(text))
+    menu("Enter a number for your choice:\n1. Sales\n2. Service\n3. Leave Dealership")
     choice = input()
     if int(choice) == 1:
         to_sales(customer)
@@ -257,9 +249,7 @@ def to_lobby(customer):
     elif int(choice) == 3:
         pass
     else:
-        text = Text("Not a valid choice.")
-        text.stylize('magenta')
-        print(Panel.fit(text))
+        error("Not a valid choice.")
         to_lobby(customer)
 
 def welcome():
@@ -269,34 +259,24 @@ def welcome():
 
 def create_customer():
     from classes.Customer import Customer
-    text = Text('Please enter your phone:')
-    text.stylize('green')
-    print(text)
+    user_input('Please enter your phone number.')
     phone = input()
     phone = phone.strip()
     if not re.match('^\d{10}$', phone):
-        text = Text('Phone must be a 10 digit number with no spaces or special characters.')
-        text.stylize('magenta')
-        print(Panel.fit(text))
+        error('Phone must be a 10 digit number with no spaces or special characters.')
         create_customer()
     else:
         if phone in Customer.phone_numbers():
             searched_customer = Customer.get_by('phone', phone)
-            text = Text(f"Are you {searched_customer.name}? Y/N:")
-            text.stylize('yellow')
-            print(Panel.fit(text))
+            qualifier(f"Are you {searched_customer.name}? Y/N:")
             yn = input()
             if yn.lower() == "y":
                 to_lobby(searched_customer)
             elif yn.lower() == "n":
-                text = Text("That phone number is already in use.")
-                text.stylize('magenta')
-                print(Panel.fit(text))
+                error("That phone number is already in use.")
                 create_customer()
         else:
-            text = Text("Please enter your name:")
-            text.stylize('green')
-            print(text)
+            user_input('Please enter your name.')
             name = input()
             new_customer = Customer.create(name, phone, datetime.now())
             to_lobby(new_customer)

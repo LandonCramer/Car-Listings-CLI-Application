@@ -180,23 +180,24 @@ class Employee:
         rows = CURSOR.execute(sql).fetchall()
         sub_class = rows[0][3] if rows else None
 
-        if not rows:
-            print('No results found.')
-            return
-        elif len(rows) == 1:
+        if len(rows) == 1:
             if sub_class == 'Salesman':
                 return Salesman.instance_from_db(rows[0])
             elif sub_class == 'ServiceTech':
                 return ServiceTech.instance_from_db(rows[0])
             if sub_class == 'Manager':
                 return Manager.instance_from_db(rows[0])
-        else:
+        elif len(rows) > 1:
             if sub_class == 'Salesman':
                 return [Salesman.instance_from_db(row) for row in rows]
             elif sub_class == 'ServiceTech':
                 return [ServiceTech.instance_from_db(row) for row in rows]
             if sub_class == 'Manager':
                 return [Manager.instance_from_db(row) for row in rows]
+        else:
+            print('No results found.')
+            return
+    
 
     # ******
     # UPDATE
