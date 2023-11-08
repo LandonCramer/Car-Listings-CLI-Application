@@ -1,14 +1,10 @@
 import random
 from classes.__init__ import CURSOR, CONN
-from helpers import current_date
+from helpers import current_date, year_range
 from classes.Appointment import Appointment
 from classes.Testdrive import Testdrive
 
 class Car:
-
-    # ! Approved Types
-    VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
-    FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
 
     def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_=None):
         self.vehicle_type = vehicle_type
@@ -23,7 +19,51 @@ class Car:
         self.price = price
         self.id_ = id_
 
-    # ! Properties
+    # **************
+    # APPROVED LISTS
+    # **************
+
+    VEHICLE_TYPES = ['COUPE', 'SEDAN', 'TRUCK', 'VAN', 'SUV']
+    FUEL_TYPES = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID']
+
+    # *********************
+    # CREATE / DROP TABLES
+    # *********************
+
+    @classmethod
+    def create_table(cls):
+        CURSOR.execute(
+            '''
+            CREATE TABLE IF NOT EXISTS cars (
+                id INTEGER PRIMARY KEY,
+                vehicle_type TEXT,
+                new INTEGER,
+                make TEXT,
+                model TEXT,
+                year INTEGER,
+                miles INTEGER,
+                fuel_type TEXT,
+                color TEXT,
+                transmission INTEGER,
+                price INTEGER
+            );
+            '''
+        )
+        CONN.commit()
+
+    @classmethod
+    def drop_table(cls):
+        CURSOR.execute(
+            '''
+            DROP TABLE IF EXISTS cars;
+            '''
+        )
+        CONN.commit()
+
+    # **********
+    # PROPERTIES
+    # **********
+
     @property
     def vehicle_type(self):
         return self._vehicle_type.title()
@@ -38,11 +78,11 @@ class Car:
 
     @property
     def new(self):
-        return 'New' if self._new else 'Used'
+        return self._new
     @new.setter
     def new(self, new):
-        if not isinstance(new, bool):
-            raise TypeError('New value must be a boolean.')
+        if not isinstance(new, str):
+            raise TypeError("New value must be either 'New' or 'Used'.")
         else:
             self._new = new
 
@@ -83,8 +123,8 @@ class Car:
             raise ValueError('Year can not be reset')
         elif not isinstance(year, int) or isinstance(year, bool):
             raise TypeError('Year must be an int')
-        elif year not in range(current_date.year - 100, current_date.year + 1):
-            raise ValueError(f'Year must be between {current_date.year - 100} and {current_date.year + 1}.')
+        elif year not in year_range:
+            raise ValueError(f'Year must be between {current_date().year - 100} and {current_date().year + 1}.')
         else:
             self._year = year
 
@@ -124,13 +164,13 @@ class Car:
 
     @property
     def transmission(self):
-        return 'Automatic' if self._transmission else 'Manual'
+        return self._transmission
     @transmission.setter
     def transmission(self, transmission):
         if hasattr(self, 'transmission'):
             raise ValueError('Transmission cannot be re-assigned.')
-        elif not isinstance(transmission, bool):
-            raise TypeError('Transmission value must be a boolean.')
+        elif not isinstance(transmission, str):
+            raise TypeError('Transmission value must be "Automatic" or "Manual".')
         else:
             self._transmission = transmission
 
@@ -154,7 +194,7 @@ class Car:
 
             # Calculate the price based on the factors and weights
             base_price = random.randint(0, 300_001)
-            price = base_price + (self.miles * miles_weight) + ((current_date.year - self.year) * age_weight) + (condition_weights[self.condition] * base_price)
+            price = base_price + (self.miles * miles_weight) + ((current_date().year - self.year) * age_weight) + (condition_weights[self.condition] * base_price)
 
             # Ensure the price is within the valid range (5000 to 500,000)
             self._price = int(max(8_000, min(price, 1_000_000)))
@@ -164,7 +204,6 @@ class Car:
             raise ValueError('Price must be between 0 and 1,000,000.')
         else:
             self._price = price
-
 
     @property
     def id_(self):
@@ -184,7 +223,7 @@ class Car:
         if self.miles == 0:
             return 'New' 
     
-        age_weight = current_date.year - self.year / 15
+        age_weight = current_date().year - self.year / 15
         mileage_weight = self.miles / 200000
         
         condition_score = age_weight + mileage_weight
@@ -200,82 +239,9 @@ class Car:
         else:
             return 'Poor'
     
-    # ! ORM Class Methods
-    @classmethod
-    def create_table(cls):
-        CURSOR.execute(
-            '''
-            CREATE TABLE IF NOT EXISTS cars (
-                id INTEGER PRIMARY KEY,
-                vehicle_type TEXT,
-                new INTEGER,
-                make TEXT,
-                model TEXT,
-                year INTEGER,
-                miles INTEGER,
-                fuel_type TEXT,
-                color TEXT,
-                transmission INTEGER,
-                price INTEGER
-            );
-            '''
-        )
-        CONN.commit()
-
-    @classmethod
-    def drop_table(cls):
-        CURSOR.execute(
-            '''
-            DROP TABLE IF EXISTS cars;
-            '''
-        )
-        CONN.commit()
-    
-    @classmethod
-    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None):
-        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None)
-        new_car.save()
-        return new_car
-    
-    @classmethod
-    def instance_from_db(cls, row):
-        return cls(
-                row[1], # vehicle_type
-                bool(row[2]), # new
-                row[3], # make
-                row[4], # model
-                row[6], # miles
-                row[7], # fuel_type
-                row[8], # color
-                bool(row[9]), # transmission
-                row[5], # year
-                row[10], # price
-                row[0] # id_
-                )
-
-    @classmethod
-    def get_all(cls):
-        CURSOR.execute(
-            '''
-            SELECT * FROM cars;
-            '''
-        )
-        rows = CURSOR.fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-    
-    @classmethod
-    def find_by_id(cls, id_):
-        CURSOR.execute(
-            '''
-            SELECT * FROM cars
-            WHERE id = ?
-            ''',
-            (id_,)
-        )
-        row = CURSOR.fetchone()
-        return cls.instance_from_db(row) if row else None
-
-    # ! ORM Instance Methods
+    # ******
+    # CREATE
+    # ******
 
     def save(self):
         CURSOR.execute(
@@ -288,7 +254,74 @@ class Car:
         CONN.commit()
         self.id = CURSOR.lastrowid
         return self
+
+    @classmethod
+    def create(cls, vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None):
+        new_car = cls(vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price, id_=None)
+        new_car.save()
+        return new_car
     
+    @classmethod
+    def instance_from_db(cls, row):
+        return cls(
+                row[1], # vehicle_type
+                row[2], # new
+                row[3], # make
+                row[4], # model
+                row[6], # miles
+                row[7], # fuel_type
+                row[8], # color
+                row[9], # transmission
+                row[5], # year
+                row[10], # price
+                row[0] # id_
+                )
+
+    # ****
+    # READ
+    # ****
+
+    @classmethod
+    def get_by(cls, param='all', value=None):
+        if isinstance(value, str) and value in ('vehicle_type', 'fuel_type'):
+            value.strip().upper()
+        elif isinstance(value, str):
+            value.strip()
+        elif not isinstance(value, int):
+            raise TypeError(
+                'Value must be an integer or string.'
+            )
+
+        search_params = ['all', 'id', 'vehicle_type', 'new', 'make', 'model', 'year', 'miles', 'fuel_type', 'color', 'transmission', 'price']
+        
+        if param not in search_params:
+            raise ValueError("Incorrect search parameter inputted.")
+
+        if param == 'all':
+            sql = """
+                SELECT * FROM cars
+            """
+        else:
+            sql = f"""
+                SELECT * FROM cars
+                WHERE {param} = '{value}'
+            """
+
+        rows = CURSOR.execute(sql).fetchall()
+        
+        if not rows:
+            print('No results found.')
+            return
+        
+        elif len(rows) == 1:
+            return cls.instance_from_db(rows[0])
+        else:
+            return [cls.instance_from_db(row) for row in rows]
+
+    # ******
+    # UPDATE
+    # ******
+
     def update(self):
         CURSOR.execute(
             '''
@@ -300,6 +333,10 @@ class Car:
         )
         CONN.commit()
         return self
+
+    # *******
+    # DESTROY
+    # *******
     
     def delete(self):
         CURSOR.execute(
@@ -313,7 +350,10 @@ class Car:
         self.id = None
         return self
 
-    # ! Class Methods
+    # *************
+    # CLASS METHODS
+    # *************
+
     @classmethod
     def cars_w_appts(cls):
         CURSOR.execute(f"""
@@ -364,7 +404,7 @@ class Car:
     @classmethod
     def top_cars(cls, list_len):
         driven_car_ids = {}
-        for testdrive in Testdrive.get_all():
+        for testdrive in Testdrive.get_by():
             if testdrive.car_id in driven_car_ids.keys():
                 driven_car_ids[testdrive.car_id] = driven_car_ids[testdrive.car_id] + 1
             else:
@@ -372,18 +412,23 @@ class Car:
         tuple_list = [(key, value) for key, value in driven_car_ids.items()]
         top_cars = []
         for car in sorted(tuple_list, key=lambda x: x[1])[:list_len]:
-            top_cars.append(cls.find_by_id(car[1]))
+            top_cars.append(cls.get_by('id', car[1]))
         return top_cars
 
+    # TODO
     @classmethod
     def search_cars(cls):
         pass
 
+    # TODO
     @classmethod
     def filter_cars(cls):
         pass
 
-    # ! Instance Methods
+    # ****************
+    # INSTANCE METHODS
+    # ****************
+
     def appts(self):
         return Appointment.get_by('car_id', self.id_)
         
@@ -399,6 +444,7 @@ class Car:
     def test_drives(self):
         return [appt for appt in self.appts() if appt.type_ == 'TESTDRIVE']
 
+    # TODO
     def employees(self):
         from classes.Employee import Employee
         employee_ids = {appt.employee_id for appt in self.appts()}
@@ -406,7 +452,8 @@ class Car:
         for id_ in employee_ids:
             employees.append(Employee.find_by_id(id_))
         return employees
-        
+
+    # TODO   
     def customers(self): 
         from classes.Customer import Customer
         cust_ids = {appt.customer_id for appt in self.appts()}

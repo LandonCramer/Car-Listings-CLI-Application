@@ -3,9 +3,6 @@ from helpers import parse_date
 from classes.__init__ import CURSOR, CONN
 
 class Appointment:
-    all = {}
-
-    APPT_TYPES = ['SALE', 'SERVICE', 'TESTDRIVE']
 
     def __init__(self, type_, date, customer_id, employee_id, car_id, id_=None):
         self.type_ = type_
@@ -15,6 +12,12 @@ class Appointment:
         self.car_id = car_id
         self.id_ = id_
     
+    # **************
+    # APPROVED LISTS
+    # **************
+
+    APPT_TYPES = ['SALE', 'SERVICE', 'TESTDRIVE']
+
     # *********************
     # CREATE / DROP TABLES
     # *********************
@@ -50,9 +53,9 @@ class Appointment:
         CURSOR.execute(sql)
         CONN.commit()
 
-    # ***********
+    # **********
     # PROPERTIES
-    # ***********
+    # **********
 
     @property
     def type_(self):

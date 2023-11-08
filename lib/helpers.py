@@ -2,9 +2,10 @@
 from datetime import datetime, timedelta
 import random
 
+def current_date():
+    return datetime.now()
 
-current_date = datetime.now()
-year_range = range(current_date.year - 100, current_date.year + 1)
+year_range = range(current_date().year - 100, current_date().year + 1)
 miles_range = range(300_001)
 
 def parse_date(date):
@@ -130,7 +131,7 @@ def rand_vehicle():
 
 def rand_year():
     years = list(year_range)
-    weights = [i - current_date.year + 75 for i in years]  # Weights favoring recent years
+    weights = [i - current_date().year + 75 for i in years]  # Weights favoring recent years
     return random.choices(years, weights=weights)[0]
 
 def rand_miles():
@@ -168,8 +169,13 @@ def rand_color():
     ]
     return random.choices(colors, weights=weights, k=1)[0]
 
-def rand_bool():
-    bools = [True, False]
+def rand_new():
+    bools = ['New', 'Used']
+    weights = [0.75, 0.25]
+    return random.choices(bools, weights=weights, k=1)[0]
+
+def rand_transmission():
+    bools = ['Automatic', 'Manual']
     weights = [0.75, 0.25]
     return random.choices(bools, weights=weights, k=1)[0]
 
@@ -178,13 +184,13 @@ def rand_car():
     make_and_model = rand_vehicle()
     return Car(
         make_and_model[2],
-        rand_bool(),
+        rand_new(),
         make_and_model[0], 
         make_and_model[1],
         rand_miles(),
         rand_fuel_type(),
         rand_color(),
-        rand_bool(),
+        rand_transmission(),
         rand_year()
         )
 
