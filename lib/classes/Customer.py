@@ -12,6 +12,37 @@ class Customer:
         self._join_date = join_date
         self._id_ = id_
     
+    # *********************
+    # CREATE / DROP TABLES
+    # *********************
+
+    @classmethod
+    def create_table(cls):
+        """ Create a new table to persist the attributes of Customer instances"""
+        sql = """
+            CREATE TABLE IF NOT EXISTS customers (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                phone TEXT,
+                join_date TEXT
+            )
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+
+    @classmethod
+    def drop_table(cls):
+        sql = """
+            DROP TABLE IF EXISTS customers
+        """
+        
+        CURSOR.execute(sql)
+        CONN.commit()   
+
+    # ***********
+    # PROPERTIES
+    # ***********
+
     @property
     def name(self):
         return self._name
@@ -57,30 +88,9 @@ class Customer:
         else:
             self._id_ = id_
 
-
-# ORM METHODS
-    @classmethod
-    def create_table(cls):
-        """ Create a new table to persist the attributes of Customer instances"""
-        sql = """
-            CREATE TABLE IF NOT EXISTS customers (
-                id INTEGER PRIMARY KEY,
-                name TEXT,
-                phone TEXT,
-                join_date TEXT
-            )
-        """
-        CURSOR.execute(sql)
-        CONN.commit()
-
-    @classmethod
-    def drop_table(cls):
-        sql = """
-            DROP TABLE IF EXISTS customers
-        """
-        
-        CURSOR.execute(sql)
-        CONN.commit()   
+    # **************
+    # CRUD METHODS
+    # **************
 
     @classmethod
     def get_all(cls):
