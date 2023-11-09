@@ -445,38 +445,38 @@ class Car:
 
         # search_params = []
 
-        # for value_list in search_dict.values():
-        #     if not isinstance(value_list[0], int) and value_list[0].lower() == 'any':
-        #         search_params.append('NOT NULL')
-        #     elif all(isinstance(item, int) for item in value_list):
-        #         search_params.append(str(value_list[0]))
-        #     else:
-        #         result_string = ''
-        #         for val in value_list:
-        #             if value_list.index(val) == 0:
-        #                 result_string = result_string + f"'{val}'"
-        #             else:
-        #                 result_string = result_string + f" OR '{val}'"
-        #         search_params.append(result_string)
+        for value_list in search_dict.values():
+            if not isinstance(value_list[0], int) and value_list[0].lower() == 'any':
+                search_params.append('NOT NULL')
+            elif all(isinstance(item, int) for item in value_list):
+                search_params.append(str(value_list[0]))
+            else:
+                result_string = ''
+                for val in value_list:
+                    if value_list.index(val) == 0:
+                        result_string = result_string + f"'{val}'"
+                    else:
+                        result_string = result_string + f" OR '{val}'"
+                search_params.append(result_string)
 
         # print(search_params)
 
-        # conditions = [
-        # "vehicle_type IS NOT NULL" if search_params[0] == 'NOT NULL' else f"vehicle_type = {search_params[0]}",
-        # "new IS NOT NULL" if search_params[1] == 'NOT NULL' else f"new = {search_params[1]}",
-        # "make IS NOT NULL" if search_params[2] == 'NOT NULL' else f"make = {search_params[2]}",
-        # "model IS NOT NULL" if search_params[3] == 'NOT NULL' else f"model = {search_params[3]}",
-        # "year IS NOT NULL" if search_params[4] == 'NOT NULL' else f"year > {search_params[4]}",
-        # "miles IS NOT NULL" if search_params[5] == 'NOT NULL' else f"miles < {search_params[5]}",
-        # "fuel_type IS NOT NULL" if search_params[6] == 'NOT NULL' else f"fuel_type = {search_params[6]}",
-        # "color IS NOT NULL" if search_params[7] == 'NOT NULL' else f"color = {search_params[7]}",
-        # "transmission IS NOT NULL" if search_params[8] == 'NOT NULL' else f"transmission = {search_params[8]}",
-        # "price IS NOT NULL" if search_params[9] == 'NOT NULL' else f"price < {search_params[9]}"
-        # ]
+        conditions = [
+        "vehicle_type IS NOT NULL" if search_params[0] == 'NOT NULL' else f"vehicle_type = {search_params[0]}",
+        "new IS NOT NULL" if search_params[1] == 'NOT NULL' else f"new = {search_params[1]}",
+        "make IS NOT NULL" if search_params[2] == 'NOT NULL' else f"make = {search_params[2]}",
+        "model IS NOT NULL" if search_params[3] == 'NOT NULL' else f"model = {search_params[3]}",
+        "year IS NOT NULL" if search_params[4] == 'NOT NULL' else f"year > {search_params[4]}",
+        "miles IS NOT NULL" if search_params[5] == 'NOT NULL' else f"miles < {search_params[5]}",
+        "fuel_type IS NOT NULL" if search_params[6] == 'NOT NULL' else f"fuel_type = {search_params[6]}",
+        "color IS NOT NULL" if search_params[7] == 'NOT NULL' else f"color = {search_params[7]}",
+        "transmission IS NOT NULL" if search_params[8] == 'NOT NULL' else f"transmission = {search_params[8]}",
+        "price IS NOT NULL" if search_params[9] == 'NOT NULL' else f"price < {search_params[9]}"
+        ]
 
         # print(conditions)
 
-        conditions = ["vehicle_type = 'COUPE' OR 'VAN' OR 'SEDAN'", "new = New", "make IS NOT NULL", "model IS NOT NULL", "year > '1978'", "miles < '250000'", "fuel_type = 'GAS' OR 'ELECTRIC'", "color IS NOT NULL", "transmission = 'Automatic'", "price < '1000000'"]
+        # conditions = ["vehicle_type = 'COUPE' OR 'VAN' OR 'SEDAN'", "new = New", "make IS NOT NULL", "model IS NOT NULL", "year > '1978'", "miles < '250000'", "fuel_type = 'GAS' OR 'ELECTRIC'", "color IS NOT NULL", "transmission = 'Automatic'", "price < '1000000'"]
 
         sql = """
             SELECT *
