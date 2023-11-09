@@ -228,7 +228,7 @@ def owned_cars(car_list):
 # *************
 
 def view_car_details(customer, salesman, car):
-    print(customer, salesman, car.full_details())
+    print(customer, salesman, car)
 
 def list_cars(customer, salesman, current_list):
     from classes.Car import Car
@@ -238,7 +238,7 @@ def list_cars(customer, salesman, current_list):
         if key != '_owned':
             table.add_column(snake_case_to_title_case(key))
     for car in current_list:
-        table.add_row(f"{car.vehicle_type}", f"{car.new}", f"{car.make}", f"{car.model}", f"{car.year}", f"{car.miles}", f"{car.fuel_type}", f"{car.color}", f"{car.transmission}", f"{car.price}", f"{car.id_}")
+        table.add_row(f"{car.vehicle_type}", f"{car.new}", f"{car.make}", f"{car.model}", f"{'{:,}'.format(car.miles)}", f"{car.fuel_type}", f"{car.color}", f"{car.transmission}", f"{car.year}", f"${'{:,}'.format(car.price)}.00", f"{car.id_}")
 
     console = Console()
     console.print(table)
