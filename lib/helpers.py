@@ -230,7 +230,6 @@ def owned_cars(car_list):
 def show_car(customer, salesman, car):
     from classes.Testdrive import Testdrive
     from classes.Sale import Sale
-    print(customer, salesman, car)
     table = Table(title=f'{car.year} {car.make} {car.model}')
     for key in car.__dict__.keys():
         if key != '_owned':
@@ -240,13 +239,21 @@ def show_car(customer, salesman, car):
     console = Console()
     console.print(table)
 
-    menu('Enter a number for your choice:\n1. Test drive this car\n2. Buy this car')
+    menu('Enter a number for your choice:\n1. Test drive this car\n2. Buy this car\n3. Browse other cars\n4. Return to Lobby')
     choice = input()
 
     if int(choice) == 1:
-        Testdrive.create()
+        Testdrive.create('TESTDRIVE', datetime.now(), customer.id_, salesman.id_, car.id_, 'notes')
+        print('Test drive complete.')
+        show_car(customer, salesman, car)
     elif int(choice) == 2:
-        Sale.create()
+        Sale.create('SALE', datetime.now(), customer.id_, salesman.id_, car.id_, car.price, 'Active')
+        print(f'Congratulations! You are the proud new owner of a {str(car.year)} {car.make} {car.model}!')
+        to_lobby(customer)
+    elif int(choice) == 3:
+        browse_cars(customer, salesman)
+    elif int(choice) == 4:
+        to_lobby(customer)
     else:
         error("Not a valid choice.")
         to_sales(customer)
@@ -276,7 +283,6 @@ def list_cars(customer, salesman, current_list):
 
     show_car(customer, salesman, Car.get_by('id', int(selected_id)))
 
-#customer, salesman
 def browse_cars(customer, salesman):
     from classes.Car import Car
     search_dict = {}

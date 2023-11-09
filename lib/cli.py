@@ -16,7 +16,7 @@ def main():
     setup_db()
     welcome()
     # create_customer()
-    # show_car(Customer.get_by('id', 1), Salesman.get_by('id', 1), Car.get_by('id', 50))
-    browse_cars(Customer.get_by('id', 1), Salesman.get_by('id', 1))
+    # browse_cars(Customer.get_by('id', 1), Salesman.get_by('id', 1))
+    show_car(Customer.get_by('id', 1), Salesman.get_by('id', 1), Car.get_by('id', 50))
 if __name__ == "__main__":
     main()
