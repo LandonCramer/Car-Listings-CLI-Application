@@ -436,12 +436,12 @@ class Car:
     # TODO
 
     @classmethod
-    def search_cars(cls):
+    def search_cars(cls, search_dict):
         # # vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price = search_dict.vehicle_type, search_dict.new, search_dict.make, search_dict.model, search_dict.year, search_dict.miles, search_dict.fuel_type, search_dict.color, search_dict.transmission, search_dict.price
 
-        search_dict = {'vehicle_types': ['COUPE', 'VAN', 'TRUCK'], 'new': ['New'], 'makes': ['Any'], 'model': ['any'], 'year': [1978], 'miles': [250000], 'fuel_types': ['GAS'], 'colors': ['any'], 'transmission': ['Manual'], 'price': [1000000]}
+        # search_dict = {'vehicle_types': ['COUPE', 'VAN', 'TRUCK'], 'new': ['New'], 'makes': ['Any'], 'model': ['any'], 'year': [1978], 'miles': [250000], 'fuel_types': ['GAS'], 'colors': ['any'], 'transmission': ['Manual'], 'price': [1000000]}
         
-        # print(search_dict)
+        print(search_dict)
 
         search_params = []
 
@@ -483,8 +483,6 @@ class Car:
             FROM cars
             WHERE {}
         """.format(" AND ".join(conditions))
-
-        print(sql)
 
         rows = CURSOR.execute(sql).fetchall()
         cars = []
