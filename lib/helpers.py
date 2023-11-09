@@ -8,7 +8,7 @@ from rich.text import Text
 from rich.panel import Panel
 from rich.table import Table
 from rich.console import Console
-from richstyling import user_input, menu, error, listing, details, qualifier
+from richstyling import user_input, menu, error, listing, details, qualifier, department
 
 def current_date():
     return datetime.now()
@@ -321,6 +321,7 @@ def browse_cars(customer, salesman):
     def choose_year():
         user_input("Please enter a year representing the oldest car you would like to see or Any to see all.")
         choice = input().strip()
+
         if choice.lower() == "any":
             search_dict["year"] = ["any"]
         elif len(str(choice)) != 4:
@@ -397,46 +398,106 @@ def browse_cars(customer, salesman):
 
     choose_type()
 
-
-
-def to_sales(customer):
-    from classes.Salesman import Salesman
-
-    salesman = Salesman.get_by('id', random.randint(0, len(Salesman.get_by()) -1))
-    menu("Enter a number for your choice:\n1. Browse Cars\n2. My Cars\n3. Sell Car\n4. Return to Lobby")
-    choice = input()
-
-    if int(choice) == 1:
-        browse_cars(customer, salesman)
-    elif int(choice) == 2:
-        #my_cars(customer, salesman)
-        pass
-    elif int(choice) == 3:
-        pass
-    elif int(choice) == 4:
-        pass
-    else:
-        error("Not a valid choice.")
-        to_sales(customer)
-
 def to_lobby(customer):
     menu("Enter a number for your choice:\n1. Sales\n2. Service\n3. Leave Dealership")
     choice = input()
     if int(choice) == 1:
         to_sales(customer)
     elif int(choice) == 2:
-        #to_service(customer)
-        pass
+        to_service(customer)
     elif int(choice) == 3:
         pass
     else:
         error("Not a valid choice.")
         to_lobby(customer)
 
-def welcome():
-    text = Text("*** WELCOME TO THE DEALERSHIP ***")
-    text.stylize('bold blue')
-    print(Panel.fit(text))
+def to_service(customer):
+    from classes.ServiceTech import ServiceTech
+    from classes.Appointment import Appointment
+    from classes.Car import Car
+    from classes.Service import Service
+
+    service_tech = ServiceTech.get_by('id', random.randint(0, len(ServiceTech.get_by()) - 1))
+    
+    department("*** WELCOME TO THE SERVICE DEPARTMENT ***")
+    menu("How can we help you today?\n1. Drop off a vehicle for service.\n2. Pick up a serviced vehicle.\n3. Return to lobby.")
+    choice = input()
+    
+    if choice == '1':
+        new_appt = Appointment.create()
+        print('Dropped off!')
+    elif choice == '2':
+        current_car = customer.cars_in_shop()[0]
+        if current_car:
+            table = Table(title="Your vehicle is ready for pickup!")
+            table.add_column('Date')
+            table.add_column('Year')
+            table.add_column('Make')
+            table.add_column('Model')
+            table.add_column('Estimate')
+            table.add_column('Status')
+
+            all_appts = Service.get_by('car_id', current_car._id_)
+            latest_index = len(all_appts) - 1
+            
+            for num in range(0, latest_index):
+                all_appts[num].status = "Closed"
+
+            for appt in all_appts:
+                curr_car = Car.get_by('id', appt.car_id)
+                table.add_row(f"{appt.date}", f"{curr_car.year}", f"{curr_car.make}", f"{curr_car.model}", f"{appt.estimate}", f"{appt.status}")
+            console = Console()
+            console.print(table)
+
+            menu("What would you like to do?\n1. Pick up vehicle.\n2. Return to the service department.\n3. Return to the lobby.\n4. Leave dealership.")          
+            choice = input()
+
+            if choice == '1':
+                text = Text("THANK YOU FOR YOUR BUSINESS!")
+                text.stylize('green')
+                print(text)
+            elif choice == '2':
+                to_service(customer)
+            elif choice == '3':
+                to_lobby(customer)
+            elif choice == '4':
+                pass
+            else:
+                error("That is not a valid option.")
+                to_service(customer)
+        else:
+            error("You do not have any vehicles in the shop.")
+            menu("What would you like to do?\n1. Return to the service department.\n2. Return to the lobby.\n3. Leave dealership.")
+            choice = input()
+            if choice == '1':
+                to_service(customer)
+            elif choice == '2':
+                to_lobby(customer)
+            elif choice == '3':
+                pass
+            else:
+                error("That is not a valid option.")
+                to_service(customer)
+    elif choice == '3':
+        to_lobby(customer)
+    else:
+        error("That is not a valid choice.")
+        to_service()
+  
+def to_sales(customer):
+    from classes.Salesman import Salesman
+    salesman = Salesman.get_by('id', random.randint(0, len(Salesman.get_by()) - 1))
+    
+    menu("Enter a number for your choice:\n1. Browse Cars\n2. Return to Lobby")
+    choice = input()
+
+    if int(choice) == 1:
+        browse_cars(customer, salesman)
+    elif int(choice) == 2:
+        to_lobby(customer)
+    else:
+        error("Not a valid choice.")
+        to_sales(customer)
 
 def create_customer():
     from classes.Customer import Customer
@@ -461,6 +522,10 @@ def create_customer():
             name = input()
             new_customer = Customer.create(name, phone, datetime.now())
             to_lobby(new_customer)
+
+def welcome():
+    department("*** WELCOME TO THE DEALERSHIP ***")
+    create_customer()
 
 if __name__ == '__main__':
     import ipdb; ipdb.set_trace()
