@@ -33,6 +33,7 @@ Honest Aang's New and Used Cars relies on several external Python packages to en
 * ipdb: A powerful debugger for Python applications, providing an interactive and feature-rich debugging experience. Install it with `pip install ipdb`.
 * Faker: A Python library for generating fake data, including names, addresses, and other information, useful for testing and populating the database with sample data. Install it with `pip install Faker`.
 * Rich: A library for adding beautiful and sophisticated formatting to your command-line interface (CLI) application, making your interactions with Honest Aang's New and Used Cars more visually appealing and informative. Install it with `pip install rich`.
+
 These dependencies are essential for a smooth and feature-rich experience when using Honest Aang's New and Used Cars.
 # Usage
 
@@ -175,7 +176,7 @@ The Customer class, defined in the customer.py file, is a fundamental part of th
 
 The Customer class facilitates the management of customer data and their interactions within the Honest Aangs New and Used Cars application. It ensures the accuracy of customer information, making it a vital component for tracking customer history and building strong customer relationships within the dealership.
 
-## Dependencies
+
 
 
 ## Contributing
