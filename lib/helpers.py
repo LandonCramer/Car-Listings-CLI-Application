@@ -417,18 +417,56 @@ def to_service(customer):
     from classes.Car import Car
     from classes.Service import Service
 
-    service_tech = ServiceTech.get_by('id', random.randint(0, len(ServiceTech.get_by()) - 1))
+    service_tech = ServiceTech.get_by('id', 5)
     
     department("*** WELCOME TO THE SERVICE DEPARTMENT ***")
     menu("How can we help you today?\n1. Drop off a vehicle for service.\n2. Pick up a serviced vehicle.\n3. Return to lobby.")
     choice = input()
     
     if choice == '1':
-        new_appt = Appointment.create()
-        print('Dropped off!')
+        cust_cars = customer.cars_owned()
+        if cust_cars:
+            table = Table(title="Which car would you like to be serviced?")
+            table.add_column('Year')
+            table.add_column('Make')
+            table.add_column('Model')
+            table.add_column('Id')
+
+            for car in cust_cars:
+                table.add_row(f"{car.year}", f"{car.make}", f"{car.model}", f"{car.id_}")
+            
+            console = Console()
+            console.print(table)
+            user_input('Please select a vehicle by Id.')
+            selected_id = input()
+            
+            if int(selected_id) not in [car.id_ for car in cust_cars]:
+                error('Invalid ID.')
+                to_service(customer)
+            else:
+                user_input('Please enter the reason for your visit.')
+                reason = input()
+                estimate = random.randint(200, 2500)
+                car = car.get_by('id', selected_id)
+                new_appt = Service.create('SERVICE', datetime.now(), customer.id_, service_tech.id_, car.id_, reason, estimate, "Active")
+
+                menu(f"Your service appointment has been scheduled for {parse_date(datetime.now() + timedelta(days = 3))}. Your repair estimate is ${estimate}.")
+                menu("What would you like to do?\n1. Return to the service department.\n2. Return to the lobby.\n3. Leave dealership.")
+                
+                choice = input()
+                if choice == '1':
+                    to_service(customer)
+                elif choice == '2':
+                    to_lobby(customer)
+                elif choice == '3':
+                    pass
+                else:
+                    error("That is not a valid option.")
+                    to_service(customer)
+        
     elif choice == '2':
-        current_car = customer.cars_in_shop()[0]
-        if current_car:
+        cust_cars = customer.cars_in_shop()
+        if cust_cars:
             table = Table(title="Your vehicle is ready for pickup!")
             table.add_column('Date')
             table.add_column('Year')
@@ -436,37 +474,40 @@ def to_service(customer):
             table.add_column('Model')
             table.add_column('Estimate')
             table.add_column('Status')
+            table.add_column('Id')
 
-            all_appts = Service.get_by('car_id', current_car._id_)
-            latest_index = len(all_appts) - 1
+            for car in cust_cars:
+                table.add_row(f"{car.open_tickets()[0].date}", f"{car.year}", f"{car.make}", f"{car.model}", f"{car.open_tickets()[0].estimate}", f"{car.open_tickets()[0].status}", f"{car.id_}")
             
-            for num in range(0, latest_index):
-                all_appts[num].status = "Closed"
-
-            for appt in all_appts:
-                curr_car = Car.get_by('id', appt.car_id)
-                table.add_row(f"{appt.date}", f"{curr_car.year}", f"{curr_car.make}", f"{curr_car.model}", f"{appt.estimate}", f"{appt.status}")
             console = Console()
             console.print(table)
 
-            menu("What would you like to do?\n1. Pick up vehicle.\n2. Return to the service department.\n3. Return to the lobby.\n4. Leave dealership.")          
-            choice = input()
-
-            if choice == '1':
-                text = Text("THANK YOU FOR YOUR BUSINESS!")
-                text.stylize('green')
-                print(text)
-            elif choice == '2':
+            menu("Enter the Id of the vehicle you would like to pick up.")
+            selected_id = input()
+            if int(selected_id) not in [car.id_ for car in customer.cars_in_shop()]:
+                error('Invalid ID.')
                 to_service(customer)
-            elif choice == '3':
+            else:
+                 car = Car.get_by('id', selected_id)
+                 
+                 selected_service = Service.get_by('id', car.open_tickets()[0].id_)
+                 selected_service.status = "Closed"
+                 selected_service.update()
+            text = Text("THANK YOU FOR YOUR BUSINESS!")
+            text.stylize('green')
+            print(text)
+            menu("What would you like to do?\n1. Return to the lobby.\n2. Leave dealership.")          
+            
+            choice = input()
+            if choice == '1':
                 to_lobby(customer)
-            elif choice == '4':
+            elif choice == '2':
                 pass
             else:
                 error("That is not a valid option.")
                 to_service(customer)
         else:
-            error("You do not have any vehicles in the shop.")
+            error('It appears we don\'t have any records for you.')
             menu("What would you like to do?\n1. Return to the service department.\n2. Return to the lobby.\n3. Leave dealership.")
             choice = input()
             if choice == '1':
@@ -478,6 +519,7 @@ def to_service(customer):
             else:
                 error("That is not a valid option.")
                 to_service(customer)
+            
     elif choice == '3':
         to_lobby(customer)
     else:
@@ -512,10 +554,14 @@ def create_customer():
             searched_customer = Customer.get_by('phone', phone)
             qualifier(f"Are you {searched_customer.name}? Y/N:")
             yn = input()
-            if yn.lower() == "y":
-                to_lobby(searched_customer)
-            elif yn.lower() == "n":
-                error("That phone number is already in use.")
+            if re.compile(r'^[yn]$', re.IGNORECASE).match(yn):
+                if yn.lower() == "y":
+                    to_lobby(searched_customer)
+                elif yn.lower() == "n":
+                    error("That phone number is already in use.")
+                    create_customer()
+            else:
+                error("Please enter either Y or N.")
                 create_customer()
         else:
             user_input('Please enter your name.')

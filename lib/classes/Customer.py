@@ -206,6 +206,13 @@ class Customer:
             employees.append(Employee.get_by('id', id_))
         return employees
     
+    def cars_owned(self):
+        return [Car.get_by('id', appt.car_id) for appt in self.appts() if appt.type_ == 'SALE'] if self.appts() else None
+    
+    def active_services(self):
+        from classes.Service import Service
+        return [Service.get_by('id', appt.id_) for appt in self.appts() if appt.type_ == 'SERVICE' and appt.status == 'Active'] if self.appts() else None
+    
     # *************
     # CLASS METHODS
     # *************
