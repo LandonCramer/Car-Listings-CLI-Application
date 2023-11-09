@@ -211,17 +211,29 @@ def generate_fleet():
     
     return fleet
 
+def snake_case_to_title_case(input_string):
+    words = input_string.split('_')  # Split the snake case string into words
+    title_case_string = ' '.join(word.capitalize() for word in words) 
+    if title_case_string == 'Id':
+        return 'ID'
+    return title_case_string
+
+
 # *********************
 # CLI FUNCTIONS
 # *********************
 
 def list_cars(customer, salesman, current_list):
+    # print(current_list[0].__dict__.keys())
     table = Table(title="Here are your search results.")
-    for key in list(current_list[0].keys()):
-        table.add_column(key)
-    for car in current_list:
-        table.add_row(car.vehicle_type, car.new, car.make, car.model, car.year, car.miles, car.fuel_type, car.color, car.transmission, car.price, car.owned)
+    for key in current_list[0].__dict__.keys():
+        print(key)
+        if key != '_owned':
+            table.add_column(snake_case_to_title_case(key))
     print(table)
+    # for car in current_list:
+    #     table.add_row(car.vehicle_type, car.new, car.make, car.model, car.year, car.miles, car.fuel_type, car.color, car.transmission, car.price, car.owned)
+    # print(table)
 
 #customer, salesman
 def browse_cars(customer, salesman):
