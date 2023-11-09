@@ -18,10 +18,10 @@ from faker import Faker
 fake = Faker()
 
 def setup_db():
-    Customer.drop_table()
-    Employee.drop_table()
-    Car.drop_table()
-    Appointment.drop_table()
+    # Customer.drop_table()
+    # Employee.drop_table()
+    # Car.drop_table()
+    # Appointment.drop_table()
 
     Customer.create_table()
     Employee.create_table()
@@ -72,7 +72,7 @@ def setup_db():
     serv2 = Service.create('SERVICE', bound_rand_date(st2.hire_date), 1, 6, 1, 'I put Monster Energy into the gastank and now it does not run.', 550, 'Closed')
     serv3 = Service.create('SERVICE', bound_rand_date(st1.hire_date), 7, 5, 12, 'The car smells like feet.', 400, 'Active')
     serv4 = Service.create('SERVICE', bound_rand_date(st2.hire_date), 4, 6, 43, 'The car only goes reverse when my eyes are closed.', 550, 'Closed')
-    serv5 = Service.create('SERVICE', bound_rand_date(st2.hire_date), 1, 6, 1, 'Will painting flames onto my car make it go faster?', 400, 'Active')
+    serv5 = Service.create('SERVICE', bound_rand_date(st2.hire_date), 1, 6, 1, 'Will painting flames onto my car make it go faster?', 400, 'Closed')
     td1 = Testdrive.create('TESTDRIVE', bound_rand_date(sm1.hire_date), 1, 1, 1, "The guy drove thru a McDonalds and ordered a 50-pc chicken nugget.")
     td2 = Testdrive.create('TESTDRIVE', bound_rand_date(sm1.hire_date), 3, 1, 1, "Dude crashed into lightpole then tried to bribe me with an expired Chuck E Cheese coupon.")
     td3 = Testdrive.create('TESTDRIVE', bound_rand_date(sm1.hire_date), 3, 1, 3, "The customer kept telling me about her toenail collection.")

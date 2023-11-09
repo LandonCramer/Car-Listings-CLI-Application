@@ -10,6 +10,11 @@ def user_input(string):
     text.stylize('green')
     print(text)
 
+def department(string):
+    text = Text(string)
+    text.stylize('bold blue')
+    print(Panel.fit(text))
+
 def menu(string):
     text = Text(string)
     text.stylize('cyan')

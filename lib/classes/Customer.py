@@ -166,7 +166,7 @@ class Customer:
             SET name = ?, phone = ?, join_date = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.name, self.phone, self.join_date, self.id))
+        CURSOR.execute(sql, (self.name, self.phone, self.join_date, self.id_))
         CONN.commit()
 
     # *******
@@ -189,6 +189,10 @@ class Customer:
     def appts(self):
         return Appointment.get_by('customer_id', self.id_)
     
+    def active_services(self):
+        from classes.Service import Service
+        return [Service.get_by('id', service.id_) for appt in self.appts() if appt.type_ == 'SERVICE' and appt.status == 'Active'] if self.appts() else None
+
     def cars_test_driven(self):
         return [Car.get_by('id', appt.car_id) for appt in self.appts() if appt.type_ == 'TESTDRIVE'] if self.appts() else None
     
@@ -197,6 +201,9 @@ class Customer:
 
     def cars_in_shop(self):
         return [Car.get_by('id', appt.car_id) for appt in self.appts() if appt.type_ == 'SERVICE' and appt.status == 'Active'] if self.appts() else None
+
+    def cars_owned(self):
+        return [Car.get_by('id', appt.car_id) for appt in self.appts() if appt.type_ == 'SALE'] if self.appts() else None
 
     def employees(self):
         from classes.Employee import Employee

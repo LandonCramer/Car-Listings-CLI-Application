@@ -210,7 +210,7 @@ class Employee:
             SET name = ?, salary = ?, job_title = ?, hire_date = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.name, self.salary, self.job_title, self.hire_date, self.id))
+        CURSOR.execute(sql, (self.name, self.salary, self.job_title, self.hire_date, self.id_))
         CONN.commit()
 
     # *******
@@ -223,7 +223,7 @@ class Employee:
             DELETE FROM employees
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.id,))
+        CURSOR.execute(sql, (self.id_,))
         CONN.commit()
 
     # *************
@@ -232,7 +232,7 @@ class Employee:
 
     @classmethod
     def employee_of_the_month(cls, role):
-        one_month_ago = datetime.now() - timedelta(days=30)
+        one_month_ago = helpers.parse_date(datetime.now() - timedelta(days=30))
         valid_emps = cls.get_by('job_title', role)
         return max(valid_emps, key=lambda x: len([appt for appt in x.appts() if appt.date > one_month_ago]))
 
