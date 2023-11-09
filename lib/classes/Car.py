@@ -148,7 +148,7 @@ class Car:
         return self._fuel_type.title()
     @fuel_type.setter
     def fuel_type(self, fuel_type):
-        if fuel_type not in type(self).FUEL_TYPES:
+        if fuel_type.upper() not in type(self).FUEL_TYPES:
             raise ValueError(f'Type must be one of the following: {[f_type for f_type in type(self).FUEL_TYPES]}')
         else:
             self._fuel_type = fuel_type
@@ -472,7 +472,7 @@ class Car:
         "color IS NOT NULL" if search_params[1] == 'NOT NULL' else f"color = {search_params[1]}",
         "transmission IS NOT NULL" if search_params[8] == 'NOT NULL' else f"transmission = {search_params[8]}",
         "price IS NOT NULL" if search_params[9] == 'NOT NULL' else f"price < 1000000",
-        "owned IS NOT 0"
+        "owned IS 0"
         ]
 
         # conditions = ["vehicle_type = 'COUPE' OR 'VAN' OR 'SEDAN'", "new = New", "make IS NOT NULL", "model IS NOT NULL", "year > '1978'", "miles < '250000'", "fuel_type = 'GAS' OR 'ELECTRIC'", "color IS NOT NULL", "transmission = 'Automatic'", "price < '1000000'"]
