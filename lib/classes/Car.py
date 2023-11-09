@@ -440,7 +440,7 @@ class Car:
 
         # search_dict = {'vehicle_types': ['COUPE', 'VAN', 'TRUCK'], 'new': ['New'], 'makes': ['Any'], 'model': ['any'], 'year': [1978], 'miles': [250000], 'fuel_types': ['GAS'], 'colors': ['any'], 'transmission': ['Manual'], 'price': [1000000]}
         
-        # print(search_dict)
+        print(search_dict)
 
         search_params = []
 
@@ -458,24 +458,24 @@ class Car:
                         result_string = result_string + f" OR '{val}'"
                 search_params.append(result_string)
 
-        # print(search_params)
+        print(search_params)
 
         conditions = [
-        "vehicle_type IS NOT NULL" if search_params[0] == 'NOT NULL' else f"vehicle_type = {search_params[0]}",
-        "new IS NOT NULL" if search_params[1] == 'NOT NULL' else f"new = {search_params[1]}",
-        "make IS NOT NULL" if search_params[2] == 'NOT NULL' else f"make = {search_params[2]}",
-        "model IS NOT NULL" if search_params[3] == 'NOT NULL' else f"model = {search_params[3]}",
-        "year IS NOT NULL" if search_params[4] == 'NOT NULL' else f"year > 0 ",
-        "miles IS NOT NULL" if search_params[5] == 'NOT NULL' else f"miles < 1000000",
-        "fuel_type IS NOT NULL" if search_params[6] == 'NOT NULL' else f"fuel_type = {search_params[6]}",
-        "color IS NOT NULL" if search_params[7] == 'NOT NULL' else f"color = {search_params[7]}",
+        "vehicle_type IS NOT NULL" if search_params[2] == 'NOT NULL' else f"vehicle_type = {search_params[2]}",
+        "new IS NOT NULL" if search_params[3] == 'NOT NULL' else f"new = {search_params[3]}",
+        "make IS NOT NULL" if search_params[4] == 'NOT NULL' else f"make = {search_params[4]}",
+        "model IS NOT NULL" if search_params[0] == 'NOT NULL' else f"model = {search_params[0]}",
+        "year IS NOT NULL" if search_params[5] == 'NOT NULL' else f"year > 0 ",
+        "miles IS NOT NULL" if search_params[6] == 'NOT NULL' else f"miles < 1000000",
+        "fuel_type IS NOT NULL" if search_params[7] == 'NOT NULL' else f"fuel_type = {search_params[7]}",
+        "color IS NOT NULL" if search_params[1] == 'NOT NULL' else f"color = {search_params[1]}",
         "transmission IS NOT NULL" if search_params[8] == 'NOT NULL' else f"transmission = {search_params[8]}",
         "price IS NOT NULL" if search_params[9] == 'NOT NULL' else f"price < 1000000"
         ]
 
         # conditions = ["vehicle_type = 'COUPE' OR 'VAN' OR 'SEDAN'", "new = New", "make IS NOT NULL", "model IS NOT NULL", "year > '1978'", "miles < '250000'", "fuel_type = 'GAS' OR 'ELECTRIC'", "color IS NOT NULL", "transmission = 'Automatic'", "price < '1000000'"]
 
-        # print(conditions)
+        print(conditions)
 
         sql = """
             SELECT *
@@ -486,7 +486,8 @@ class Car:
         rows = CURSOR.execute(sql).fetchall()
         cars = []
 
-        # print(sql)
+        print(sql)
+        print(rows)
 
         if not rows:
             print('No results found.')

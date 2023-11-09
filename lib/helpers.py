@@ -224,25 +224,27 @@ def snake_case_to_title_case(input_string):
 # *********************
 
 def view_car_details(customer, salesman, car):
-    print(customer, salesman, car)
+    # print(customer, salesman, car)
+    pass
 
 def list_cars(customer, salesman, current_list):
-    from classes.Car import Car
-    table = Table(title="Here are your search results.")
+    # from classes.Car import Car
+    # table = Table(title="Here are your search results.")
 
-    for key in current_list[0].__dict__.keys():
-        if key != '_owned':
-            table.add_column(snake_case_to_title_case(key))
-    for car in current_list:
-        table.add_row(f"{car.vehicle_type}", f"{car.new}", f"{car.make}", f"{car.model}", f"{car.year}", f"{car.miles}", f"{car.fuel_type}", f"{car.color}", f"{car.transmission}", f"{car.price}", f"{car.owned}")
+    # for key in current_list[0].__dict__.keys():
+    #     if key != '_owned':
+    #         table.add_column(snake_case_to_title_case(key))
+    # for car in current_list:
+    #     table.add_row(f"{car.vehicle_type}", f"{car.new}", f"{car.make}", f"{car.model}", f"{car.year}", f"{car.miles}", f"{car.fuel_type}", f"{car.color}", f"{car.transmission}", f"{car.price}", f"{car.owned}")
 
-    console = Console()
-    console.print(table)
+    # console = Console()
+    # console.print(table)
 
-    user_input("Please select a vehicle by Id.")
-    selected_id = input()
+    # user_input("Please select a vehicle by Id.")
+    # selected_id = input()
 
-    view_car_details(customer, salesman, Car.get_by('id',selected_id))
+    # view_car_details(customer, salesman, Car.get_by('id',selected_id))
+    pass
 
 #customer, salesman
 def browse_cars(customer, salesman):
@@ -255,6 +257,9 @@ def browse_cars(customer, salesman):
 
         if choice.lower() == "any":
             search_dict["price"] = ["any"]
+        elif isinstance(choice, str) and choice.lower() != 'any':
+            error("That is an invalid string.")
+            choose_max_price()
         else:
             price = int(choice)
             search_dict["price"] = [price]
@@ -304,23 +309,25 @@ def browse_cars(customer, salesman):
 
         if choice.lower() == "any":
             search_dict["miles"] = ["any"]
-        else:
+        elif choice.isdigit() and len(choice):
             miles = int(choice)
-            search_dict["miles"] = miles
+            search_dict["miles"] = [miles]
+        else:
+            error("That is an invalid string.")
+            choose_mileage()
 
         choose_fuel_type()
 
     def choose_year():
         user_input("Please enter a year representing the oldest car you would like to see or Any to see all.")
         choice = input().strip()
-
         if choice.lower() == "any":
             search_dict["year"] = ["any"]
         elif len(str(choice)) != 4:
             error("Please enter a valid year in format YYYY.")
             choose_year()
         else:
-            year = int(choice)
+            year = int(choice) 
             search_dict["year"] = [year]
         
         choose_mileage()
