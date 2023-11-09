@@ -223,7 +223,11 @@ def snake_case_to_title_case(input_string):
 # CLI FUNCTIONS
 # *********************
 
+def view_car_details(customer, salesman, car):
+    print(customer, salesman, car)
+
 def list_cars(customer, salesman, current_list):
+    from classes.Car import Car
     table = Table(title="Here are your search results.")
 
     for key in current_list[0].__dict__.keys():
@@ -238,7 +242,7 @@ def list_cars(customer, salesman, current_list):
     user_input("Please select a vehicle by Id.")
     selected_id = input()
 
-    # view_car_details(customer, salesman, selected_id)
+    view_car_details(customer, salesman, Car.get_by('id',selected_id))
 
 #customer, salesman
 def browse_cars(customer, salesman):
