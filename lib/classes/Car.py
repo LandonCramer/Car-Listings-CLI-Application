@@ -1,4 +1,5 @@
 import random
+from collections import Counter
 from classes.__init__ import CURSOR, CONN
 from helpers import current_date, year_range
 from classes.Appointment import Appointment
@@ -418,19 +419,21 @@ class Car:
 
     @classmethod
     def top_cars(cls, list_len):
-        driven_car_ids = {}
-        for testdrive in Testdrive.get_by():
-            if testdrive.car_id in driven_car_ids.keys():
-                driven_car_ids[testdrive.car_id] = driven_car_ids[testdrive.car_id] + 1
-            else:
-                driven_car_ids[testdrive.car_id] = 1
-        tuple_list = [(key, value) for key, value in driven_car_ids.items()]
-        top_cars = []
-        for car in sorted(tuple_list, key=lambda x: x[1])[:list_len]:
-            top_cars.append(cls.get_by('id', car[1]))
-        return top_cars
 
-    # TODO
+        unique_cars = [car for car in cls.test_driven_cars() if car.owned == False] if cls.test_driven_cars() else None
+        unique_car_ids = [car.id_ for car in unique_cars] if unique_cars else None
+        all_tds = Testdrive.get_by()
+        all_td_ids = [appt.car_id for appt in all_tds]
+
+        count_td_ids = Counter(all_td_ids)
+
+        if unique_car_ids:
+            top_most_common = count_td_ids.most_common(list_len)
+            cars = [cls.get_by('id', pair[0]) for pair in top_most_common]
+            return [car for car in cars if not car.owned]
+
+        else:
+            print("No unique car IDs found.")
 
     @classmethod
     def search_cars(cls, search_dict):
