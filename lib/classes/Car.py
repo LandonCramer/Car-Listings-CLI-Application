@@ -333,7 +333,6 @@ class Car:
     # ******
 
     def update(self):
-        print(self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owned)
         CURSOR.execute(
             '''
             UPDATE cars
@@ -358,7 +357,7 @@ class Car:
             (self.id_,)
         )
         CONN.commit()
-        self.id = None
+        self.id_ = None
         return self
 
     # *************
@@ -456,7 +455,7 @@ class Car:
                         result_string = result_string + f" OR '{val}'"
                 search_params.append(result_string)
 
-        print(search_params)
+        # print(search_params)
 
         conditions = [
         "vehicle_type IS NOT NULL" if search_params[2] == 'NOT NULL' else f"vehicle_type = {search_params[2]}",
@@ -485,11 +484,10 @@ class Car:
         rows = CURSOR.execute(sql).fetchall()
         cars = []
 
-        print(sql)
+        # print(sql)
         # print(rows)
 
         if not rows:
-            print('No results found.')
             return
         elif len(rows) == 1:
             cars = [cls.instance_from_db(rows[0])]

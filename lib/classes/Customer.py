@@ -166,7 +166,7 @@ class Customer:
             SET name = ?, phone = ?, join_date = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.name, self.phone, self.join_date, self.id))
+        CURSOR.execute(sql, (self.name, self.phone, self.join_date, self.id_))
         CONN.commit()
 
     # *******

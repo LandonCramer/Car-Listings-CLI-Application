@@ -18,10 +18,10 @@ from faker import Faker
 fake = Faker()
 
 def setup_db():
-    Customer.drop_table()
-    Employee.drop_table()
-    Car.drop_table()
-    Appointment.drop_table()
+    # Customer.drop_table()
+    # Employee.drop_table()
+    # Car.drop_table()
+    # Appointment.drop_table()
 
     Customer.create_table()
     Employee.create_table()

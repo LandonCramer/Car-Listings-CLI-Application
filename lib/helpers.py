@@ -8,7 +8,7 @@ from rich.text import Text
 from rich.panel import Panel
 from rich.table import Table
 from rich.console import Console
-from richstyling import user_input, menu, error, listing, details, qualifier
+from richstyling import user_input, menu, error, listing, details, qualifier, department
 
 def current_date():
     return datetime.now()
@@ -248,6 +248,8 @@ def show_car(customer, salesman, car):
         show_car(customer, salesman, car)
     elif int(choice) == 2:
         Sale.create('SALE', datetime.now(), customer.id_, salesman.id_, car.id_, car.price, 'Active')
+        car.owned = True
+        car.update()
         print(f'Congratulations! You are the proud new owner of a {str(car.year)} {car.make} {car.model}!')
         to_lobby(customer)
     elif int(choice) == 3:
@@ -370,7 +372,7 @@ def browse_cars(customer, salesman):
             search_dict["year"] = [year]
         else:
             error("That is an invalid string.")
-            choose_mileage()
+            choose_year()
         
         choose_mileage()
 
@@ -439,12 +441,126 @@ def browse_cars(customer, salesman):
 
     choose_type()
 
+def to_service(customer):
+    from classes.ServiceTech import ServiceTech
+    from classes.Appointment import Appointment
+    from classes.Car import Car
+    from classes.Service import Service
+
+    service_tech = ServiceTech.get_by('id', 5)
+    
+    department("*** WELCOME TO THE SERVICE DEPARTMENT ***")
+    menu("How can we help you today?\n1. Drop off a vehicle for service.\n2. Pick up a serviced vehicle.\n3. Return to lobby.")
+    choice = input()
+    
+    if choice == '1':
+        cust_cars = customer.cars_owned()
+        if cust_cars:
+            table = Table(title="Which car would you like to be serviced?")
+            table.add_column('Year')
+            table.add_column('Make')
+            table.add_column('Model')
+            table.add_column('Id')
+
+            for car in cust_cars:
+                table.add_row(f"{car.year}", f"{car.make}", f"{car.model}", f"{car.id_}")
+            
+            console = Console()
+            console.print(table)
+            user_input('Please select a vehicle by Id.')
+            selected_id = input()
+            
+            if int(selected_id) not in [car.id_ for car in cust_cars]:
+                error('Invalid ID.')
+                to_service(customer)
+            else:
+                user_input('Please enter the reason for your visit.')
+                reason = input()
+                estimate = random.randint(200, 2500)
+                car = car.get_by('id', selected_id)
+                new_appt = Service.create('SERVICE', datetime.now(), customer.id_, service_tech.id_, car.id_, reason, estimate, "Active")
+
+                menu(f"Your service appointment has been scheduled for {parse_date(datetime.now() + timedelta(days = 3))}. Your repair estimate is ${estimate}.")
+                menu("What would you like to do?\n1. Return to the service department.\n2. Return to the lobby.\n3. Leave dealership.")
+                
+                choice = input()
+                if choice == '1':
+                    to_service(customer)
+                elif choice == '2':
+                    to_lobby(customer)
+                elif choice == '3':
+                    pass
+                else:
+                    error("That is not a valid option.")
+                    to_service(customer)
+        
+    elif choice == '2':
+        cust_cars = customer.cars_in_shop()
+        if cust_cars:
+            table = Table(title="Your vehicle is ready for pickup!")
+            table.add_column('Date')
+            table.add_column('Year')
+            table.add_column('Make')
+            table.add_column('Model')
+            table.add_column('Estimate')
+            table.add_column('Status')
+            table.add_column('Id')
+
+            for car in cust_cars:
+                table.add_row(f"{car.open_tickets()[0].date}", f"{car.year}", f"{car.make}", f"{car.model}", f"{car.open_tickets()[0].estimate}", f"{car.open_tickets()[0].status}", f"{car.id_}")
+            
+            console = Console()
+            console.print(table)
+
+            menu("Enter the Id of the vehicle you would like to pick up.")
+            selected_id = input()
+            if int(selected_id) not in [car.id_ for car in customer.cars_in_shop()]:
+                error('Invalid ID.')
+                to_service(customer)
+            else:
+                car = Car.get_by('id', selected_id)
+                
+                selected_service = Service.get_by('id', car.open_tickets()[0].id_)
+                selected_service.status = "Closed"
+                selected_service.update()
+            text = Text("THANK YOU FOR YOUR BUSINESS!")
+            text.stylize('green')
+            print(text)
+            menu("What would you like to do?\n1. Return to the lobby.\n2. Leave dealership.")          
+            
+            choice = input()
+            if choice == '1':
+                to_lobby(customer)
+            elif choice == '2':
+                pass
+            else:
+                error("That is not a valid option.")
+                to_service(customer)
+        else:
+            error('It appears we don\'t have any records for you.')
+            menu("What would you like to do?\n1. Return to the service department.\n2. Return to the lobby.\n3. Leave dealership.")
+            choice = input()
+            if choice == '1':
+                to_service(customer)
+            elif choice == '2':
+                to_lobby(customer)
+            elif choice == '3':
+                pass
+            else:
+                error("That is not a valid option.")
+                to_service(customer)
+            
+    elif choice == '3':
+        to_lobby(customer)
+    else:
+        error("That is not a valid choice.")
+        to_service()
 
 
 def to_sales(customer):
     from classes.Salesman import Salesman
 
-    salesman = Salesman.get_by('id', random.randint(0, len(Salesman.get_by()) -1))
+    salesman = Salesman.get_by('id', Salesman.employee_of_the_month('Salesman').id_)
     menu("Enter a number for your choice:\n1. Browse Cars\n2. My Cars\n3. Sell Car\n4. Return to Lobby")
     choice = input()
 
@@ -467,18 +583,13 @@ def to_lobby(customer):
     if int(choice) == 1:
         to_sales(customer)
     elif int(choice) == 2:
-        #to_service(customer)
+        to_service(customer)
         pass
     elif int(choice) == 3:
         pass
     else:
         error("Not a valid choice.")
         to_lobby(customer)
-
-def welcome():
-    text = Text("*** WELCOME TO THE DEALERSHIP ***")
-    text.stylize('bold blue')
-    print(Panel.fit(text))
 
 def create_customer():
     from classes.Customer import Customer
@@ -493,16 +604,26 @@ def create_customer():
             searched_customer = Customer.get_by('phone', phone)
             qualifier(f"Are you {searched_customer.name}? Y/N:")
             yn = input()
-            if yn.lower() == "y":
-                to_lobby(searched_customer)
-            elif yn.lower() == "n":
-                error("That phone number is already in use.")
+            if re.compile(r'^[yn]$', re.IGNORECASE).match(yn):
+                if yn.lower() == "y":
+                    to_lobby(searched_customer)
+                elif yn.lower() == "n":
+                    error("That phone number is already in use. Please provide an alternate number.")
+                    create_customer()
+            else:
+                error("Please enter either Y or N.")
                 create_customer()
         else:
             user_input('Please enter your name.')
             name = input()
             new_customer = Customer.create(name, phone, datetime.now())
             to_lobby(new_customer)
+
+def welcome():
+    text = Text("*** WELCOME TO THE DEALERSHIP ***")
+    text.stylize('bold blue')
+    print(Panel.fit(text))
+    create_customer()
 
 if __name__ == '__main__':
     import ipdb; ipdb.set_trace()
