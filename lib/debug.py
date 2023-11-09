@@ -89,14 +89,13 @@ def setup_db():
     td14 = Testdrive.create('TESTDRIVE', bound_rand_date(sm3.hire_date), 10, 3, 4, "Person did not show up.")
     td15 = Testdrive.create('TESTDRIVE', bound_rand_date(sm2.hire_date), 9, 2, 5, "Testdrive actually went well.")
 
-if __name__ == '__main__':
-    setup_db()
     owned_cars = [Car.get_by('id', id_) for id_ in Sale.owned_cars()]
-    # print([car.id_ for car in owned_cars])
-    car = owned_cars[0]
     for car in owned_cars:
         car.owned = True
-    for car in owned_cars:
         car.update()
+
+if __name__ == '__main__':
+    setup_db()
+
     print('Seeded database')
     import ipdb; ipdb.set_trace()

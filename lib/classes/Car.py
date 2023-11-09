@@ -74,7 +74,7 @@ class Car:
     def vehicle_type(self, vehicle_type):
         if hasattr(self, 'vehicle_type'):
             raise ValueError('Vehicle type can not be reset')
-        elif vehicle_type not in type(self).VEHICLE_TYPES:
+        elif vehicle_type.upper() not in type(self).VEHICLE_TYPES:
             raise ValueError(f'Vehicle type must be one of the following: {[v_type for v_type in self.VEHICLE_TYPES]}')
         else:
             self._vehicle_type = vehicle_type
@@ -275,7 +275,6 @@ class Car:
     
     @classmethod
     def instance_from_db(cls, row):
-        
         return cls(
                 row[1], # vehicle_type
                 row[2], # new
@@ -322,7 +321,7 @@ class Car:
             """
 
         rows = CURSOR.execute(sql).fetchall()
-        
+
         if not rows:
             print('No results found.')
             return
@@ -344,7 +343,7 @@ class Car:
             SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?, owned = ?
             WHERE id = ?
             ''',
-            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owned)
+            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.owned, self.id_)
         )
         CONN.commit()
         return self
