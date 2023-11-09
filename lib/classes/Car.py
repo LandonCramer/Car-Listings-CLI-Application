@@ -322,9 +322,7 @@ class Car:
         rows = CURSOR.execute(sql).fetchall()
 
         if not rows:
-            print('No results found.')
             return
-        
         elif len(rows) == 1:
             return cls.instance_from_db(rows[0])
         else:
