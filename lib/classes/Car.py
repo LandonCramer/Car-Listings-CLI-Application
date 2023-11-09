@@ -334,7 +334,6 @@ class Car:
     # ******
 
     def update(self):
-        print(self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owned)
         CURSOR.execute(
             '''
             UPDATE cars
