@@ -484,8 +484,6 @@ class Car:
             WHERE {}
         """.format(" AND ".join(conditions))
 
-        print(sql)
-
         rows = CURSOR.execute(sql).fetchall()
         cars = []
 

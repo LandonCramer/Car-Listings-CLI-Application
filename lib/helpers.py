@@ -216,7 +216,12 @@ def generate_fleet():
 # *********************
 
 def list_cars(customer, salesman, current_list):
-    print(customer, salesman, current_list)
+    table = Table(title="Here are your search results.")
+    for key in list(current_list[0].keys()):
+        table.add_column(key)
+    for car in current_list:
+        table.add_row(car.vehicle_type, car.new, car.make, car.model, car.year, car.miles, car.fuel_type, car.color, car.transmission, car.price, car.owned)
+    print(table)
 
 #customer, salesman
 def browse_cars(customer, salesman):
@@ -294,7 +299,8 @@ def browse_cars(customer, salesman):
         else:
             year = int(choice)
             search_dict["year"] = [year]
-            choose_mileage()
+        
+        choose_mileage()
 
     def choose_make():
         valid_choices = ['Ford', 'Chevrolet', 'Audi', 'Jeep', 'Kia', 'Toyota', 'Any']
@@ -305,15 +311,16 @@ def browse_cars(customer, salesman):
         makes = [make.strip().title() for make in choice.split(',')]
 
         for item in makes:
-            if item not in valid_choices:
+            if item.title() not in valid_choices:
                 error("One or more of your selections is not a valid make.")
                 choose_make()
         
-        if choice.title() == 'Any':
+        if "Any" in makes:
             search_dict["makes"] = 'any'
         else:
             search_dict['makes'] = makes
-            choose_year()
+        
+        choose_year()
 
     def choose_condition():
         valid_choices = ['New', 'Used', 'Any']
@@ -346,7 +353,7 @@ def browse_cars(customer, salesman):
                 choose_type()
 
         if 'ANY' in vehicle_types:
-            search_dict['vehicle_types'] == ['any']
+            search_dict['vehicle_types'] = ['any']
         else:
             search_dict['vehicle_types'] = vehicle_types 
         
