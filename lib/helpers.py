@@ -263,7 +263,7 @@ def list_cars(customer, salesman, current_list):
         error('Invalid ID.')
         list_cars(customer, salesman, current_list)
 
-    view_car_details(customer, salesman, Car.get_by('id', int(selected_id)))
+    show_car(customer, salesman, Car.get_by('id', int(selected_id)))
 
 #customer, salesman
 def browse_cars(customer, salesman):
