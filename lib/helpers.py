@@ -219,65 +219,143 @@ def generate_fleet():
 def browse_cars():
     from classes.Car import Car
     search_dict = {}
-    menu('Vehicle Types: Sedan, Coupe, Van, Truck, SUV')
-    user_input("Enter desired vehicle type(s) separated by commas or Any to see all.")
-    vehicle_types = [vehicle.strip().upper() for vehicle in input().split(',')]
-    search_dict['vehicle_types'] = vehicle_types 
-    
-    menu("Condition: New, Used")
-    user_input("Enter New, Used, or Any:")
-    new = [input()]
-    search_dict["new"]= new
-    
-    menu("Makes: Ford, Chevrolet, Audi, Jeep, Kia, Toyota")
-    user_input("Enter desired vehicle make(s) separated by commas or Any to see all.")
-    makes = [make.strip().title() for make in input().split(',')]
-    search_dict["makes"] = makes
 
+    def choose_max_price():
+        user_input("Please enter the maximum price you would like to see or Any to see all.")
+        choice = input()
+
+        if choice.lower() == "any":
+            search_dict["price"] = ["any"]
+        else:
+            price = int(choice)
+            search_dict["price"] = [price]
+
+        Car.search_cars(search_dict)
+
+    def choose_transmission():
+        valid_choices = ['Manual', 'Automatic', 'Any']
+
+        menu("Transmission: Manual, Automatic")
+        user_input("Enter Manual, Automatic, or Any:")
+        choice = input()
+
+        if choice.title() not in valid_choices:
+            error("That is not a valid transmission type.")
+            choose_transmission()
+
+        transmission = [choice.title()]
+        search_dict["transmission"] = transmission
+        choose_max_price()
+
+    def choose_fuel_type():
+        valid_choices = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID', 'ANY']
+   
+        menu('Fuel Types: Gas, Diesel, Electric, Hybrid')
+        user_input("Enter desired fuel type(s) separated by commas or Any to see all.")
+        choice = input()
+        fuel_types = [fuel_type.strip().upper() for fuel_type in input().split(',')]
+
+        for item in fuel_types:
+            if item not in valid_choices:
+                error("One or more of your choices is not a valid fuel type.")
+                choose_fuel_type()
+        
+        if 'ANY' in fuel_types:
+            search_dict['fuel_types'] = ['any']
+        else:
+            search_dict['fuel_types'] = fuel_types 
+
+        choose_transmission()
+
+    def choose_mileage():
+        user_input("Please enter the maximum mileage you would like to see or Any to see all.")
+        choice = input().strip()
+
+        if choice.lower() == "any":
+            search_dict["miles"] = ["any"]
+        else:
+            miles = int(choice)
+            search_dict["miles"] = miles
+
+        choose_fuel_type()
+
+    def choose_year():
+        user_input("Please enter a year representing the oldest car you would like to see or Any to see all.")
+        choice = input().strip()
+
+        if choice.lower() == "any":
+            search_dict["year"] = ["any"]
+        elif len(str(choice)) != 4:
+            error("Please enter a valid year in format YYYY.")
+            choose_year()
+        else:
+            year = int(choice)
+            search_dict["year"] = [year]
+            choose_mileage()
+
+    def choose_make():
+        valid_choices = ['Ford', 'Chevrolet', 'Audi', 'Jeep', 'Kia', 'Toyota', 'Any']
+    
+        menu("Makes: Ford, Chevrolet, Audi, Jeep, Kia, Toyota")
+        user_input("Enter desired vehicle make(s) separated by commas or Any to see all.")
+        choice = input()
+        makes = [make.strip().title() for make in input().split(',')]
+
+        for item in makes:
+            if item not in valid_choices:
+                error("One or more of your selections is not a valid make.")
+                choose_make()
+        
+        if choice.title() == 'Any':
+            search_dict["makes"] = 'any'
+        else:
+            search_dict['makes'] = makes
+            choose_year()
+
+    def choose_condition():
+        valid_choices = ['New', 'Used', 'Any']
+
+        menu("Condition: New, Used")
+        user_input("Enter New, Used, or Any:")
+        choice = input().strip()
+
+        if choice.title() not in valid_choices:
+            error('That is not a valid choice.')
+            choose_condition()
+        elif choice.title() == 'Any':
+            search_dict['new'] = ['any']
+        else:
+            search_dict['new'] = [choice.title()]
+        
+        choose_make()
+
+    def choose_type():
+        valid_choices = ['SEDAN', 'COUPE', 'VAN', 'TRUCK', 'SUV', 'ANY']
+
+        menu('Vehicle Types: Sedan, Coupe, Van, Truck, SUV')
+        user_input("Enter desired vehicle type(s) separated by commas or Any to see all.")
+        choice = input()
+        vehicle_types = [vehicle.strip().upper() for vehicle in choice.split(',')]
+
+        for item in vehicle_types:
+            if item not in valid_choices:
+                error("You have entered one or more incorrect vehicle types.")
+                choose_type()
+
+        if 'ANY' in vehicle_types:
+            search_dict['vehicle_types'] == ['any']
+        else:
+            search_dict['vehicle_types'] = vehicle_types 
+        
+        choose_condition()
+    
     model = "NOT NULL"
     search_dict["model"] = model
-  
-    user_input("Please enter a year representing the oldest car you would like to see or Any to see all.")
-    choice = input()
-    if not choice.lower() == "any":
-        year = int(choice)
-        search_dict["year"] = year 
-    else:
-        search_dict["year"] = "any"
 
-    user_input("Please enter the maximum mileage you would like to see or Any to see all.")
-    choice = input()
-    if not choice.lower() == "any":
-        miles = int(choice)
-        search_dict["miles"] = miles
-    else:
-        search_dict["miles"] = "any"
-
-   
-    menu('Fuel Types: Gas, Diesel, Electric, Hybrid')
-    user_input("Enter desired fuel type(s) separated by commas or Any to see all.")
-    fuel_types = [fuel_type.strip().upper() for fuel_type in input().split(',')]
-    search_dict['fuel_types'] = fuel_types 
-    
     colors = "NOT NULL"
     search_dict["colors"] = colors
 
-    menu("Transmission: Manual, Automatic")
-    user_input("Enter Manual, Automatic, or Any:")
-    transmission = [input()]
-    search_dict["transmission"]= transmission
-
-    user_input("Please enter the maximum price you would like to see or Any to see all.")
-    choice = input()
-    if not choice.lower() == "any":
-        price = int(choice)
-        search_dict["price"] = price
-    else:
-        search_dict["price"] = "any"
-    Car.search_cars(search_dict)
-
-
-
+    choose_type()
 
 
 def to_sales(customer):
