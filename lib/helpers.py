@@ -293,8 +293,13 @@ def browse_cars(customer, salesman):
         else:
             error("That is an invalid string.")
             choose_max_price()
-
-        list_cars(customer, salesman, Car.search_cars(search_dict))
+        
+        searched_cars = Car.search_cars(search_dict)
+        if searched_cars:
+            list_cars(customer, salesman, searched_cars)
+        else:
+            error('No results found. Try broadening your search.')
+            browse_cars(customer, salesman)
 
     def choose_transmission():
         valid_choices = ['Manual', 'Automatic', 'Any']
