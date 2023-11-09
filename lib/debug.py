@@ -48,7 +48,8 @@ def setup_db():
     # man = Manager.create(fake.name(), 75_000, rand_date())
 
     # TODO Are these getters and setter defined wrong?
-    for car in generate_fleet():
+    fleet = generate_fleet()
+    for car in fleet:
         car.create(car._vehicle_type, car._new, car._make, car._model, car._miles, car._fuel_type, car._color, car._transmission, car._year, car._price)
 
     sale1 = Sale.create('SALE', bound_rand_date(cust1.join_date), 1, 1, 1, 69_000, 'Active')
@@ -66,7 +67,6 @@ def setup_db():
     sale13 = Sale.create('SALE', bound_rand_date(cust4.join_date), 4, 2, 41, 6_000, 'Active')
     sale14 = Sale.create('SALE', bound_rand_date(cust5.join_date), 5, 1, 3, 19_000, 'Closed')
     sale15 = Sale.create('SALE', bound_rand_date(cust7.join_date), 7, 7, 5, 16_000, 'Active')
-    
     
     serv1 = Service.create('SERVICE', bound_rand_date(st1.hire_date), 1, 5, 1, 'Radio says demonic-sounding things in Latin on every station.', 200, 'Active')
     serv2 = Service.create('SERVICE', bound_rand_date(st2.hire_date), 1, 6, 1, 'I put Monster Energy into the gastank and now it does not run.', 550, 'Closed')
@@ -89,7 +89,13 @@ def setup_db():
     td14 = Testdrive.create('TESTDRIVE', bound_rand_date(sm3.hire_date), 10, 3, 4, "Person did not show up.")
     td15 = Testdrive.create('TESTDRIVE', bound_rand_date(sm2.hire_date), 9, 2, 5, "Testdrive actually went well.")
 
+    owned_cars = [Car.get_by('id', id_) for id_ in Sale.owned_cars()]
+    for car in owned_cars:
+        car.owned = True
+        car.update()
+
 if __name__ == '__main__':
     setup_db()
+
     print('Seeded database')
     import ipdb; ipdb.set_trace()

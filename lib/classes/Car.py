@@ -5,7 +5,6 @@ from classes.Appointment import Appointment
 from classes.Testdrive import Testdrive
 
 class Car:
-
     def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_=None, owned=False):
         self.vehicle_type = vehicle_type
         self.new = new
@@ -17,8 +16,9 @@ class Car:
         self.transmission = transmission
         self.year = year
         self.price = price
-        self.owned = owned
         self.id_ = id_
+        self.owned = owned
+
 
     # **************
     # APPROVED LISTS
@@ -73,7 +73,7 @@ class Car:
     def vehicle_type(self, vehicle_type):
         if hasattr(self, 'vehicle_type'):
             raise ValueError('Vehicle type can not be reset')
-        elif vehicle_type not in type(self).VEHICLE_TYPES:
+        elif vehicle_type.upper() not in type(self).VEHICLE_TYPES:
             raise ValueError(f'Vehicle type must be one of the following: {[v_type for v_type in self.VEHICLE_TYPES]}')
         else:
             self._vehicle_type = vehicle_type
@@ -147,7 +147,7 @@ class Car:
         return self._fuel_type.title()
     @fuel_type.setter
     def fuel_type(self, fuel_type):
-        if fuel_type not in type(self).FUEL_TYPES:
+        if fuel_type.upper() not in type(self).FUEL_TYPES:
             raise ValueError(f'Type must be one of the following: {[f_type for f_type in type(self).FUEL_TYPES]}')
         else:
             self._fuel_type = fuel_type
@@ -212,22 +212,21 @@ class Car:
         return self._id_ 
     @id_.setter
     def id_(self, id_):
-        if not id_:
-            self._id_ = None
-        elif not isinstance(id_, int) or isinstance(id_, bool):
-            raise TypeError("ID must be an integer.")
-        else:
+        if isinstance(id_, int) or isinstance(id_, bool):
             self._id_ = id_
+        elif not id_:
+            self._id_ = None
+        else:
+            raise TypeError("ID must be an integer.")
     
     @property
     def owned(self):
         return self._owned
     @owned.setter
     def owned(self, owned):
-        if not isinstance(owned, int):
-            raise TypeError("Owned must be an boolean.")
-        else:
-            self._owned = owned
+        self._owned = bool(owned)
+            
+
 
     # TODO Bell curve weights. Right now all cars seems to be poor for some reason.
     @property
@@ -286,8 +285,8 @@ class Car:
                 row[9], # transmission
                 row[5], # year
                 row[10], # price
-                bool(row[11]), # owned
-                row[0] # id_
+                row[0], # id_
+                row[11], # owned
                 )
 
     # ****
@@ -295,7 +294,7 @@ class Car:
     # ****
 
     @classmethod
-    def get_by(cls, param='all', value=None):
+    def get_by(cls, param='all', value=''):
         if isinstance(value, str) and value in ('vehicle_type', 'fuel_type'):
             value.strip().upper()
         elif isinstance(value, str):
@@ -321,7 +320,7 @@ class Car:
             """
 
         rows = CURSOR.execute(sql).fetchall()
-        
+
         if not rows:
             print('No results found.')
             return
@@ -336,13 +335,14 @@ class Car:
     # ******
 
     def update(self):
+        print(self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owned)
         CURSOR.execute(
             '''
             UPDATE cars
-            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ? owned = ?
+            SET vehicle_type = ?, new = ?, make = ?, model = ?, year = ?, miles = ?, fuel_type = ?, color = ?, transmission = ?, price = ?, owned = ?
             WHERE id = ?
             ''',
-            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.id_, self.owned)
+            (self.vehicle_type, self.new, self.make, self.model, self.year, self.miles, self.fuel_type, self.color, self.transmission, self.price, self.owned, self.id_)
         )
         CONN.commit()
         return self
@@ -440,7 +440,7 @@ class Car:
 
         # search_dict = {'vehicle_types': ['COUPE', 'VAN', 'TRUCK'], 'new': ['New'], 'makes': ['Any'], 'model': ['any'], 'year': [1978], 'miles': [250000], 'fuel_types': ['GAS'], 'colors': ['any'], 'transmission': ['Manual'], 'price': [1000000]}
         
-        print(search_dict)
+        # print(search_dict)
 
         search_params = []
 
@@ -458,7 +458,7 @@ class Car:
                         result_string = result_string + f" OR '{val}'"
                 search_params.append(result_string)
 
-        print(search_params)
+        # print(search_params)
 
         conditions = [
         "vehicle_type IS NOT NULL" if search_params[2] == 'NOT NULL' else f"vehicle_type = {search_params[2]}",
@@ -470,12 +470,13 @@ class Car:
         "fuel_type IS NOT NULL" if search_params[7] == 'NOT NULL' else f"fuel_type = {search_params[7]}",
         "color IS NOT NULL" if search_params[1] == 'NOT NULL' else f"color = {search_params[1]}",
         "transmission IS NOT NULL" if search_params[8] == 'NOT NULL' else f"transmission = {search_params[8]}",
-        "price IS NOT NULL" if search_params[9] == 'NOT NULL' else f"price < 1000000"
+        "price IS NOT NULL" if search_params[9] == 'NOT NULL' else f"price < 1000000",
+        "owned IS 0"
         ]
 
         # conditions = ["vehicle_type = 'COUPE' OR 'VAN' OR 'SEDAN'", "new = New", "make IS NOT NULL", "model IS NOT NULL", "year > '1978'", "miles < '250000'", "fuel_type = 'GAS' OR 'ELECTRIC'", "color IS NOT NULL", "transmission = 'Automatic'", "price < '1000000'"]
 
-        print(conditions)
+        # print(conditions)
 
         sql = """
             SELECT *
@@ -486,8 +487,8 @@ class Car:
         rows = CURSOR.execute(sql).fetchall()
         cars = []
 
-        print(sql)
-        print(rows)
+        # print(sql)
+        # print(rows)
 
         if not rows:
             print('No results found.')
@@ -497,7 +498,6 @@ class Car:
         else:
             cars = [cls.instance_from_db(row) for row in rows]
 
-        print(cars)
         return cars
 
     # ****************
