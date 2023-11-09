@@ -30,6 +30,11 @@ def qualifier(string):
     text.stylize('yellow')
     print(Panel.fit(text))
 
+def message_to_user(string):
+    text = Text(string)
+    text.stylize('orange')
+    print(Panel.fit(text))
+
 def listing(string):
     pass
 

@@ -191,11 +191,12 @@ class Customer:
     
     def active_services(self):
         from classes.Service import Service
-        return [Service.get_by('id', service.id_) for appt in self.appts() if appt.type_ == 'SERVICE' and appt.status == 'Active'] if self.appts() else None
+        return [Service.get_by('id', appt.id_) for appt in self.appts() if appt.type_ == 'SERVICE' and appt.status == 'Active'] if self.appts() else None
 
     def cars_test_driven(self):
-        return [Car.get_by('id', appt.car_id) for appt in self.appts() if appt.type_ == 'TESTDRIVE'] if self.appts() else None
-    
+        ids = set([appt.car_id for appt in self.appts() if appt.type_ == 'TESTDRIVE']) if self.appts() else None
+        return [Car.get_by('id', id_) for id_ in ids]
+
     def cars_serviced(self):
         return [Car.get_by('id', appt.car_id) for appt in self.appts() if appt.type_ == 'SERVICE' and appt.status == 'Closed'] if self.appts() else None
 

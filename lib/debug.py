@@ -17,6 +17,7 @@ from faker import Faker
 
 fake = Faker()
 
+# TODO Drop tables again
 def setup_db():
     # Customer.drop_table()
     # Employee.drop_table()
@@ -84,11 +85,20 @@ def setup_db():
     td9 = Testdrive.create('TESTDRIVE', bound_rand_date(sm1.hire_date), 1, 1, 3, "Person did not show up.")
     td10 = Testdrive.create('TESTDRIVE', bound_rand_date(sm1.hire_date), 1, 1, 33, "Testdrive actually went well.")
     td11 = Testdrive.create('TESTDRIVE', bound_rand_date(sm3.hire_date), 7, 3, 3, "The guy drove thru a McDonalds and ordered a 50-pc chicken nugget.")
-    td12 = Testdrive.create('TESTDRIVE', bound_rand_date(sm2.hire_date), 7, 2, 1, "Dude crashed into lightpole then tried to bribe me with an expired Chuck E Cheese coupon.")
+    td12 = Testdrive.create('TESTDRIVE', bound_rand_date(sm2.hire_date), 7, 2, 16, "Dude crashed into lightpole then tried to bribe me with an expired Chuck E Cheese coupon.")
     td13 = Testdrive.create('TESTDRIVE', bound_rand_date(sm3.hire_date), 8, 3, 22, "The customer kept telling me about her toenail collection.")
     td14 = Testdrive.create('TESTDRIVE', bound_rand_date(sm3.hire_date), 10, 3, 4, "Person did not show up.")
     td15 = Testdrive.create('TESTDRIVE', bound_rand_date(sm2.hire_date), 9, 2, 5, "Testdrive actually went well.")
-
+    td16 = Testdrive.create('TESTDRIVE', bound_rand_date(sm4.hire_date), 1, 2, 44, "Testdrive actually went well.")
+    td17 = Testdrive.create('TESTDRIVE', bound_rand_date(sm4.hire_date), 1, 2, 44, "Testdrive actually went well.")
+    td18 = Testdrive.create('TESTDRIVE', bound_rand_date(sm3.hire_date), 7, 3, 16, "The guy drove thru a McDonalds and ordered a 50-pc chicken nugget.")
+    td19 = Testdrive.create('TESTDRIVE', bound_rand_date(sm2.hire_date), 7, 2, 16, "Dude crashed into lightpole then tried to bribe me with an expired Chuck E Cheese coupon.")
+    td20 = Testdrive.create('TESTDRIVE', bound_rand_date(sm3.hire_date), 8, 3, 22, "The customer kept telling me about her toenail collection.")
+    td21 = Testdrive.create('TESTDRIVE', bound_rand_date(sm3.hire_date), 10, 3, 16, "Person did not show up.")
+    td22 = Testdrive.create('TESTDRIVE', bound_rand_date(sm2.hire_date), 9, 2, 3, "Testdrive actually went well.")
+    td23 = Testdrive.create('TESTDRIVE', bound_rand_date(sm4.hire_date), 1, 2, 44, "Testdrive actually went well.")
+    td24 = Testdrive.create('TESTDRIVE', bound_rand_date(sm4.hire_date), 1, 2, 44, "Testdrive actually went well.")
+    
     owned_cars = [Car.get_by('id', id_) for id_ in Sale.owned_cars()]
     for car in owned_cars:
         car.owned = True
