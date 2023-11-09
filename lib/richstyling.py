@@ -12,7 +12,7 @@ def user_input(string):
 
 def department(string):
     text = Text(string)
-    text.stylize('bold blue')
+    text.stylize('magenta')
     print(Panel.fit(text))
 
 def menu(string):
@@ -22,7 +22,7 @@ def menu(string):
 
 def error(string):
     text = Text(string)
-    text.stylize('magenta')
+    text.stylize('red')
     print(Panel.fit(text))
 
 def qualifier(string):
@@ -32,7 +32,7 @@ def qualifier(string):
 
 def message_to_user(string):
     text = Text(string)
-    text.stylize('orange')
+    text.stylize('green')
     print(Panel.fit(text))
 
 def listing(string):
