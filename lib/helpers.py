@@ -215,8 +215,11 @@ def generate_fleet():
 # CLI FUNCTIONS
 # *********************
 
+def list_cars(customer, salesman, current_list):
+    print(customer, salesman, current_list)
+
 #customer, salesman
-def browse_cars():
+def browse_cars(customer, salesman):
     from classes.Car import Car
     search_dict = {}
 
@@ -230,7 +233,7 @@ def browse_cars():
             price = int(choice)
             search_dict["price"] = [price]
 
-        Car.search_cars(search_dict)
+        list_cars(customer, salesman, Car.search_cars())
 
     def choose_transmission():
         valid_choices = ['Manual', 'Automatic', 'Any']
@@ -356,6 +359,7 @@ def browse_cars():
     search_dict["colors"] = colors
 
     choose_type()
+
 
 
 def to_sales(customer):
