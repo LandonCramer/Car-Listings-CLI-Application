@@ -253,7 +253,7 @@ def browse_cars():
         menu('Fuel Types: Gas, Diesel, Electric, Hybrid')
         user_input("Enter desired fuel type(s) separated by commas or Any to see all.")
         choice = input()
-        fuel_types = [fuel_type.strip().upper() for fuel_type in input().split(',')]
+        fuel_types = [fuel_type.strip().upper() for fuel_type in choice.split(',')]
 
         for item in fuel_types:
             if item not in valid_choices:
@@ -299,7 +299,7 @@ def browse_cars():
         menu("Makes: Ford, Chevrolet, Audi, Jeep, Kia, Toyota")
         user_input("Enter desired vehicle make(s) separated by commas or Any to see all.")
         choice = input()
-        makes = [make.strip().title() for make in input().split(',')]
+        makes = [make.strip().title() for make in choice.split(',')]
 
         for item in makes:
             if item not in valid_choices:
