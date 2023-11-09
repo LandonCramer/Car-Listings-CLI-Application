@@ -227,11 +227,22 @@ def owned_cars(car_list):
 # CLI FUNCTIONS
 # *************
 
-def view_car_details(customer, salesman, car):
+def show_car(customer, salesman, car):
     print(customer, salesman, car)
+    table = Table(title=f'{car.year} {car.make} {car.model}')
+    for key in car.__dict__.keys():
+        if key != '_owned':
+            table.add_column(snake_case_to_title_case(key))
+    table.add_row(f"{car.vehicle_type}", f"{car.new}", f"{car.make}", f"{car.model}", f"{'{:,}'.format(car.miles)}", f"{car.fuel_type}", f"{car.color}", f"{car.transmission}", f"{car.year}", f"${'{:,}'.format(car.price)}.00", f"{car.id_}")
+
+    console = Console()
+    console.print(table)
+
+    menu('Would you like ')
 
 def list_cars(customer, salesman, current_list):
     from classes.Car import Car
+    from classes.Sale import Sale
     table = Table(title="Here are your search results.")
 
     for key in current_list[0].__dict__.keys():
@@ -245,8 +256,14 @@ def list_cars(customer, salesman, current_list):
 
     user_input("Please select a vehicle by Id.")
     selected_id = input()
+    if int(selected_id) in Sale.owned_cars():
+        error('Invalid ID.')
+        list_cars(customer, salesman, current_list)
+    elif int(selected_id) > len(Car.get_by()):
+        error('Invalid ID.')
+        list_cars(customer, salesman, current_list)
 
-    view_car_details(customer, salesman, Car.get_by('id',selected_id))
+    view_car_details(customer, salesman, Car.get_by('id', int(selected_id)))
 
 #customer, salesman
 def browse_cars(customer, salesman):
@@ -323,14 +340,15 @@ def browse_cars(customer, salesman):
     def choose_year():
         user_input("Please enter a year representing the oldest car you would like to see or Any to see all.")
         choice = input().strip()
+
         if choice.lower() == "any":
             search_dict["year"] = ["any"]
-        elif len(str(choice)) != 4:
-            error("Please enter a valid year in format YYYY.")
-            choose_year()
-        else:
-            year = int(choice) 
+        elif choice.isdigit() and len(choice):
+            year = int(choice)
             search_dict["year"] = [year]
+        else:
+            error("That is an invalid string.")
+            choose_mileage()
         
         choose_mileage()
 

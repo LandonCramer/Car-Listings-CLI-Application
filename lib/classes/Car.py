@@ -5,7 +5,6 @@ from classes.Appointment import Appointment
 from classes.Testdrive import Testdrive
 
 class Car:
-
     def __init__(self, vehicle_type, new, make, model, miles, fuel_type, color, transmission, year=None, price=None, id_=None, owned=False):
         self.vehicle_type = vehicle_type
         self.new = new
@@ -441,7 +440,7 @@ class Car:
 
         # search_dict = {'vehicle_types': ['COUPE', 'VAN', 'TRUCK'], 'new': ['New'], 'makes': ['Any'], 'model': ['any'], 'year': [1978], 'miles': [250000], 'fuel_types': ['GAS'], 'colors': ['any'], 'transmission': ['Manual'], 'price': [1000000]}
         
-        print(search_dict)
+        # print(search_dict)
 
         search_params = []
 
@@ -459,7 +458,7 @@ class Car:
                         result_string = result_string + f" OR '{val}'"
                 search_params.append(result_string)
 
-        print(search_params)
+        # print(search_params)
 
         conditions = [
         "vehicle_type IS NOT NULL" if search_params[2] == 'NOT NULL' else f"vehicle_type = {search_params[2]}",
@@ -477,7 +476,7 @@ class Car:
 
         # conditions = ["vehicle_type = 'COUPE' OR 'VAN' OR 'SEDAN'", "new = New", "make IS NOT NULL", "model IS NOT NULL", "year > '1978'", "miles < '250000'", "fuel_type = 'GAS' OR 'ELECTRIC'", "color IS NOT NULL", "transmission = 'Automatic'", "price < '1000000'"]
 
-        print(conditions)
+        # print(conditions)
 
         sql = """
             SELECT *
@@ -488,8 +487,8 @@ class Car:
         rows = CURSOR.execute(sql).fetchall()
         cars = []
 
-        print(sql)
-        print(rows)
+        # print(sql)
+        # print(rows)
 
         if not rows:
             print('No results found.')
