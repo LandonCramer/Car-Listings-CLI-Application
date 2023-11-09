@@ -225,7 +225,7 @@ def show_car(customer, salesman, car):
     console = Console()
     console.print(table)
 
-    menu('Enter a number for your choice:\n1. Test drive this car\n2. Buy this car\n3. Browse other cars\n4. Return to Lobby')
+    menu('Enter a number for your choice:\n1. Test drive this car\n2. Buy this car\n3. Browse other cars\n4. Return to Lobby\n5. Return to Sales Floor.')
     choice = input()
 
     if int(choice) == 1:
@@ -243,6 +243,8 @@ def show_car(customer, salesman, car):
         browse_cars(customer, salesman)
     elif int(choice) == 4:
         to_lobby(customer)
+    elif int(choice) == 5:
+        to_sales(customer)
     else:
         error("Not a valid choice.")
         to_sales(customer)

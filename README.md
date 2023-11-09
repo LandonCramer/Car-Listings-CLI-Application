@@ -180,7 +180,7 @@ The Customer class facilitates the management of customer data and their interac
 
 
 ## Contributing
-- <b>Conner Adams
+- <b>Connor Adams
 - Joseph Lee
 - Landon Cramer
 </b>
