@@ -224,20 +224,19 @@ def snake_case_to_title_case(input_string):
 # *********************
 
 def list_cars(customer, salesman, current_list):
-    pass
-    # table = Table(title="Here are your search results.")
+    table = Table(title="Here are your search results.")
 
-    # for key in current_list[0].dict.keys():
-    #     if key != '_owned':
-    #         table.add_column(snake_case_to_title_case(key))
-    # for car in current_list:
-    #     table.add_row(f"{car.vehicle_type}", f"{car.new}", f"{car.make}", f"{car.model}", f"{car.year}", f"{car.miles}", f"{car.fuel_type}", f"{car.color}", f"{car.transmission}", f"{car.price}", f"{car.owned}")
+    for key in current_list[0].__dict__.keys():
+        if key != '_owned':
+            table.add_column(snake_case_to_title_case(key))
+    for car in current_list:
+        table.add_row(f"{car.vehicle_type}", f"{car.new}", f"{car.make}", f"{car.model}", f"{car.year}", f"{car.miles}", f"{car.fuel_type}", f"{car.color}", f"{car.transmission}", f"{car.price}", f"{car.owned}")
 
-    # console = Console()
-    # console.print(table)
+    console = Console()
+    console.print(table)
 
-    # user_input("Please select a vehicle by Id.")
-    # selected_id = input()
+    user_input("Please select a vehicle by Id.")
+    selected_id = input()
 
     # view_car_details(customer, salesman, selected_id)
 
