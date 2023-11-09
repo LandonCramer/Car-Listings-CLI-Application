@@ -215,9 +215,13 @@ def generate_fleet():
 # CLI FUNCTIONS
 # *********************
 
+def view_car(customer, salesman, current_car):
+    pass
+
 def browse_cars(customer, salesman):
     cars = query_cars()
-    
+    print(cars)
+    view_car(customer, salesman, 1)
 
 def query_cars():
     from classes.Car import Car
