@@ -224,13 +224,14 @@ def snake_case_to_title_case(input_string):
 # *********************
 
 def list_cars(customer, salesman, current_list):
+    print(current_list)
     # print(current_list[0].__dict__.keys())
-    table = Table(title="Here are your search results.")
-    for key in current_list[0].__dict__.keys():
-        print(key)
-        if key != '_owned':
-            table.add_column(snake_case_to_title_case(key))
-    print(table)
+    # table = Table(title="Here are your search results.")
+    # for key in current_list[0].__dict__.keys():
+    #     print(key)
+    #     if key != '_owned':
+    #         table.add_column(snake_case_to_title_case(key))
+    # print(table)
     # for car in current_list:
     #     table.add_row(car.vehicle_type, car.new, car.make, car.model, car.year, car.miles, car.fuel_type, car.color, car.transmission, car.price, car.owned)
     # print(table)
@@ -250,21 +251,23 @@ def browse_cars(customer, salesman):
             price = int(choice)
             search_dict["price"] = [price]
 
-        list_cars(customer, salesman, Car.search_cars())
+        list_cars(customer, salesman, Car.search_cars(search_dict))
 
     def choose_transmission():
         valid_choices = ['Manual', 'Automatic', 'Any']
 
         menu("Transmission: Manual, Automatic")
         user_input("Enter Manual, Automatic, or Any:")
-        choice = input()
+        choice = input().strip()
 
         if choice.title() not in valid_choices:
-            error("That is not a valid transmission type.")
+            error('That is not a valid choice.')
             choose_transmission()
-
-        transmission = [choice.title()]
-        search_dict["transmission"] = transmission
+        elif choice.title() == 'Any':
+            search_dict['transmission'] = ['any']
+        else:
+            search_dict['transmission'] = [choice.title()]
+        
         choose_max_price()
 
     def choose_fuel_type():
@@ -328,7 +331,7 @@ def browse_cars(customer, salesman):
                 choose_make()
         
         if "Any" in makes:
-            search_dict["makes"] = 'any'
+            search_dict["makes"] = ['any']
         else:
             search_dict['makes'] = makes
         
@@ -371,10 +374,10 @@ def browse_cars(customer, salesman):
         
         choose_condition()
     
-    model = "NOT NULL"
+    model = ["any"]
     search_dict["model"] = model
 
-    colors = "NOT NULL"
+    colors = ["any"]
     search_dict["colors"] = colors
 
     choose_type()
