@@ -215,8 +215,11 @@ def generate_fleet():
 # CLI FUNCTIONS
 # *********************
 
-#customer, salesman
-def browse_cars():
+def browse_cars(customer, salesman):
+    cars = query_cars()
+    
+
+def query_cars():
     from classes.Car import Car
     search_dict = {}
     menu('Vehicle Types: Sedan, Coupe, Van, Truck, SUV')
@@ -226,7 +229,7 @@ def browse_cars():
     
     menu("Condition: New, Used")
     user_input("Enter New, Used, or Any:")
-    new = [input()]
+    new = [input().title()]
     search_dict["new"]= new
     
     menu("Makes: Ford, Chevrolet, Audi, Jeep, Kia, Toyota")
@@ -234,7 +237,7 @@ def browse_cars():
     makes = [make.strip().title() for make in input().split(',')]
     search_dict["makes"] = makes
 
-    model = ["NOT NULL"]
+    model = ["any"]
     search_dict["model"] = model
 
     user_input("Please enter a year representing the oldest car you would like to see or Any to see all.")
@@ -258,12 +261,12 @@ def browse_cars():
     fuel_types = [fuel_type.strip().upper() for fuel_type in input().split(',')]
     search_dict['fuel_types'] = fuel_types 
     
-    colors = ["NOT NULL"]
+    colors = ["any"]
     search_dict["colors"] = colors
 
     menu("Transmission: Manual, Automatic")
     user_input("Enter Manual, Automatic, or Any:")
-    transmission = [input()]
+    transmission = [input().title()]
     search_dict["transmission"]= transmission
 
     user_input("Please enter the maximum price you would like to see or Any to see all.")
@@ -274,7 +277,7 @@ def browse_cars():
     else:
         search_dict["price"] = ["any"]
 
-    Car.search_cars(search_dict)
+    return Car.search_cars() if Car.search_cars() else None
 
 def to_sales(customer):
     from classes.Salesman import Salesman

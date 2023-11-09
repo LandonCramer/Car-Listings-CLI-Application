@@ -434,76 +434,70 @@ class Car:
         return top_cars
 
     # TODO
+
     @classmethod
-    def search_cars(cls, search_dict):
-        # vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price = search_dict.vehicle_type, search_dict.new, search_dict.make, search_dict.model, search_dict.year, search_dict.miles, search_dict.fuel_type, search_dict.color, search_dict.transmission, search_dict.price
-        print(search_dict)
+    def search_cars(cls):
+        # # vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price = search_dict.vehicle_type, search_dict.new, search_dict.make, search_dict.model, search_dict.year, search_dict.miles, search_dict.fuel_type, search_dict.color, search_dict.transmission, search_dict.price
 
-        search_params = []
+        search_dict = {'vehicle_types': ['COUPE', 'VAN', 'TRUCK'], 'new': ['New'], 'makes': ['Any'], 'model': ['any'], 'year': [1978], 'miles': [250000], 'fuel_types': ['GAS'], 'colors': ['any'], 'transmission': ['Manual'], 'price': [1000000]}
+        
+        # print(search_dict)
 
-        for key, value_list in search_dict.items():
-            if value_list[0] == 'any':
-                search_params.append('NOT NULL')
-            elif all(isinstance(item, int) for item in value_list):
-                search_params.append(value_list[0])
-            else:
-                result_string = ''
-                for val in value_list:
-                    if value_list.index(val) == 0:
-                        result_string = result_string + f"{val}"
-                    else:
-                        result_string = result_string + f" OR {val}"
-                search_params.append(result_string)
-        
+        # search_params = []
 
-
-
-        
-        
-        
-        
-        # for key, value in search_dict.items():
-        #     if value[0] == 'any':
-        #             search_params.append('NOT NULL')
-        #     elif not isinstance(value, int):
-        #         elif len(value) == 1:
-        #             search_params.append(value[0])
-        #     elif key == 'miles' and value == 'any':
+        # for value_list in search_dict.values():
+        #     if not isinstance(value_list[0], int) and value_list[0].lower() == 'any':
         #         search_params.append('NOT NULL')
-        #     elif key == 'price' and value == 'any':
-        #         search_params.append('NOT NULL')
-        #     elif key == 'year' and value == 'any':
-        #         search_params.append('NOT NULL')
+        #     elif all(isinstance(item, int) for item in value_list):
+        #         search_params.append(str(value_list[0]))
         #     else:
         #         result_string = ''
-        #         for val in value:
-        #             if value.index(val) == 0:
-        #                 result_string = result_string + f"{val}"
+        #         for val in value_list:
+        #             if value_list.index(val) == 0:
+        #                 result_string = result_string + f"'{val}'"
         #             else:
-        #                 result_string = result_string + f" OR {val}"
+        #                 result_string = result_string + f" OR '{val}'"
         #         search_params.append(result_string)
 
-        print(search_params)
+        # print(search_params)
 
+        # conditions = [
+        # "vehicle_type IS NOT NULL" if search_params[0] == 'NOT NULL' else f"vehicle_type = {search_params[0]}",
+        # "new IS NOT NULL" if search_params[1] == 'NOT NULL' else f"new = {search_params[1]}",
+        # "make IS NOT NULL" if search_params[2] == 'NOT NULL' else f"make = {search_params[2]}",
+        # "model IS NOT NULL" if search_params[3] == 'NOT NULL' else f"model = {search_params[3]}",
+        # "year IS NOT NULL" if search_params[4] == 'NOT NULL' else f"year > {search_params[4]}",
+        # "miles IS NOT NULL" if search_params[5] == 'NOT NULL' else f"miles < {search_params[5]}",
+        # "fuel_type IS NOT NULL" if search_params[6] == 'NOT NULL' else f"fuel_type = {search_params[6]}",
+        # "color IS NOT NULL" if search_params[7] == 'NOT NULL' else f"color = {search_params[7]}",
+        # "transmission IS NOT NULL" if search_params[8] == 'NOT NULL' else f"transmission = {search_params[8]}",
+        # "price IS NOT NULL" if search_params[9] == 'NOT NULL' else f"price < {search_params[9]}"
+        # ]
 
+        # print(conditions)
 
-        # CURSOR.execute('''
-        #     SELECT DISTINCT cars.*
-        #     FROM cars
-        #     WHERE vehicle_type = ?
-        #     AND new = ?
-        #     AND make = ?
-        #     AND model = ?
-        #     AND year > ?
-        #     AND miles < ?
-        #     AND fuel_type = ?
-        #     AND color = ?
-        #     AND transmission = ?
-        #     AND price < ?
-        #     AND owned = '0'         
-        #     ''',
-        #     tuple(search_params))
-        
+        conditions = ["vehicle_type = 'COUPE' OR 'VAN' OR 'SEDAN'", "new = New", "make IS NOT NULL", "model IS NOT NULL", "year > '1978'", "miles < '250000'", "fuel_type = 'GAS' OR 'ELECTRIC'", "color IS NOT NULL", "transmission = 'Automatic'", "price < '1000000'"]
+
+        sql = """
+            SELECT *
+            FROM cars
+            WHERE {}
+        """.format(" AND ".join(conditions))
+
+        print(sql)
+
+        rows = CURSOR.execute(sql).fetchall()
+        cars = []
+
+        if not rows:
+            print('No results found.')
+            return
+        elif len(rows) == 1:
+            cars = [cls.instance_from_db(rows[0])]
+        else:
+            cars = [cls.instance_from_db(row) for row in rows]
+
+        return cars
 
     # ****************
     # INSTANCE METHODS
