@@ -211,12 +211,29 @@ def generate_fleet():
     
     return fleet
 
+def snake_case_to_title_case(input_string):
+    words = input_string.split('_')  # Split the snake case string into words
+    title_case_string = ' '.join(word.capitalize() for word in words) 
+    if title_case_string == 'Id':
+        return 'ID'
+    return title_case_string
+
+
 # *********************
 # CLI FUNCTIONS
 # *********************
 
 def list_cars(customer, salesman, current_list):
-    print(customer, salesman, current_list)
+    print(current_list)
+    # table = Table(title="Here are your search results.")
+    # for key in current_list[0].__dict__.keys():
+    #     print(key)
+    #     if key != '_owned':
+    #         table.add_column(snake_case_to_title_case(key))
+    # print(table)
+    # for car in current_list:
+    #     table.add_row(car.vehicle_type, car.new, car.make, car.model, car.year, car.miles, car.fuel_type, car.color, car.transmission, car.price, car.owned)
+    # print(table)
 
 #customer, salesman
 def browse_cars(customer, salesman):
@@ -233,7 +250,7 @@ def browse_cars(customer, salesman):
             price = int(choice)
             search_dict["price"] = [price]
 
-        list_cars(customer, salesman, Car.search_cars())
+        list_cars(customer, salesman, Car.search_cars(search_dict))
 
     def choose_transmission():
         valid_choices = ['Manual', 'Automatic', 'Any']
@@ -252,7 +269,7 @@ def browse_cars(customer, salesman):
 
     def choose_fuel_type():
         valid_choices = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID', 'ANY']
-   
+
         menu('Fuel Types: Gas, Diesel, Electric, Hybrid')
         user_input("Enter desired fuel type(s) separated by commas or Any to see all.")
         choice = input()
@@ -294,7 +311,8 @@ def browse_cars(customer, salesman):
         else:
             year = int(choice)
             search_dict["year"] = [year]
-            choose_mileage()
+        
+        choose_mileage()
 
     def choose_make():
         valid_choices = ['Ford', 'Chevrolet', 'Audi', 'Jeep', 'Kia', 'Toyota', 'Any']
@@ -305,15 +323,16 @@ def browse_cars(customer, salesman):
         makes = [make.strip().title() for make in choice.split(',')]
 
         for item in makes:
-            if item not in valid_choices:
+            if item.title() not in valid_choices:
                 error("One or more of your selections is not a valid make.")
                 choose_make()
         
-        if choice.title() == 'Any':
+        if "Any" in makes:
             search_dict["makes"] = 'any'
         else:
             search_dict['makes'] = makes
-            choose_year()
+        
+        choose_year()
 
     def choose_condition():
         valid_choices = ['New', 'Used', 'Any']
@@ -346,7 +365,7 @@ def browse_cars(customer, salesman):
                 choose_type()
 
         if 'ANY' in vehicle_types:
-            search_dict['vehicle_types'] == ['any']
+            search_dict['vehicle_types'] = ['any']
         else:
             search_dict['vehicle_types'] = vehicle_types 
         

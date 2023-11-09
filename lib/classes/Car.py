@@ -436,12 +436,12 @@ class Car:
     # TODO
 
     @classmethod
-    def search_cars(cls):
+    def search_cars(cls, search_dict):
         # # vehicle_type, new, make, model, year, miles, fuel_type, color, transmission, price = search_dict.vehicle_type, search_dict.new, search_dict.make, search_dict.model, search_dict.year, search_dict.miles, search_dict.fuel_type, search_dict.color, search_dict.transmission, search_dict.price
 
-        search_dict = {'vehicle_types': ['COUPE', 'VAN', 'TRUCK'], 'new': ['New'], 'makes': ['Any'], 'model': ['any'], 'year': [1978], 'miles': [250000], 'fuel_types': ['GAS'], 'colors': ['any'], 'transmission': ['Manual'], 'price': [1000000]}
+        # search_dict = {'vehicle_types': ['COUPE', 'VAN', 'TRUCK'], 'new': ['New'], 'makes': ['Any'], 'model': ['any'], 'year': [1978], 'miles': [250000], 'fuel_types': ['GAS'], 'colors': ['any'], 'transmission': ['Manual'], 'price': [1000000]}
         
-        # print(search_dict)
+        print(search_dict)
 
         search_params = []
 
@@ -459,7 +459,7 @@ class Car:
                         result_string = result_string + f" OR '{val}'"
                 search_params.append(result_string)
 
-        # print(search_params)
+        # # print(search_params)
 
         conditions = [
         "vehicle_type IS NOT NULL" if search_params[0] == 'NOT NULL' else f"vehicle_type = {search_params[0]}",
@@ -474,9 +474,9 @@ class Car:
         "price IS NOT NULL" if search_params[9] == 'NOT NULL' else f"price < {search_params[9]}"
         ]
 
-        # print(conditions)
+        # # print(conditions)
 
-        # conditions = ["vehicle_type = 'COUPE' OR 'VAN' OR 'SEDAN'", "new = New", "make IS NOT NULL", "model IS NOT NULL", "year > '1978'", "miles < '250000'", "fuel_type = 'GAS' OR 'ELECTRIC'", "color IS NOT NULL", "transmission = 'Automatic'", "price < '1000000'"]
+        # # conditions = ["vehicle_type = 'COUPE' OR 'VAN' OR 'SEDAN'", "new = New", "make IS NOT NULL", "model IS NOT NULL", "year > '1978'", "miles < '250000'", "fuel_type = 'GAS' OR 'ELECTRIC'", "color IS NOT NULL", "transmission = 'Automatic'", "price < '1000000'"]
 
         sql = """
             SELECT *
@@ -484,7 +484,7 @@ class Car:
             WHERE {}
         """.format(" AND ".join(conditions))
 
-        print(sql)
+        # print(sql)
 
         rows = CURSOR.execute(sql).fetchall()
         cars = []
