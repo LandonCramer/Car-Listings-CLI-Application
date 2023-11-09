@@ -212,23 +212,26 @@ def generate_fleet():
     return fleet
 
 def snake_case_to_title_case(input_string):
-    words = input_string.split('_')  # Split the snake case string into words
+    words = input_string.split('_')
     title_case_string = ' '.join(word.capitalize() for word in words) 
     if title_case_string == 'Id':
         return 'ID'
     return title_case_string
 
+def owned_cars(car_list):
+    from classes.Car import Car
+    for car in car_list:
+        print(car.__dict__)
 
-# *********************
+# *************
 # CLI FUNCTIONS
-# *********************
+# *************
 
 def view_car_details(customer, salesman, car):
-    # print(customer, salesman, car)
-    pass
+    print(customer, salesman, car.full_details())
 
 def list_cars(customer, salesman, current_list):
-    # from classes.Car import Car
+    from classes.Car import Car
     # table = Table(title="Here are your search results.")
 
     # for key in current_list[0].__dict__.keys():
@@ -244,7 +247,6 @@ def list_cars(customer, salesman, current_list):
     # selected_id = input()
 
     # view_car_details(customer, salesman, Car.get_by('id',selected_id))
-    pass
 
 #customer, salesman
 def browse_cars(customer, salesman):
@@ -257,12 +259,12 @@ def browse_cars(customer, salesman):
 
         if choice.lower() == "any":
             search_dict["price"] = ["any"]
-        elif isinstance(choice, str) and choice.lower() != 'any':
-            error("That is an invalid string.")
-            choose_max_price()
-        else:
+        elif choice.isdigit() and len(choice):
             price = int(choice)
             search_dict["price"] = [price]
+        else:
+            error("That is an invalid string.")
+            choose_max_price()
 
         list_cars(customer, salesman, Car.search_cars(search_dict))
 
@@ -285,7 +287,7 @@ def browse_cars(customer, salesman):
 
     def choose_fuel_type():
         valid_choices = ['GAS', 'DIESEL', 'ELECTRIC', 'HYBRID', 'ANY']
-   
+
         menu('Fuel Types: Gas, Diesel, Electric, Hybrid')
         user_input("Enter desired fuel type(s) separated by commas or Any to see all.")
         choice = input()

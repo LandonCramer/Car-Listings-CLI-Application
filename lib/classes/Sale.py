@@ -34,3 +34,8 @@ class Sale(Appointment):
             raise TypeError("Status must be a string.")
         else:
             self._status = status
+
+    @classmethod
+    def owned_cars(cls):
+        from classes.Car import Car
+        return [Car.get_by('id', sale.car_id).id_ for sale in Sale.get_by()]
