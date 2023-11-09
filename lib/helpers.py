@@ -228,6 +228,8 @@ def owned_cars(car_list):
 # *************
 
 def show_car(customer, salesman, car):
+    from classes.Testdrive import Testdrive
+    from classes.Sale import Sale
     print(customer, salesman, car)
     table = Table(title=f'{car.year} {car.make} {car.model}')
     for key in car.__dict__.keys():
@@ -238,7 +240,16 @@ def show_car(customer, salesman, car):
     console = Console()
     console.print(table)
 
-    menu('Would you like ')
+    menu('Enter a number for your choice:\n1. Test drive this car\n2. Buy this car')
+    choice = input()
+
+    if int(choice) == 1:
+        Testdrive.create()
+    elif int(choice) == 2:
+        Sale.create()
+    else:
+        error("Not a valid choice.")
+        to_sales(customer)
 
 def list_cars(customer, salesman, current_list):
     from classes.Car import Car
@@ -282,8 +293,13 @@ def browse_cars(customer, salesman):
         else:
             error("That is an invalid string.")
             choose_max_price()
-
-        list_cars(customer, salesman, Car.search_cars(search_dict))
+        
+        searched_cars = Car.search_cars(search_dict)
+        if searched_cars:
+            list_cars(customer, salesman, searched_cars)
+        else:
+            error('No results found. Try broadening your search.')
+            browse_cars(customer, salesman)
 
     def choose_transmission():
         valid_choices = ['Manual', 'Automatic', 'Any']
